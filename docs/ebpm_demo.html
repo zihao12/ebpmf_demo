@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree5e5f539e3038b4ffe9b07972b3151549fee5183ftargetblank5e5f539a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/5e5f539e3038b4ffe9b07972b3151549fee5183f" target="_blank">5e5f539</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftreea92d9abd42d9dd4b1cc9d9753665da52840533b6targetblanka92d9aba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/a92d9abd42d9dd4b1cc9d9753665da52840533b6" target="_blank">a92d9ab</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree5e5f539e3038b4ffe9b07972b3151549fee5183ftargetblank5e5f539a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftreea92d9abd42d9dd4b1cc9d9753665da52840533b6targetblanka92d9aba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -589,6 +589,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/a92d9abd42d9dd4b1cc9d9753665da52840533b6/analysis/ebpm_demo.Rmd" target="_blank">a92d9ab</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+<td>
+demo ebpm update grid range
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/06d1f333d2a547f80b66ef1cbefb9d73344f963a/docs/ebpm_demo.html" target="_blank">06d1f33</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -653,12 +687,15 @@ demo ebpm
 <pre class="r"><code>library(mixsqp)
 library(ggplot2)</code></pre>
 <pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>library(gtools)</code></pre>
 </div>
 <div id="ebpm-gamma" class="section level2">
 <h2>EBPM-gamma</h2>
 <ul>
 <li>For now, I use mixture of exponential as prior family.</li>
-<li>Selecting grid needs to be improved.</li>
+<li>Under the exponential case, we discuss how to select the range of the grid (of <span class="math inline">\(\mu\)</span>). For convenience we use <span class="math inline">\(exp(\mu)\)</span> to denote exponential distribution with mean <span class="math inline">\(\mu\)</span>:<br />
+If <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\ell(\lambda) = - \lambda s\)</span>, in order to have a good likelihood, we want the model to be able to choose <span class="math inline">\(\lambda \sim o(\frac{1}{s})\)</span>. Therefore, we want the smallest <span class="math inline">\(\mu\)</span> to be in the order of <span class="math inline">\(o(\frac{1}{s})\)</span> if there is 0 count.<br />
+If <span class="math inline">\(x &gt; 0\)</span>, the MLE would be <span class="math inline">\(\frac{x}{s}\)</span>, and <span class="math inline">\(\lambda\)</span> too small would have bad likelihood. So we want the biggest <span class="math inline">\(\mu\)</span> to be of order <span class="math inline">\(O(max(\frac{x}{s}))\)</span></li>
 </ul>
 <pre class="r"><code>compute_L &lt;- function(x, s,a, b){
   M1 = (s^x)/gamma(x + 1)
@@ -671,14 +708,21 @@ library(ggplot2)</code></pre>
 }
 
 select_grid &lt;- function(x, s, nv){
+  ## mu_grid: mu =  1/b
+  x_d_s = x/s
+  xprime = x
+  xprime[x == 0] = xprime[x == 0] + 1
+  xprime_d_s = xprime/s
+  mu_grid = seq(0.1*min(xprime_d_s[which(xprime_d_s  &gt; 0)]),2*max(x_d_s), length.out = nv)
+  
   a = rep(1,nv)
-  b = seq(0.5*min(x/s) +  1e-4, 2*max(x/s), length.out = nv)
+  b = 1/mu_grid
   return(list(a = a, b  = b))
 }
 
-ebpm &lt;- function(x,s,nv = 100,seed = 123){
+ebpm &lt;- function(x,s,nv = 100, grid = NULL, seed = 123){
   set.seed(seed)
-  grid &lt;- select_grid(x,s,nv)
+  if(is.null(grid)){grid &lt;- select_grid(x,s,nv)}
   a = grid$a
   b =  grid$b
   L &lt;-  compute_L(x,s,a,b)
@@ -688,14 +732,30 @@ ebpm &lt;- function(x,s,nv = 100,seed = 123){
   pm = cpm %*% pi
   return(list(pi = pi, pm = pm, L = L, a  = a, b = b))
 }</code></pre>
-<pre class="r"><code>simulate_pm  &lt;-  function(seed = 123){
+<pre class="r"><code>## simulate from a mixture of gamma, with weight generated from a dirichlet 
+sim_mgamma &lt;- function(grid, pi){
+  a = grid$a
+  b = grid$b
+  idx = which(rmultinom(1,1, pi) == 1)
+  return(rgamma(n = 1,shape = a[idx], rate = b[idx]))
+}
+
+
+simulate_pm  &lt;-  function(grid = NULL, seed = 123){
   set.seed(seed)
-  lam_true &lt;- c(rep(0,199),seq(0,10,0.05))
+  if(is.null(grid)){lam_true &lt;- c(rep(0,199),seq(0,10,0.05)); pi = NULL}
+  else{
+    n_component = length(grid$a)
+    pi &lt;- rdirichlet(1,rep(1/n_component, n_component))
+    lam_true &lt;- rep(sim_mgamma(grid, pi), 400)
+  }
   #s  = runif(length(lam_true))
   s = rep(1, length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
-  return(list(x =  x, s = s, lam_true = lam_true))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi))
 }</code></pre>
+<div id="lam_true-from-0-and-linspace" class="section level3">
+<h3>lam_true from 0 and linspace</h3>
 <pre class="r"><code>sim = simulate_pm()
 x = sim$x 
 s = sim$s
@@ -751,7 +811,11 @@ zihao12
                labs(x = &quot;x&quot;, y = &quot;lam_hat&quot;, title = &quot;EBPM&quot;) +
                guides(fill = &quot;color&quot;)+
                 geom_abline(slope = 1)</code></pre>
-<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lam_true-from-mixture-of-gamma-same-as-grids-chosen-by-the-model" class="section level3">
+<h3>lam_true from mixture of gamma (same as grids chosen by the model)</h3>
+<p>I generate “lam_true” from a mixture of gamma. Then I give the gamma components (grids) to the model. So we can see if the model estimates mixture weights properly</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -775,19 +839,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.2.0  mixsqp_0.1-120
+[1] gtools_3.8.1   ggplot2_3.2.0  mixsqp_0.1-120
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.2       knitr_1.23       whisker_0.3-2    magrittr_1.5    
- [5] workflowr_1.4.0  tidyselect_0.2.5 munsell_0.5.0    colorspace_1.4-1
- [9] R6_2.4.0         rlang_0.4.0      dplyr_0.8.1      stringr_1.4.0   
-[13] tools_3.5.1      grid_3.5.1       gtable_0.3.0     xfun_0.8        
-[17] withr_2.1.2      git2r_0.25.2     htmltools_0.3.6  assertthat_0.2.1
-[21] yaml_2.2.0       lazyeval_0.2.2   rprojroot_1.3-2  digest_0.6.19   
-[25] tibble_2.1.3     crayon_1.3.4     purrr_0.3.2      fs_1.3.1        
-[29] glue_1.3.1       evaluate_0.14    rmarkdown_1.13   labeling_0.3    
-[33] stringi_1.4.3    pillar_1.4.1     compiler_3.5.1   scales_1.0.0    
-[37] backports_1.1.4  pkgconfig_2.0.2 </code></pre>
+ [1] Rcpp_1.0.2       compiler_3.5.1   pillar_1.4.1     git2r_0.25.2    
+ [5] workflowr_1.4.0  tools_3.5.1      digest_0.6.19    evaluate_0.14   
+ [9] tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.2  rlang_0.4.0     
+[13] yaml_2.2.0       xfun_0.8         withr_2.1.2      stringr_1.4.0   
+[17] dplyr_0.8.1      knitr_1.23       fs_1.3.1         rprojroot_1.3-2 
+[21] grid_3.5.1       tidyselect_0.2.5 glue_1.3.1       R6_2.4.0        
+[25] rmarkdown_1.13   purrr_0.3.2      magrittr_1.5     whisker_0.3-2   
+[29] backports_1.1.4  scales_1.0.0     htmltools_0.3.6  assertthat_0.2.1
+[33] colorspace_1.4-1 labeling_0.3     stringi_1.4.3    lazyeval_0.2.2  
+[37] munsell_0.5.0    crayon_1.3.4    </code></pre>
+</div>
 </div>
 </div>
 
