@@ -13,12 +13,16 @@ see detail in  ...
 ```{r}
 library(mixsqp)
 library(ggplot2)
+library(gtools)
 ```
 
 
 ## EBPM-gamma
 * For now, I use mixture of exponential as prior family.
-* Selecting grid needs to  be improved. 
+* Under the exponential case, we discuss how to select the range of  the grid (of $\mu$). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
+If $x = 0$, $\ell(\lambda) = - \lambda s$, in order to  have a good likelihood, we want the model to be able to choose  $\lambda \sim o(\frac{1}{s})$. Therefore, we want the smallest $\mu$ to be  in the order of $o(\frac{1}{s})$ if there  is 0 count.\
+If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have bad likelihood. So we want the biggest $\mu$ to be of order $O(max(\frac{x}{s}))$
+
 
 ```{r}
 compute_L <- function(x, s,a, b){
@@ -32,14 +36,21 @@ compute_L <- function(x, s,a, b){
 }
 
 select_grid <- function(x, s, nv){
+  ## mu_grid: mu =  1/b
+  x_d_s = x/s
+  xprime = x
+  xprime[x == 0] = xprime[x == 0] + 1
+  xprime_d_s = xprime/s
+  mu_grid = seq(0.1*min(xprime_d_s[which(xprime_d_s  > 0)]),2*max(x_d_s), length.out = nv)
+  
   a = rep(1,nv)
-  b = seq(0.5*min(x/s) +  1e-4, 2*max(x/s), length.out = nv)
+  b = 1/mu_grid
   return(list(a = a, b  = b))
 }
 
-ebpm <- function(x,s,nv = 100,seed = 123){
+ebpm <- function(x,s,nv = 100, grid = NULL, seed = 123){
   set.seed(seed)
-  grid <- select_grid(x,s,nv)
+  if(is.null(grid)){grid <- select_grid(x,s,nv)}
   a = grid$a
   b =  grid$b
   L <-  compute_L(x,s,a,b)
@@ -53,17 +64,31 @@ ebpm <- function(x,s,nv = 100,seed = 123){
 
 
 ```{r}
-simulate_pm  <-  function(seed = 123){
+## simulate from a mixture of gamma, with weight generated from a dirichlet 
+sim_mgamma <- function(grid, pi){
+  a = grid$a
+  b = grid$b
+  idx = which(rmultinom(1,1, pi) == 1)
+  return(rgamma(n = 1,shape = a[idx], rate = b[idx]))
+}
+
+
+simulate_pm  <-  function(grid = NULL, seed = 123){
   set.seed(seed)
-  lam_true <- c(rep(0,199),seq(0,10,0.05))
+  if(is.null(grid)){lam_true <- c(rep(0,199),seq(0,10,0.05)); pi = NULL}
+  else{
+    n_component = length(grid$a)
+    pi <- rdirichlet(1,rep(1/n_component, n_component))
+    lam_true <- rep(sim_mgamma(grid, pi), 400)
+  }
   #s  = runif(length(lam_true))
   s = rep(1, length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
-  return(list(x =  x, s = s, lam_true = lam_true))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi))
 }
 ```
 
-
+### lam_true from 0 and linspace
 ```{r}
 sim = simulate_pm()
 x = sim$x 
@@ -78,16 +103,39 @@ ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = "true"), cex 
                geom_point(aes(x = n, y = log10(lam_hat+1), color = "lam_hat"), cex = 0.5) +
                labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
                guides(fill = "color")
-```
 
-
-```{r}
 ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = "blue"), cex = 0.5) +
                labs(x = "x", y = "lam_hat", title = "EBPM") +
                guides(fill = "color")+
                 geom_abline(slope = 1)
 ```
 
+
+### lam_true from mixture of gamma (same as grids chosen by the model)
+I generate "lam_true" from a mixture of gamma. Then I give the gamma components (grids) to the model. So we can see if the model estimates mixture weights properly
+```{r include = FALSE}
+n_component = 20
+a = rep(1, n_component)
+b = 10*runif(n_component)
+grid = list(a = a, b = b)
+sim <- simulate_pm(grid)
+fit = ebpm(sim$x, sim$s, grid = grid, nv = 100)
+```
+
+```{r include = FALSE}
+df = data.frame(n = 1:length(sim$x), x = sim$x, lam_true = sim$lam_true, lam_hat = fit$pm)
+ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = "true"), cex = 0.5) +
+               geom_point(aes(x = n, y = log10(x+1), color = "x"), cex = 0.5) +
+               geom_point(aes(x = n, y = log10(lam_hat+1), color = "lam_hat"), cex = 0.5) +
+               labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
+               guides(fill = "color")
+
+ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = "blue"), cex = 0.5) +
+               labs(x = "x", y = "lam_hat", title = "EBPM") +
+               guides(fill = "color")+
+                geom_abline(slope = 1)
+#plot(log10(fit$pi), log10(sim$pi))
+```
 
 
 
