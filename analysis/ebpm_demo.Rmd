@@ -41,7 +41,7 @@ select_grid <- function(x, s, nv){
   xprime = x
   xprime[x == 0] = xprime[x == 0] + 1
   xprime_d_s = xprime/s
-  mu_grid = seq(0.1*min(xprime_d_s[which(xprime_d_s  > 0)]),2*max(x_d_s), length.out = nv)
+  mu_grid = seq(0.1*min(xprime_d_s),2*max(x_d_s), length.out = nv)
   
   a = rep(1,nv)
   b = 1/mu_grid
