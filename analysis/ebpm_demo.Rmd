@@ -1,0 +1,101 @@
+---
+title: "ebpm_demo"
+author: "zihao12"
+date: "2019-09-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## EBPM problem
+see detail in  ...
+
+```{r}
+library(mixsqp)
+library(ggplot2)
+```
+
+
+## EBPM-gamma
+```{r}
+compute_L <- function(x, s,a, b){
+  M1 = (s^x)/gamma(x + 1)
+  M2 = (b^a)/gamma(a)
+  ak_add_xi = outer(x,a, "+")
+  M3 = gamma(ak_add_xi)/outer(s,b, "+")^ak_add_xi
+  #browser()
+  out = outer(M1, M2, "*") * M3
+  return(out)
+}
+
+select_grid <- function(x, s, nv){
+  a = rep(1,nv)
+  b = seq(0.5*min(x/s) +  1e-4, 2*max(x/s), length.out = nv)
+  return(list(a = a, b  = b))
+}
+
+ebpm <- function(x,s,nv = 100,seed = 123){
+  set.seed(seed)
+  grid <- select_grid(x,s,nv)
+  a = grid$a
+  b =  grid$b
+  L <-  compute_L(x,s,a,b)
+  fit <- mixsqp(L, control = list(verbose = FALSE))
+  pi = fit$x
+  cpm = outer(x,a)/outer(s, b)
+  pm = cpm %*% pi
+  return(list(pi = pi, pm = pm, L = L, a  = a, b = b))
+}
+```
+
+
+```{r}
+simulate_pm  <-  function(seed = 123){
+  set.seed(seed)
+  lam_true <- c(rep(0,199),seq(0,10,0.05))
+  #s  = runif(length(lam_true))
+  s = rep(1, length(lam_true))
+  x  = rpois(length(lam_true),s*lam_true)
+  return(list(x =  x, s = s, lam_true = lam_true))
+}
+```
+
+
+```{r}
+sim = simulate_pm()
+x = sim$x 
+s = sim$s
+lam_true = sim$lam_true
+fit = ebpm(x, s)
+
+df = data.frame(n = 1:length(x), x = log10(x+1), lam_true = log10(lam_true+1), lam_hat = log10(fit$pm + 1))
+
+ggplot(df)  + geom_point(aes(x = n, y = lam_true, color = "true"), cex = 0.5) +
+               geom_point(aes(x = n, y = x, color = "x"), cex = 0.5) +
+               geom_point(aes(x = n, y = lam_hat, color = "lam_hat"), cex = 0.5) +
+               labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
+               guides(fill = "color")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
