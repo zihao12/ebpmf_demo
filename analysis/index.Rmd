@@ -9,3 +9,5 @@ editor_options:
 ---
 
 Welcome to my research website.
+
+My demo for EBPM is here: https://zihao12.github.io/ebpmf/ebpm_demo.html
