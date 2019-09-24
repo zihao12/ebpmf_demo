@@ -17,6 +17,9 @@ library(ggplot2)
 
 
 ## EBPM-gamma
+* For now, I use mixture of exponential as prior family.
+* Selecting grid needs to  be improved. 
+
 ```{r}
 compute_L <- function(x, s,a, b){
   M1 = (s^x)/gamma(x + 1)
@@ -68,16 +71,22 @@ s = sim$s
 lam_true = sim$lam_true
 fit = ebpm(x, s)
 
-df = data.frame(n = 1:length(x), x = log10(x+1), lam_true = log10(lam_true+1), lam_hat = log10(fit$pm + 1))
+df = data.frame(n = 1:length(x), x = x, lam_true = lam_true, lam_hat = fit$pm)
 
-ggplot(df)  + geom_point(aes(x = n, y = lam_true, color = "true"), cex = 0.5) +
-               geom_point(aes(x = n, y = x, color = "x"), cex = 0.5) +
-               geom_point(aes(x = n, y = lam_hat, color = "lam_hat"), cex = 0.5) +
+ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = "true"), cex = 0.5) +
+               geom_point(aes(x = n, y = log10(x+1), color = "x"), cex = 0.5) +
+               geom_point(aes(x = n, y = log10(lam_hat+1), color = "lam_hat"), cex = 0.5) +
                labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
                guides(fill = "color")
 ```
 
 
+```{r}
+ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = "blue"), cex = 0.5) +
+               labs(x = "x", y = "lam_hat", title = "EBPM") +
+               guides(fill = "color")+
+                geom_abline(slope = 1)
+```
 
 
 
