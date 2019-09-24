@@ -14,12 +14,14 @@ see detail in  ...
 library(mixsqp)
 library(ggplot2)
 library(gtools)
+#library(bsts)
 ```
 
 
 ## EBPM-gamma
 * For now, I use mixture of exponential as prior family.
 * Under the exponential case, we discuss how to select the range of  the grid (of $\mu$). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
+The goal is: for each observation, we want to include the range of $\lambda$ "of  interest" (i.e. $log \ p(x | \lambda)$ is  close to that of the MLE, like within $log(0.1)$). 
 If $x = 0$, $\ell(\lambda) = - \lambda s$, in order to  have a good likelihood, we want the model to be able to choose  $\lambda \sim o(\frac{1}{s})$. Therefore, we want the smallest $\mu$ to be  in the order of $o(\frac{1}{s})$ if there  is 0 count.\
 If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have bad likelihood. So we want the biggest $\mu$ to be of order $O(max(\frac{x}{s}))$
 
@@ -30,20 +32,29 @@ compute_L <- function(x, s,a, b){
   M2 = (b^a)/gamma(a)
   ak_add_xi = outer(x,a, "+")
   M3 = gamma(ak_add_xi)/outer(s,b, "+")^ak_add_xi
-  #browser()
   out = outer(M1, M2, "*") * M3
   return(out)
 }
 
-select_grid <- function(x, s, nv){
+## generate a geometric sequence: x_n = low*m^{n-1} up to x_n < up
+geom_seq <- function(low, up, m){
+  N =  ceiling(log(up/low)/log(m)) + 1
+  out  = low*m^(seq(1,N, by = 1)-1)
+  return(out)
+}
+
+select_grid <- function(x, s, m = 2){
   ## mu_grid: mu =  1/b
   x_d_s = x/s
   xprime = x
   xprime[x == 0] = xprime[x == 0] + 1
   xprime_d_s = xprime/s
-  mu_grid = seq(0.1*min(xprime_d_s),2*max(x_d_s), length.out = nv)
+  #mu_grid = seq(0.1*min(xprime_d_s),2*max(x_d_s), length.out = nv)
+  mu_grid_min =  0.1*min(xprime_d_s)
+  mu_grid_max = 2*max(x_d_s)
+  mu_grid = geom_seq(mu_grid_min, mu_grid_max, m)
   
-  a = rep(1,nv)
+  a = rep(1,length(mu_grid))
   b = 1/mu_grid
   return(list(a = a, b  = b))
 }
