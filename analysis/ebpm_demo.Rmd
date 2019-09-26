@@ -8,33 +8,46 @@ editor_options:
 ---
 
 ## EBPM problem
-see detail in  ...
+$$
+\begin{align}
+  & x_i \sim Pois(s_i \lambda_i)\\
+  & \lambda_i \sim g(.)\\
+  & g \in \mathcal{G}
+\end{align}
+$$
+Our goal is to estimate $\hat{g}$ (MLE), then  compute posterior $p(\lambda_i | x_i, \hat{g})$. Here  I use  mixture of exponential as prior family. 
+
+see detail in  https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2
 
 ```{r}
 library(mixsqp)
 library(ggplot2)
 library(gtools)
-#library(bsts)
+require(gridExtra)
 ```
 
 
-## EBPM-gamma
+## EBPM-exponential-mixture
 * For now, I use mixture of exponential as prior family.
-* Under the exponential case, we discuss how to select the range of  the grid (of $\mu$). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
+* Under the exponential case, we discuss how to select the range of  the grid (of $\mu$, exponential mean). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
 The goal is: for each observation, we want to include the range of $\lambda$ "of  interest" (i.e. $log \ p(x | \lambda)$ is  close to that of the MLE, like within $log(0.1)$). 
 If $x = 0$, $\ell(\lambda) = - \lambda s$, in order to  have a good likelihood, we want the model to be able to choose  $\lambda \sim o(\frac{1}{s})$. Therefore, we want the smallest $\mu$ to be  in the order of $o(\frac{1}{s})$ if there  is 0 count.\
 If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have bad likelihood. So we want the biggest $\mu$ to be of order $O(max(\frac{x}{s}))$
 
+## experiment setup
+* I simulate $\lambda_i \sim \sum_k \pi_k exp(b_k), k = 1, ...,  50$, where $b_k$ is the exponential rate, for $i = 1, ..., 4000$. 
+* Then I fit  EBPM with mixture of exponential as prior (our model knows the $b_k$). I compare $\ell(\pi)$, which should be better than oracle; I also compare $\ell(\lambda)$ (it is not clear whether the posterior  will be better than oracle, but still  we can use it  to see how good the model is). 
+*  Then  I fit without the same model, without knowing the $b_k$. 
+
 
 ```{r}
-compute_L <- function(x, s,a, b){
-  M1 = (s^x)/gamma(x + 1)
-  M2 = (b^a)/gamma(a)
-  ak_add_xi = outer(x,a, "+")
-  M3 = gamma(ak_add_xi)/outer(s,b, "+")^ak_add_xi
-  out = outer(M1, M2, "*") * M3
-  return(out)
-}
+## ===========================================================================
+## ==========================ebpm_exponential_mixture=========================
+## ===========================================================================
+
+## description
+## this solves ebpm problem, with mixture of exponential distribution as prior:
+## g(.) = \sum_k \pi_k exp(.;b_k), where b_k is rate of exponential
 
 ## generate a geometric sequence: x_n = low*m^{n-1} up to x_n < up
 geom_seq <- function(low, up, m){
@@ -43,114 +56,153 @@ geom_seq <- function(low, up, m){
   return(out)
 }
 
-select_grid <- function(x, s, m = 2){
-  ## mu_grid: mu =  1/b
-  x_d_s = x/s
+lin_seq <- function(low, up, m){
+  out = seq(low, up, length.out = m)
+  return(out)
+}
+
+## select grid for b_k
+select_grid_exponential <- function(x, s, m = 2){
+  ## mu_grid: mu =  1/b is the exponential mean
   xprime = x
   xprime[x == 0] = xprime[x == 0] + 1
-  xprime_d_s = xprime/s
-  #mu_grid = seq(0.1*min(xprime_d_s),2*max(x_d_s), length.out = nv)
-  mu_grid_min =  0.1*min(xprime_d_s)
-  mu_grid_max = 2*max(x_d_s)
+  mu_grid_min =  0.05*min(xprime/s)
+  mu_grid_max = 2*max(x/s)
   mu_grid = geom_seq(mu_grid_min, mu_grid_max, m)
-  
-  a = rep(1,length(mu_grid))
+  #mu_grid = lin_seq(mu_grid_min, mu_grid_max, m)
   b = 1/mu_grid
-  return(list(a = a, b  = b))
+  a = rep(1, length(b))
+  return(list(a= a, b = b))
 }
 
-ebpm <- function(x,s,nv = 100, grid = NULL, seed = 123){
+## compute L matrix from data and selected grid
+## L_ik = (s_i^x_i* b_k)/(s_i + b_k)^(x_i + 1)
+compute_L <- function(x, s, a, b){
+  prob = 1 - s/outer(s,b, "+")
+  L = dnbinom(x,a,prob = prob, log = F) 
+  return(L)
+}
+
+## compute ebpm_exponential_mixture problem
+ebpm_exponential_mixture <- function(x,s,m = 2, grid = NULL, seed = 123){
   set.seed(seed)
-  if(is.null(grid)){grid <- select_grid(x,s,nv)}
+  if(is.null(grid)){grid <- select_grid_exponential(x,s,m)}
+  b = grid$b
   a = grid$a
-  b =  grid$b
-  L <-  compute_L(x,s,a,b)
-  fit <- mixsqp(L, control = list(verbose = FALSE))
+  L <-  compute_L(x,s,a, b)
+  fit <- mixsqp(L, control = list(verbose = F))
+  ll_pi = - (fit$value) * length(x) ## get ll(pi) from mixsqr obj
   pi = fit$x
   cpm = outer(x,a)/outer(s, b)
-  pm = cpm %*% pi
-  return(list(pi = pi, pm = pm, L = L, a  = a, b = b))
-}
-```
-
-
-```{r}
-## simulate from a mixture of gamma, with weight generated from a dirichlet 
-sim_mgamma <- function(grid, pi){
-  a = grid$a
-  b = grid$b
-  idx = which(rmultinom(1,1, pi) == 1)
-  return(rgamma(n = 1,shape = a[idx], rate = b[idx]))
+  lam_pm = cpm %*% pi
+  ll_lam = sum(dpois(x, s*lam_pm, log = T))
+  return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,ll_pi = ll_pi,L = L,grid = grid))
 }
 
+## ===========================================================================
+## ==========================experiment setup=================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+sim_mgamma <- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
 
-simulate_pm  <-  function(grid = NULL, seed = 123){
+## simulate a poisson mean problem
+simulate_pm  <-  function(seed = 123){
   set.seed(seed)
-  if(is.null(grid)){lam_true <- c(rep(0,199),seq(0,10,0.05)); pi = NULL}
-  else{
-    n_component = length(grid$a)
-    pi <- rdirichlet(1,rep(1/n_component, n_component))
-    lam_true <- rep(sim_mgamma(grid, pi), 400)
-  }
-  #s  = runif(length(lam_true))
-  s = rep(1, length(lam_true))
+  n = 4000 ## number of  data
+  d = 50 ## number of mixture components in prior
+  ## simulate grid
+  a = replicate(d,1)
+  b = 10*runif(d)
+  grid  = list(a = a, b = b)
+  pi <- rdirichlet(1,rep(1/d, d))
+  lam_true = replicate(n, sim_mgamma(a,b,pi))
+  s = replicate(length(lam_true), 10)
+  #s = 2*runif(length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
-  return(list(x =  x, s = s, lam_true = lam_true, pi = pi))
+  ll_lam = sum(dpois(x, s*lam_true, log = T))
+  L =  compute_L(x,s,a,b)
+  ll_pi = sum(log(L %*% matrix(pi, ncol = 1)))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid, ll_lam = ll_lam, ll_pi = ll_pi))
 }
 ```
 
-### lam_true from 0 and linspace
 ```{r}
-sim = simulate_pm()
-x = sim$x 
-s = sim$s
-lam_true = sim$lam_true
-fit = ebpm(x, s)
+## test functions  above
+main <- function(know_grid = F){
+  m = 1.1
+  sim = simulate_pm()
+  x = sim$x 
+  s = sim$s
+  lam_true = sim$lam_true
+  
+  start = proc.time()
+  if(!know_grid){
+    fit = ebpm_exponential_mixture(x, s, m)
+  }else{
+    fit = ebpm_exponential_mixture(x, s, m, sim$grid)
+  }
+  
+  runtime = proc.time() - start
 
-df = data.frame(n = 1:length(x), x = x, lam_true = lam_true, lam_hat = fit$pm)
-
-ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = "true"), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(x+1), color = "x"), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(lam_hat+1), color = "lam_hat"), cex = 0.5) +
-               labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
-               guides(fill = "color")
-
-ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = "blue"), cex = 0.5) +
-               labs(x = "x", y = "lam_hat", title = "EBPM") +
-               guides(fill = "color")+
-                geom_abline(slope = 1)
+  print(sprintf("fit with %d data points and %d grid points", length(sim$x),length(fit$grid$b)))
+  print(sprintf("runtime: %f", runtime[[3]]))
+   print("\n")
+  print("log likelihood for pi:")
+  print(sprintf("oracle ll_pi: %f", sim$ll_pi))
+  print(sprintf("fitted ll_pi: %f", fit$ll_pi))
+  print("\n")
+  print("log likelihood for lam:")
+  print(sprintf("mle    ll_lam: %f", sum(dpois(x, x, log = T))))
+  print(sprintf("oracle ll_lam: %f", sim$ll_lam))
+  print(sprintf("fitted ll_lam: %f", fit$ll_lam))
+  
+  df = data.frame(n = 1:length(x), x = x, s =  s, lam_true = lam_true, lam_hat = fit$lam_pm)
+  
+  plot1 <- ggplot(df)  + geom_point(aes(x = x/s, y = lam_hat, color = "blue"), cex = 0.5) +
+    labs(x = "x/s", y = "lam_hat", title = "EBPM") +
+    guides(fill = "color")
+  plot2 <-  ggplot(df)  + geom_point(aes(x = lam_true, y = lam_hat, color = "blue"), cex = 0.5) +
+    labs(x = "lam_true", y = "lam_hat", title = "EBPM") +
+    guides(fill = "color")
+  grid.arrange(plot1, plot2, ncol=1)
+  return(list(fit = fit, sim = sim))
+}
 ```
 
 
-### lam_true from mixture of gamma (same as grids chosen by the model)
-I generate "lam_true" from a mixture of gamma. Then I give the gamma components (grids) to the model. So we can see if the model estimates mixture weights properly
-```{r include = FALSE}
-n_component = 20
-a = rep(1, n_component)
-b = 10*runif(n_component)
-grid = list(a = a, b = b)
-sim <- simulate_pm(grid)
-fit = ebpm(sim$x, sim$s, grid = grid, nv = 100)
+## fit (knowing grid)
+```{r}
+out1 = main(know_grid = T)
+plot(log10(out1$sim$pi), log10(out1$fit$pi), ylab = "log10(pi_hat)",  xlab = "log10(pi_true)")
+hist(out1$sim$grid$b, breaks = 100, xlab = "b_true", main =  "histogram of b_true")
+
 ```
 
-```{r include = FALSE}
-df = data.frame(n = 1:length(sim$x), x = sim$x, lam_true = sim$lam_true, lam_hat = fit$pm)
-ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = "true"), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(x+1), color = "x"), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(lam_hat+1), color = "lam_hat"), cex = 0.5) +
-               labs(x = "index", y = "log10(lam + 1)", title = "EBPM") +
-               guides(fill = "color")
+## fit (not knowing grid)
+```{r}
+out2 = main(know_grid = F)
+hist(out2$sim$grid$b, breaks = 100, xlab = "b_true", main =  "histogram of b_true")
+hist(out2$fit$grid$b, breaks = 100, xlab = "b_hat", main =  "histogram of b_hat")
 
-ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = "blue"), cex = 0.5) +
-               labs(x = "x", y = "lam_hat", title = "EBPM") +
-               guides(fill = "color")+
-                geom_abline(slope = 1)
-#plot(log10(fit$pi), log10(sim$pi))
+hist(out2$sim$pi, breaks = 100, xlab = "pi_true", main =  "histogram of pi_true")
+hist(out2$fit$pi, breaks = 100, xlab = "pi_hat", main =  "histogram of pi_hat")
+```
+
+## compare two experiment result
+
+```{r}
+plot(out1$fit$lam_pm, out2$fit$lam_pm,  xlab  = "lam_post (use oracle grid)", ylab = "lam_post (use selected grid)", main = "posterior mean for lambda")
 ```
 
 
-
-
+## Conclusion
+* Our grid selecting seems to work fine, as the  posterior mean of $\lambda$s are almost the same between the two experiments (use oracle  grid VS estimate grid) 
+* $\ell(\pi_{est})$ is slightly better than  $\ell(\pi_{true})$
+* It is suspicious that $\ell(\lambda_{post})$ is so much worse than oracle
+* 
 
 
 
