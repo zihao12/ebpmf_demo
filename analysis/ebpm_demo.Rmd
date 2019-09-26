@@ -76,11 +76,14 @@ select_grid_exponential <- function(x, s, m = 2){
 }
 
 ## compute L matrix from data and selected grid
-## L_ik = (s_i^x_i* b_k)/(s_i + b_k)^(x_i + 1)
+## L_ik = NB(x_i; a_k, b_k/b_k + s_i)
+## but for computation in mixsqr, we can simplyfy it for numerical stability
 compute_L <- function(x, s, a, b){
   prob = 1 - s/outer(s,b, "+")
-  L = dnbinom(x,a,prob = prob, log = F) 
-  return(L)
+  l = dnbinom(x,a,prob = prob, log = T) 
+  l_rowmax  = apply(l,1,max)
+  L = exp(l -  l_rowmax)
+  return(list(L = L, l_rowmax = l_rowmax))
 }
 
 ## compute ebpm_exponential_mixture problem
@@ -89,11 +92,13 @@ ebpm_exponential_mixture <- function(x,s,m = 2, grid = NULL, seed = 123){
   if(is.null(grid)){grid <- select_grid_exponential(x,s,m)}
   b = grid$b
   a = grid$a
-  L <-  compute_L(x,s,a, b)
-  fit <- mixsqp(L, control = list(verbose = F))
-  ll_pi = - (fit$value) * length(x) ## get ll(pi) from mixsqr obj
+  tmp <-  compute_L(x,s,a, b)
+  L =  tmp$L
+  l_rowmax = tmp$l_rowmax
+  fit <- mixsqp(L, control = list(verbose = T))
+  ll_pi = sum(log(exp(l_rowmax) * L %*%  fit$x))
   pi = fit$x
-  cpm = outer(x,a)/outer(s, b)
+  cpm = outer(x,a,  "+")/outer(s, b, "+")
   lam_pm = cpm %*% pi
   ll_lam = sum(dpois(x, s*lam_pm, log = T))
   return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,ll_pi = ll_pi,L = L,grid = grid))
@@ -123,9 +128,15 @@ simulate_pm  <-  function(seed = 123){
   #s = 2*runif(length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
   ll_lam = sum(dpois(x, s*lam_true, log = T))
-  L =  compute_L(x,s,a,b)
-  ll_pi = sum(log(L %*% matrix(pi, ncol = 1)))
+  tmp =  compute_L(x,s,a,b)
+  L =  tmp$L
+  l_rowmax = tmp$l_rowmax
+  ll_pi = sum(log(exp(l_rowmax) * L %*% matrix(pi, ncol = 1)))
   return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid, ll_lam = ll_lam, ll_pi = ll_pi))
+}
+
+rmse <- function(x,y){
+  return(sqrt(mean(x-y)^2))
 }
 ```
 
@@ -154,10 +165,9 @@ main <- function(know_grid = F){
   print(sprintf("oracle ll_pi: %f", sim$ll_pi))
   print(sprintf("fitted ll_pi: %f", fit$ll_pi))
   print("\n")
-  print("log likelihood for lam:")
-  print(sprintf("mle    ll_lam: %f", sum(dpois(x, x, log = T))))
-  print(sprintf("oracle ll_lam: %f", sim$ll_lam))
-  print(sprintf("fitted ll_lam: %f", fit$ll_lam))
+  print("RMSE with lam_oracle:")
+  print(sprintf("mle    : %f", rmse(x/s, sim$lam_true)))
+  print(sprintf("fitted : %f", rmse(fit$lam_pm, sim$lam_true)))
   
   df = data.frame(n = 1:length(x), x = x, s =  s, lam_true = lam_true, lam_hat = fit$lam_pm)
   
@@ -178,7 +188,6 @@ main <- function(know_grid = F){
 out1 = main(know_grid = T)
 plot(log10(out1$sim$pi), log10(out1$fit$pi), ylab = "log10(pi_hat)",  xlab = "log10(pi_true)")
 hist(out1$sim$grid$b, breaks = 100, xlab = "b_true", main =  "histogram of b_true")
-
 ```
 
 ## fit (not knowing grid)
@@ -201,8 +210,6 @@ plot(out1$fit$lam_pm, out2$fit$lam_pm,  xlab  = "lam_post (use oracle grid)", yl
 ## Conclusion
 * Our grid selecting seems to work fine, as the  posterior mean of $\lambda$s are almost the same between the two experiments (use oracle  grid VS estimate grid) 
 * $\ell(\pi_{est})$ is slightly better than  $\ell(\pi_{true})$
-* It is suspicious that $\ell(\lambda_{post})$ is so much worse than oracle
-* 
 
 
 
