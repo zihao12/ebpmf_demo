@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-09-24
+<strong>Last updated:</strong> 2019-09-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree731df2d11bc253d4a5f00a98b9fe47e2164d8d03targetblank731df2da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/731df2d11bc253d4a5f00a98b9fe47e2164d8d03" target="_blank">731df2d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree6d713957e8f01c5a0cc5d12b7421084ab8801279targetblank6d71395a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/6d713957e8f01c5a0cc5d12b7421084ab8801279" target="_blank">6d71395</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree731df2d11bc253d4a5f00a98b9fe47e2164d8d03targetblank731df2da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree6d713957e8f01c5a0cc5d12b7421084ab8801279targetblank6d71395a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -589,6 +589,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/6d713957e8f01c5a0cc5d12b7421084ab8801279/analysis/ebpm_demo.Rmd" target="_blank">6d71395</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+rewrite demo for ebpm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/a3da36f7b6c2ffe2d4ee57651d91a84f4ddff9cd/docs/ebpm_demo.html" target="_blank">a3da36f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -751,29 +785,44 @@ demo ebpm
 </div>
 <div id="ebpm-problem" class="section level2">
 <h2>EBPM problem</h2>
-<p>see detail in …</p>
+<p><span class="math display">\[
+\begin{align}
+  &amp; x_i \sim Pois(s_i \lambda_i)\\
+  &amp; \lambda_i \sim g(.)\\
+  &amp; g \in \mathcal{G}
+\end{align}
+\]</span> Our goal is to estimate <span class="math inline">\(\hat{g}\)</span> (MLE), then compute posterior <span class="math inline">\(p(\lambda_i | x_i, \hat{g})\)</span>. Here I use mixture of exponential as prior family.</p>
+<p>see detail in <a href="https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2" class="uri">https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2</a></p>
 <pre class="r"><code>library(mixsqp)
 library(ggplot2)</code></pre>
 <pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
 <pre class="r"><code>library(gtools)
-#library(bsts)</code></pre>
+require(gridExtra)</code></pre>
+<pre><code>Loading required package: gridExtra</code></pre>
 </div>
-<div id="ebpm-gamma" class="section level2">
-<h2>EBPM-gamma</h2>
+<div id="ebpm-exponential-mixture" class="section level2">
+<h2>EBPM-exponential-mixture</h2>
 <ul>
 <li>For now, I use mixture of exponential as prior family.</li>
-<li>Under the exponential case, we discuss how to select the range of the grid (of <span class="math inline">\(\mu\)</span>). For convenience we use <span class="math inline">\(exp(\mu)\)</span> to denote exponential distribution with mean <span class="math inline">\(\mu\)</span>:<br />
+<li>Under the exponential case, we discuss how to select the range of the grid (of <span class="math inline">\(\mu\)</span>, exponential mean). For convenience we use <span class="math inline">\(exp(\mu)\)</span> to denote exponential distribution with mean <span class="math inline">\(\mu\)</span>:<br />
 The goal is: for each observation, we want to include the range of <span class="math inline">\(\lambda\)</span> “of interest” (i.e. <span class="math inline">\(log \ p(x | \lambda)\)</span> is close to that of the MLE, like within <span class="math inline">\(log(0.1)\)</span>). If <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\ell(\lambda) = - \lambda s\)</span>, in order to have a good likelihood, we want the model to be able to choose <span class="math inline">\(\lambda \sim o(\frac{1}{s})\)</span>. Therefore, we want the smallest <span class="math inline">\(\mu\)</span> to be in the order of <span class="math inline">\(o(\frac{1}{s})\)</span> if there is 0 count.<br />
 If <span class="math inline">\(x &gt; 0\)</span>, the MLE would be <span class="math inline">\(\frac{x}{s}\)</span>, and <span class="math inline">\(\lambda\)</span> too small would have bad likelihood. So we want the biggest <span class="math inline">\(\mu\)</span> to be of order <span class="math inline">\(O(max(\frac{x}{s}))\)</span></li>
 </ul>
-<pre class="r"><code>compute_L &lt;- function(x, s,a, b){
-  M1 = (s^x)/gamma(x + 1)
-  M2 = (b^a)/gamma(a)
-  ak_add_xi = outer(x,a, &quot;+&quot;)
-  M3 = gamma(ak_add_xi)/outer(s,b, &quot;+&quot;)^ak_add_xi
-  out = outer(M1, M2, &quot;*&quot;) * M3
-  return(out)
-}
+</div>
+<div id="experiment-setup" class="section level2">
+<h2>experiment setup</h2>
+<ul>
+<li>I simulate <span class="math inline">\(\lambda_i \sim \sum_k \pi_k exp(b_k), k = 1, ..., 50\)</span>, where <span class="math inline">\(b_k\)</span> is the exponential rate, for <span class="math inline">\(i = 1, ..., 4000\)</span>.</li>
+<li>Then I fit EBPM with mixture of exponential as prior (our model knows the <span class="math inline">\(b_k\)</span>). I compare <span class="math inline">\(\ell(\pi)\)</span>, which should be better than oracle; I also compare <span class="math inline">\(\ell(\lambda)\)</span> (it is not clear whether the posterior will be better than oracle, but still we can use it to see how good the model is).</li>
+<li>Then I fit without the same model, without knowing the <span class="math inline">\(b_k\)</span>.</li>
+</ul>
+<pre class="r"><code>## ===========================================================================
+## ==========================ebpm_exponential_mixture=========================
+## ===========================================================================
+
+## description
+## this solves ebpm problem, with mixture of exponential distribution as prior:
+## g(.) = \sum_k \pi_k exp(.;b_k), where b_k is rate of exponential
 
 ## generate a geometric sequence: x_n = low*m^{n-1} up to x_n &lt; up
 geom_seq &lt;- function(low, up, m){
@@ -782,71 +831,132 @@ geom_seq &lt;- function(low, up, m){
   return(out)
 }
 
-select_grid &lt;- function(x, s, m = 2){
-  ## mu_grid: mu =  1/b
-  x_d_s = x/s
+lin_seq &lt;- function(low, up, m){
+  out = seq(low, up, length.out = m)
+  return(out)
+}
+
+## select grid for b_k
+select_grid_exponential &lt;- function(x, s, m = 2){
+  ## mu_grid: mu =  1/b is the exponential mean
   xprime = x
   xprime[x == 0] = xprime[x == 0] + 1
-  xprime_d_s = xprime/s
-  #mu_grid = seq(0.1*min(xprime_d_s),2*max(x_d_s), length.out = nv)
-  mu_grid_min =  0.1*min(xprime_d_s)
-  mu_grid_max = 2*max(x_d_s)
+  mu_grid_min =  0.05*min(xprime/s)
+  mu_grid_max = 2*max(x/s)
   mu_grid = geom_seq(mu_grid_min, mu_grid_max, m)
-  
-  a = rep(1,length(mu_grid))
+  #mu_grid = lin_seq(mu_grid_min, mu_grid_max, m)
   b = 1/mu_grid
-  return(list(a = a, b  = b))
+  a = rep(1, length(b))
+  return(list(a= a, b = b))
 }
 
-ebpm &lt;- function(x,s,nv = 100, grid = NULL, seed = 123){
+## compute L matrix from data and selected grid
+## L_ik = (s_i^x_i* b_k)/(s_i + b_k)^(x_i + 1)
+compute_L &lt;- function(x, s, a, b){
+  prob = 1 - s/outer(s,b, &quot;+&quot;)
+  L = dnbinom(x,a,prob = prob, log = F) 
+  return(L)
+}
+
+## compute ebpm_exponential_mixture problem
+ebpm_exponential_mixture &lt;- function(x,s,m = 2, grid = NULL, seed = 123){
   set.seed(seed)
-  if(is.null(grid)){grid &lt;- select_grid(x,s,nv)}
+  if(is.null(grid)){grid &lt;- select_grid_exponential(x,s,m)}
+  b = grid$b
   a = grid$a
-  b =  grid$b
-  L &lt;-  compute_L(x,s,a,b)
-  fit &lt;- mixsqp(L, control = list(verbose = FALSE))
+  L &lt;-  compute_L(x,s,a, b)
+  fit &lt;- mixsqp(L, control = list(verbose = F))
+  ll_pi = - (fit$value) * length(x) ## get ll(pi) from mixsqr obj
   pi = fit$x
   cpm = outer(x,a)/outer(s, b)
-  pm = cpm %*% pi
-  return(list(pi = pi, pm = pm, L = L, a  = a, b = b))
-}</code></pre>
-<pre class="r"><code>## simulate from a mixture of gamma, with weight generated from a dirichlet 
-sim_mgamma &lt;- function(grid, pi){
-  a = grid$a
-  b = grid$b
-  idx = which(rmultinom(1,1, pi) == 1)
-  return(rgamma(n = 1,shape = a[idx], rate = b[idx]))
+  lam_pm = cpm %*% pi
+  ll_lam = sum(dpois(x, s*lam_pm, log = T))
+  return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,ll_pi = ll_pi,L = L,grid = grid))
 }
 
+## ===========================================================================
+## ==========================experiment setup=================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+sim_mgamma &lt;- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
 
-simulate_pm  &lt;-  function(grid = NULL, seed = 123){
+## simulate a poisson mean problem
+simulate_pm  &lt;-  function(seed = 123){
   set.seed(seed)
-  if(is.null(grid)){lam_true &lt;- c(rep(0,199),seq(0,10,0.05)); pi = NULL}
-  else{
-    n_component = length(grid$a)
-    pi &lt;- rdirichlet(1,rep(1/n_component, n_component))
-    lam_true &lt;- rep(sim_mgamma(grid, pi), 400)
-  }
-  #s  = runif(length(lam_true))
-  s = rep(1, length(lam_true))
+  n = 4000 ## number of  data
+  d = 50 ## number of mixture components in prior
+  ## simulate grid
+  a = replicate(d,1)
+  b = 10*runif(d)
+  grid  = list(a = a, b = b)
+  pi &lt;- rdirichlet(1,rep(1/d, d))
+  lam_true = replicate(n, sim_mgamma(a,b,pi))
+  s = replicate(length(lam_true), 10)
+  #s = 2*runif(length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
-  return(list(x =  x, s = s, lam_true = lam_true, pi = pi))
+  ll_lam = sum(dpois(x, s*lam_true, log = T))
+  L =  compute_L(x,s,a,b)
+  ll_pi = sum(log(L %*% matrix(pi, ncol = 1)))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid, ll_lam = ll_lam, ll_pi = ll_pi))
 }</code></pre>
-<div id="lam_true-from-0-and-linspace" class="section level3">
-<h3>lam_true from 0 and linspace</h3>
-<pre class="r"><code>sim = simulate_pm()
-x = sim$x 
-s = sim$s
-lam_true = sim$lam_true
-fit = ebpm(x, s)
+<pre class="r"><code>## test functions  above
+main &lt;- function(know_grid = F){
+  m = 1.1
+  sim = simulate_pm()
+  x = sim$x 
+  s = sim$s
+  lam_true = sim$lam_true
+  
+  start = proc.time()
+  if(!know_grid){
+    fit = ebpm_exponential_mixture(x, s, m)
+  }else{
+    fit = ebpm_exponential_mixture(x, s, m, sim$grid)
+  }
+  
+  runtime = proc.time() - start
 
-df = data.frame(n = 1:length(x), x = x, lam_true = lam_true, lam_hat = fit$pm)
-
-ggplot(df)  + geom_point(aes(x = n, y = log10(lam_true+1), color = &quot;true&quot;), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(x+1), color = &quot;x&quot;), cex = 0.5) +
-               geom_point(aes(x = n, y = log10(lam_hat+1), color = &quot;lam_hat&quot;), cex = 0.5) +
-               labs(x = &quot;index&quot;, y = &quot;log10(lam + 1)&quot;, title = &quot;EBPM&quot;) +
-               guides(fill = &quot;color&quot;)</code></pre>
+  print(sprintf(&quot;fit with %d data points and %d grid points&quot;, length(sim$x),length(fit$grid$b)))
+  print(sprintf(&quot;runtime: %f&quot;, runtime[[3]]))
+   print(&quot;\n&quot;)
+  print(&quot;log likelihood for pi:&quot;)
+  print(sprintf(&quot;oracle ll_pi: %f&quot;, sim$ll_pi))
+  print(sprintf(&quot;fitted ll_pi: %f&quot;, fit$ll_pi))
+  print(&quot;\n&quot;)
+  print(&quot;log likelihood for lam:&quot;)
+  print(sprintf(&quot;mle    ll_lam: %f&quot;, sum(dpois(x, x, log = T))))
+  print(sprintf(&quot;oracle ll_lam: %f&quot;, sim$ll_lam))
+  print(sprintf(&quot;fitted ll_lam: %f&quot;, fit$ll_lam))
+  
+  df = data.frame(n = 1:length(x), x = x, s =  s, lam_true = lam_true, lam_hat = fit$lam_pm)
+  
+  plot1 &lt;- ggplot(df)  + geom_point(aes(x = x/s, y = lam_hat, color = &quot;blue&quot;), cex = 0.5) +
+    labs(x = &quot;x/s&quot;, y = &quot;lam_hat&quot;, title = &quot;EBPM&quot;) +
+    guides(fill = &quot;color&quot;)
+  plot2 &lt;-  ggplot(df)  + geom_point(aes(x = lam_true, y = lam_hat, color = &quot;blue&quot;), cex = 0.5) +
+    labs(x = &quot;lam_true&quot;, y = &quot;lam_hat&quot;, title = &quot;EBPM&quot;) +
+    guides(fill = &quot;color&quot;)
+  grid.arrange(plot1, plot2, ncol=1)
+  return(list(fit = fit, sim = sim))
+}</code></pre>
+</div>
+<div id="fit-knowing-grid" class="section level2">
+<h2>fit (knowing grid)</h2>
+<pre class="r"><code>out1 = main(know_grid = T)</code></pre>
+<pre><code>[1] &quot;fit with 4000 data points and 50 grid points&quot;
+[1] &quot;runtime: 0.120000&quot;
+[1] &quot;\n&quot;
+[1] &quot;log likelihood for pi:&quot;
+[1] &quot;oracle ll_pi: -6154.499159&quot;
+[1] &quot;fitted ll_pi: -6153.161922&quot;
+[1] &quot;\n&quot;
+[1] &quot;log likelihood for lam:&quot;
+[1] &quot;mle    ll_lam: -2807.351047&quot;
+[1] &quot;oracle ll_lam: -4785.537170&quot;
+[1] &quot;fitted ll_lam: -8811.940157&quot;</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
@@ -870,6 +980,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/a3da36f7b6c2ffe2d4ee57651d91a84f4ddff9cd/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">a3da36f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/25f8b5ac9ec260e599bcc254505b93c4cb7766a4/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">25f8b5a</a>
@@ -896,10 +1017,7 @@ zihao12
 </table>
 </div>
 </div>
-<pre class="r"><code>ggplot(df)  + geom_point(aes(x = x, y = lam_hat, color = &quot;blue&quot;), cex = 0.5) +
-               labs(x = &quot;x&quot;, y = &quot;lam_hat&quot;, title = &quot;EBPM&quot;) +
-               guides(fill = &quot;color&quot;)+
-                geom_abline(slope = 1)</code></pre>
+<pre class="r"><code>plot(log10(out1$sim$pi), log10(out1$fit$pi), ylab = &quot;log10(pi_hat)&quot;,  xlab = &quot;log10(pi_true)&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
@@ -925,6 +1043,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf/blob/a3da36f7b6c2ffe2d4ee57651d91a84f4ddff9cd/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" target="_blank">a3da36f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf/blob/25f8b5ac9ec260e599bcc254505b93c4cb7766a4/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" target="_blank">25f8b5a</a>
 </td>
 <td>
@@ -938,10 +1067,120 @@ zihao12
 </table>
 </div>
 </div>
+<pre class="r"><code>hist(out1$sim$grid$b, breaks = 100, xlab = &quot;b_true&quot;, main =  &quot;histogram of b_true&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="lam_true-from-mixture-of-gamma-same-as-grids-chosen-by-the-model" class="section level3">
-<h3>lam_true from mixture of gamma (same as grids chosen by the model)</h3>
-<p>I generate “lam_true” from a mixture of gamma. Then I give the gamma components (grids) to the model. So we can see if the model estimates mixture weights properly</p>
+<div id="fit-not-knowing-grid" class="section level2">
+<h2>fit (not knowing grid)</h2>
+<pre class="r"><code>out2 = main(know_grid = F)</code></pre>
+<pre><code>[1] &quot;fit with 4000 data points and 67 grid points&quot;
+[1] &quot;runtime: 0.173000&quot;
+[1] &quot;\n&quot;
+[1] &quot;log likelihood for pi:&quot;
+[1] &quot;oracle ll_pi: -6154.499159&quot;
+[1] &quot;fitted ll_pi: -6153.168083&quot;
+[1] &quot;\n&quot;
+[1] &quot;log likelihood for lam:&quot;
+[1] &quot;mle    ll_lam: -2807.351047&quot;
+[1] &quot;oracle ll_lam: -4785.537170&quot;
+[1] &quot;fitted ll_lam: -8811.600827&quot;</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/06d1f333d2a547f80b66ef1cbefb9d73344f963a/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" target="_blank">06d1f33</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>hist(out2$sim$grid$b, breaks = 100, xlab = &quot;b_true&quot;, main =  &quot;histogram of b_true&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(out2$fit$grid$b, breaks = 100, xlab = &quot;b_hat&quot;, main =  &quot;histogram of b_hat&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(out2$sim$pi, breaks = 100, xlab = &quot;pi_true&quot;, main =  &quot;histogram of pi_true&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(out2$fit$pi, breaks = 100, xlab = &quot;pi_hat&quot;, main =  &quot;histogram of pi_hat&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="compare-two-experiment-result" class="section level2">
+<h2>compare two experiment result</h2>
+<pre class="r"><code>plot(out1$fit$lam_pm, out2$fit$lam_pm,  xlab  = &quot;lam_post (use oracle grid)&quot;, ylab = &quot;lam_post (use selected grid)&quot;, main = &quot;posterior mean for lambda&quot;)</code></pre>
+<p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/25f8b5ac9ec260e599bcc254505b93c4cb7766a4/docs/figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" target="_blank">25f8b5a</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<ul>
+<li>Our grid selecting seems to work fine, as the posterior mean of <span class="math inline">\(\lambda\)</span>s are almost the same between the two experiments (use oracle grid VS estimate grid)</li>
+<li><span class="math inline">\(\ell(\pi_{est})\)</span> is slightly better than <span class="math inline">\(\ell(\pi_{true})\)</span></li>
+<li>It is suspicious that <span class="math inline">\(\ell(\lambda_{post})\)</span> is so much worse than oracle</li>
+<li></li>
+</ul>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -965,20 +1204,19 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] gtools_3.8.1   ggplot2_3.2.0  mixsqp_0.1-120
+[1] gridExtra_2.3  gtools_3.8.1   ggplot2_3.2.0  mixsqp_0.1-120
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.2       compiler_3.5.1   pillar_1.4.1     git2r_0.25.2    
  [5] workflowr_1.4.0  tools_3.5.1      digest_0.6.19    evaluate_0.14   
  [9] tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.2  rlang_0.4.0     
 [13] yaml_2.2.0       xfun_0.8         withr_2.1.2      stringr_1.4.0   
-[17] dplyr_0.8.1      knitr_1.23       fs_1.3.1         rprojroot_1.3-2 
+[17] dplyr_0.8.1      knitr_1.25       fs_1.3.1         rprojroot_1.3-2 
 [21] grid_3.5.1       tidyselect_0.2.5 glue_1.3.1       R6_2.4.0        
 [25] rmarkdown_1.13   purrr_0.3.2      magrittr_1.5     whisker_0.3-2   
 [29] backports_1.1.4  scales_1.0.0     htmltools_0.3.6  assertthat_0.2.1
 [33] colorspace_1.4-1 labeling_0.3     stringi_1.4.3    lazyeval_0.2.2  
 [37] munsell_0.5.0    crayon_1.3.4    </code></pre>
-</div>
 </div>
 </div>
 
