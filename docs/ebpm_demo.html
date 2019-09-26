@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree4f11a6591e3caaab0d60800a988cd77c119a8f49targetblank4f11a65a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/4f11a6591e3caaab0d60800a988cd77c119a8f49" target="_blank">4f11a65</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree32d185317bfebd6e2c9a4b05d85d38501793a8d9targetblank32d1853a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/32d185317bfebd6e2c9a4b05d85d38501793a8d9" target="_blank">32d1853</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree4f11a6591e3caaab0d60800a988cd77c119a8f49targetblank4f11a65a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree32d185317bfebd6e2c9a4b05d85d38501793a8d9targetblank32d1853a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -589,6 +589,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/32d185317bfebd6e2c9a4b05d85d38501793a8d9/analysis/ebpm_demo.Rmd" target="_blank">32d1853</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+rewrite demo for ebpm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/c7fda34654c37112afcc68038f33e3cb920a8fae/docs/ebpm_demo.html" target="_blank">c7fda34</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -839,7 +873,8 @@ require(gridExtra)</code></pre>
 <ul>
 <li>For now, I use mixture of exponential as prior family.</li>
 <li>Under the exponential case, we discuss how to select the range of the grid (of <span class="math inline">\(\mu\)</span>, exponential mean). For convenience we use <span class="math inline">\(exp(\mu)\)</span> to denote exponential distribution with mean <span class="math inline">\(\mu\)</span>:<br />
-The goal is: for each observation, we want to include the range of <span class="math inline">\(\lambda\)</span> “of interest” (i.e. <span class="math inline">\(log \ p(x | \lambda)\)</span> is close to that of the MLE, like within <span class="math inline">\(log(0.1)\)</span>). If <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\ell(\lambda) = - \lambda s\)</span>, in order to have a good likelihood, we want the model to be able to choose <span class="math inline">\(\lambda \sim o(\frac{1}{s})\)</span>. Therefore, we want the smallest <span class="math inline">\(\mu\)</span> to be in the order of <span class="math inline">\(o(\frac{1}{s})\)</span> if there is 0 count.<br />
+The goal is: for each observation, we want to include the range of <span class="math inline">\(\lambda\)</span> “of interest” (i.e. <span class="math inline">\(log \ p(x | \lambda)\)</span> is close to that of the MLE, like within <span class="math inline">\(log(0.1)\)</span>).<br />
+If <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(\ell(\lambda) = - \lambda s\)</span>, in order to have a good likelihood, we want the model to be able to choose <span class="math inline">\(\lambda \sim o(\frac{1}{s})\)</span>. Therefore, we want the smallest <span class="math inline">\(\mu\)</span> to be in the order of <span class="math inline">\(o(\frac{1}{s})\)</span> if there is 0 count.<br />
 If <span class="math inline">\(x &gt; 0\)</span>, the MLE would be <span class="math inline">\(\frac{x}{s}\)</span>, and <span class="math inline">\(\lambda\)</span> too small would have bad likelihood. So we want the biggest <span class="math inline">\(\mu\)</span> to be of order <span class="math inline">\(O(max(\frac{x}{s}))\)</span></li>
 </ul>
 </div>
@@ -981,7 +1016,7 @@ main &lt;- function(know_grid = F){
 <h2>fit (knowing grid)</h2>
 <pre class="r"><code>out1 = main(know_grid = T)</code></pre>
 <pre><code>[1] &quot;fit with 4000 data points and 50 grid points&quot;
-[1] &quot;runtime: 0.127000&quot;
+[1] &quot;runtime: 0.129000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
@@ -1167,7 +1202,7 @@ zihao12
 <h2>fit (not knowing grid)</h2>
 <pre class="r"><code>out2 = main(know_grid = F)</code></pre>
 <pre><code>[1] &quot;fit with 4000 data points and 67 grid points&quot;
-[1] &quot;runtime: 0.170000&quot;
+[1] &quot;runtime: 0.177000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
