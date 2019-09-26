@@ -36,8 +36,8 @@ If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have b
 
 ## experiment setup
 * I simulate $\lambda_i \sim \sum_k \pi_k exp(b_k), k = 1, ...,  50$, where $b_k$ is the exponential rate, for $i = 1, ..., 4000$. 
-* Then I fit  EBPM with mixture of exponential as prior (our model knows the $b_k$). I compare $\ell(\pi)$, which should be better than oracle; I also compare $\ell(\lambda)$ (it is not clear whether the posterior  will be better than oracle, but still  we can use it  to see how good the model is). 
-*  Then  I fit without the same model, without knowing the $b_k$. 
+* Then I fit  EBPM with mixture of exponential as prior (our model knows the grid for $b_k$). I compare $\ell(\pi)$, which should be better than oracle; I also compare $\ell(\lambda)$ (it is not clear whether the posterior  will be better than oracle, but still  we can use it  to see how good the model is). 
+*  Then  I fit with the same model, without knowing the grid for $b_k$. 
 
 
 ```{r}
