@@ -30,7 +30,7 @@ require(gridExtra)
 ## EBPM-exponential-mixture
 * For now, I use mixture of exponential as prior family.
 * Under the exponential case, we discuss how to select the range of  the grid (of $\mu$, exponential mean). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
-The goal is: for each observation, we want to include the range of $\lambda$ "of  interest" (i.e. $log \ p(x | \lambda)$ is  close to that of the MLE, like within $log(0.1)$). 
+The goal is: for each observation, we want to include the range of $\lambda$ "of  interest" (i.e. $log \ p(x | \lambda)$ is  close to that of the MLE, like within $log(0.1)$). \
 If $x = 0$, $\ell(\lambda) = - \lambda s$, in order to  have a good likelihood, we want the model to be able to choose  $\lambda \sim o(\frac{1}{s})$. Therefore, we want the smallest $\mu$ to be  in the order of $o(\frac{1}{s})$ if there  is 0 count.\
 If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have bad likelihood. So we want the biggest $\mu$ to be of order $O(max(\frac{x}{s}))$
 
