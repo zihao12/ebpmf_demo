@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree6d713957e8f01c5a0cc5d12b7421084ab8801279targetblank6d71395a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/6d713957e8f01c5a0cc5d12b7421084ab8801279" target="_blank">6d71395</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree4f11a6591e3caaab0d60800a988cd77c119a8f49targetblank4f11a65a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/4f11a6591e3caaab0d60800a988cd77c119a8f49" target="_blank">4f11a65</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree6d713957e8f01c5a0cc5d12b7421084ab8801279targetblank6d71395a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree4f11a6591e3caaab0d60800a988cd77c119a8f49targetblank4f11a65a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -589,6 +589,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/4f11a6591e3caaab0d60800a988cd77c119a8f49/analysis/ebpm_demo.Rmd" target="_blank">4f11a65</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+rewrite demo for ebpm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/ebpm_demo.html" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -813,8 +847,8 @@ If <span class="math inline">\(x &gt; 0\)</span>, the MLE would be <span class="
 <h2>experiment setup</h2>
 <ul>
 <li>I simulate <span class="math inline">\(\lambda_i \sim \sum_k \pi_k exp(b_k), k = 1, ..., 50\)</span>, where <span class="math inline">\(b_k\)</span> is the exponential rate, for <span class="math inline">\(i = 1, ..., 4000\)</span>.</li>
-<li>Then I fit EBPM with mixture of exponential as prior (our model knows the <span class="math inline">\(b_k\)</span>). I compare <span class="math inline">\(\ell(\pi)\)</span>, which should be better than oracle; I also compare <span class="math inline">\(\ell(\lambda)\)</span> (it is not clear whether the posterior will be better than oracle, but still we can use it to see how good the model is).</li>
-<li>Then I fit without the same model, without knowing the <span class="math inline">\(b_k\)</span>.</li>
+<li>Then I fit EBPM with mixture of exponential as prior (our model knows the grid for <span class="math inline">\(b_k\)</span>). I compare <span class="math inline">\(\ell(\pi)\)</span>, which should be better than oracle; I also compare <span class="math inline">\(\ell(\lambda)\)</span> (it is not clear whether the posterior will be better than oracle, but still we can use it to see how good the model is).</li>
+<li>Then I fit with the same model, without knowing the grid for <span class="math inline">\(b_k\)</span>.</li>
 </ul>
 <pre class="r"><code>## ===========================================================================
 ## ==========================ebpm_exponential_mixture=========================
@@ -947,7 +981,7 @@ main &lt;- function(know_grid = F){
 <h2>fit (knowing grid)</h2>
 <pre class="r"><code>out1 = main(know_grid = T)</code></pre>
 <pre><code>[1] &quot;fit with 4000 data points and 50 grid points&quot;
-[1] &quot;runtime: 0.120000&quot;
+[1] &quot;runtime: 0.127000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
@@ -980,6 +1014,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/a3da36f7b6c2ffe2d4ee57651d91a84f4ddff9cd/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">a3da36f</a>
@@ -1043,6 +1088,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf/blob/a3da36f7b6c2ffe2d4ee57651d91a84f4ddff9cd/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-2.png" target="_blank">a3da36f</a>
 </td>
 <td>
@@ -1069,12 +1125,49 @@ zihao12
 </div>
 <pre class="r"><code>hist(out1$sim$grid$b, breaks = 100, xlab = &quot;b_true&quot;, main =  &quot;histogram of b_true&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-3">
+Past versions of unnamed-chunk-4-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-3.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fit-not-knowing-grid" class="section level2">
 <h2>fit (not knowing grid)</h2>
 <pre class="r"><code>out2 = main(know_grid = F)</code></pre>
 <pre><code>[1] &quot;fit with 4000 data points and 67 grid points&quot;
-[1] &quot;runtime: 0.173000&quot;
+[1] &quot;runtime: 0.170000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
@@ -1109,6 +1202,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf/blob/06d1f333d2a547f80b66ef1cbefb9d73344f963a/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" target="_blank">06d1f33</a>
 </td>
 <td>
@@ -1124,12 +1228,160 @@ zihao12
 </div>
 <pre class="r"><code>hist(out2$sim$grid$b, breaks = 100, xlab = &quot;b_true&quot;, main =  &quot;histogram of b_true&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-2.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(out2$fit$grid$b, breaks = 100, xlab = &quot;b_hat&quot;, main =  &quot;histogram of b_hat&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-3.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(out2$sim$pi, breaks = 100, xlab = &quot;pi_true&quot;, main =  &quot;histogram of pi_true&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
+Past versions of unnamed-chunk-5-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-4.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(out2$fit$pi, breaks = 100, xlab = &quot;pi_hat&quot;, main =  &quot;histogram of pi_hat&quot;)</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-5">
+Past versions of unnamed-chunk-5-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-5.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="compare-two-experiment-result" class="section level2">
 <h2>compare two experiment result</h2>
@@ -1157,6 +1409,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" target="_blank">9a58a35</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/25f8b5ac9ec260e599bcc254505b93c4cb7766a4/docs/figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" target="_blank">25f8b5a</a>
