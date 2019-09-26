@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree32d185317bfebd6e2c9a4b05d85d38501793a8d9targetblank32d1853a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/32d185317bfebd6e2c9a4b05d85d38501793a8d9" target="_blank">32d1853</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree522f45b1e57a12e8cb940ff22a9a44d85e207e43targetblank522f45ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/522f45b1e57a12e8cb940ff22a9a44d85e207e43" target="_blank">522f45b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree32d185317bfebd6e2c9a4b05d85d38501793a8d9targetblank32d1853a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree522f45b1e57a12e8cb940ff22a9a44d85e207e43targetblank522f45ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -551,6 +551,7 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  docs/figure/test.Rmd/
 
 </code></pre>
 <p>
@@ -589,6 +590,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/522f45b1e57a12e8cb940ff22a9a44d85e207e43/analysis/ebpm_demo.Rmd" target="_blank">522f45b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+fix a stupid bug in ebpm_demo.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/6ae1cb48b70da9f8a692294e8d407a65c99045e1/docs/ebpm_demo.html" target="_blank">6ae1cb4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -920,11 +955,14 @@ select_grid_exponential &lt;- function(x, s, m = 2){
 }
 
 ## compute L matrix from data and selected grid
-## L_ik = (s_i^x_i* b_k)/(s_i + b_k)^(x_i + 1)
+## L_ik = NB(x_i; a_k, b_k/b_k + s_i)
+## but for computation in mixsqr, we can simplyfy it for numerical stability
 compute_L &lt;- function(x, s, a, b){
   prob = 1 - s/outer(s,b, &quot;+&quot;)
-  L = dnbinom(x,a,prob = prob, log = F) 
-  return(L)
+  l = dnbinom(x,a,prob = prob, log = T) 
+  l_rowmax  = apply(l,1,max)
+  L = exp(l -  l_rowmax)
+  return(list(L = L, l_rowmax = l_rowmax))
 }
 
 ## compute ebpm_exponential_mixture problem
@@ -933,11 +971,13 @@ ebpm_exponential_mixture &lt;- function(x,s,m = 2, grid = NULL, seed = 123){
   if(is.null(grid)){grid &lt;- select_grid_exponential(x,s,m)}
   b = grid$b
   a = grid$a
-  L &lt;-  compute_L(x,s,a, b)
-  fit &lt;- mixsqp(L, control = list(verbose = F))
-  ll_pi = - (fit$value) * length(x) ## get ll(pi) from mixsqr obj
+  tmp &lt;-  compute_L(x,s,a, b)
+  L =  tmp$L
+  l_rowmax = tmp$l_rowmax
+  fit &lt;- mixsqp(L, control = list(verbose = T))
+  ll_pi = sum(log(exp(l_rowmax) * L %*%  fit$x))
   pi = fit$x
-  cpm = outer(x,a)/outer(s, b)
+  cpm = outer(x,a,  &quot;+&quot;)/outer(s, b, &quot;+&quot;)
   lam_pm = cpm %*% pi
   ll_lam = sum(dpois(x, s*lam_pm, log = T))
   return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,ll_pi = ll_pi,L = L,grid = grid))
@@ -967,9 +1007,15 @@ simulate_pm  &lt;-  function(seed = 123){
   #s = 2*runif(length(lam_true))
   x  = rpois(length(lam_true),s*lam_true)
   ll_lam = sum(dpois(x, s*lam_true, log = T))
-  L =  compute_L(x,s,a,b)
-  ll_pi = sum(log(L %*% matrix(pi, ncol = 1)))
+  tmp =  compute_L(x,s,a,b)
+  L =  tmp$L
+  l_rowmax = tmp$l_rowmax
+  ll_pi = sum(log(exp(l_rowmax) * L %*% matrix(pi, ncol = 1)))
   return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid, ll_lam = ll_lam, ll_pi = ll_pi))
+}
+
+rmse &lt;- function(x,y){
+  return(sqrt(mean(x-y)^2))
 }</code></pre>
 <pre class="r"><code>## test functions  above
 main &lt;- function(know_grid = F){
@@ -995,10 +1041,9 @@ main &lt;- function(know_grid = F){
   print(sprintf(&quot;oracle ll_pi: %f&quot;, sim$ll_pi))
   print(sprintf(&quot;fitted ll_pi: %f&quot;, fit$ll_pi))
   print(&quot;\n&quot;)
-  print(&quot;log likelihood for lam:&quot;)
-  print(sprintf(&quot;mle    ll_lam: %f&quot;, sum(dpois(x, x, log = T))))
-  print(sprintf(&quot;oracle ll_lam: %f&quot;, sim$ll_lam))
-  print(sprintf(&quot;fitted ll_lam: %f&quot;, fit$ll_lam))
+  print(&quot;RMSE with lam_oracle:&quot;)
+  print(sprintf(&quot;mle    : %f&quot;, rmse(x/s, sim$lam_true)))
+  print(sprintf(&quot;fitted : %f&quot;, rmse(fit$lam_pm, sim$lam_true)))
   
   df = data.frame(n = 1:length(x), x = x, s =  s, lam_true = lam_true, lam_hat = fit$lam_pm)
   
@@ -1015,17 +1060,40 @@ main &lt;- function(know_grid = F){
 <div id="fit-knowing-grid" class="section level2">
 <h2>fit (knowing grid)</h2>
 <pre class="r"><code>out1 = main(know_grid = T)</code></pre>
-<pre><code>[1] &quot;fit with 4000 data points and 50 grid points&quot;
-[1] &quot;runtime: 0.129000&quot;
+<pre><code>Running mix-SQP algorithm 0.1-120 on 4000 x 50 matrix
+convergence tol. (SQP):     1.0e-08
+conv. tol. (active-set):    1.0e-10
+zero threshold (solution):  1.0e-08
+zero thresh. (search dir.): 1.0e-15
+l.s. sufficient decrease:   1.0e-02
+step size reduction factor: 7.5e-01
+minimum step size:          1.0e-08
+max. iter (SQP):            1000
+max. iter (active-set):     51
+number of EM iterations:    4
+iter        objective max(rdual) nnz stepsize max.diff nqp nls
+   1 +2.812590003e-01  -- EM --   50 1.00e+00 1.67e-02  --  --
+   2 +2.533469855e-01  -- EM --   50 1.00e+00 5.11e-03  --  --
+   3 +2.385549735e-01  -- EM --   50 1.00e+00 3.05e-03  --  --
+   4 +2.293655351e-01  -- EM --   50 1.00e+00 2.50e-03  --  --
+   1 +2.293655351e-01 +6.422e-02  50  ------   ------   --  --
+   2 +2.172995460e-01 +2.068e-02  50 9.90e-01 9.43e-01  51   1
+   3 +2.003965831e-01 +3.260e-03  49 9.90e-01 2.62e-02  51   1
+   4 +2.000887113e-01 +3.433e-04  38 9.90e-01 1.15e-01  51   1
+   5 +1.997620735e-01 +7.227e-06   4 9.90e-01 8.76e-01  44   1
+   6 +1.997550286e-01 +7.278e-08   4 9.90e-01 8.76e-03   4   1
+   7 +1.997549576e-01 +7.279e-10   4 9.90e-01 8.76e-05   4   1
+Convergence criteria met---optimal solution found.
+[1] &quot;fit with 4000 data points and 50 grid points&quot;
+[1] &quot;runtime: 0.150000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
 [1] &quot;fitted ll_pi: -6153.161922&quot;
 [1] &quot;\n&quot;
-[1] &quot;log likelihood for lam:&quot;
-[1] &quot;mle    ll_lam: -2807.351047&quot;
-[1] &quot;oracle ll_lam: -4785.537170&quot;
-[1] &quot;fitted ll_lam: -8811.940157&quot;</code></pre>
+[1] &quot;RMSE with lam_oracle:&quot;
+[1] &quot;mle    : 0.003011&quot;
+[1] &quot;fitted : 0.003027&quot;</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
@@ -1201,17 +1269,40 @@ zihao12
 <div id="fit-not-knowing-grid" class="section level2">
 <h2>fit (not knowing grid)</h2>
 <pre class="r"><code>out2 = main(know_grid = F)</code></pre>
-<pre><code>[1] &quot;fit with 4000 data points and 67 grid points&quot;
-[1] &quot;runtime: 0.177000&quot;
+<pre><code>Running mix-SQP algorithm 0.1-120 on 4000 x 67 matrix
+convergence tol. (SQP):     1.0e-08
+conv. tol. (active-set):    1.0e-10
+zero threshold (solution):  1.0e-08
+zero thresh. (search dir.): 1.0e-15
+l.s. sufficient decrease:   1.0e-02
+step size reduction factor: 7.5e-01
+minimum step size:          1.0e-08
+max. iter (SQP):            1000
+max. iter (active-set):     68
+number of EM iterations:    4
+iter        objective max(rdual) nnz stepsize max.diff nqp nls
+   1 +6.197650915e-01  -- EM --   67 1.00e+00 1.02e-02  --  --
+   2 +5.834642849e-01  -- EM --   67 1.00e+00 4.13e-03  --  --
+   3 +5.616717046e-01  -- EM --   67 1.00e+00 3.80e-03  --  --
+   4 +5.474023293e-01  -- EM --   67 1.00e+00 3.48e-03  --  --
+   1 +5.474023293e-01 +1.030e-01  67  ------   ------   --  --
+   2 +5.480618226e-01 +1.390e-01  67 9.90e-01 8.51e-01  68   1
+   3 +4.989059046e-01 +1.745e-02  67 9.90e-01 4.06e-01  68   1
+   4 +4.900072839e-01 +8.985e-04  47 9.90e-01 8.04e-01  68   1
+   5 +4.891817310e-01 +1.238e-05   6 9.90e-01 3.02e-01  55   1
+   6 +4.891699740e-01 +1.245e-07   5 9.90e-01 2.87e-03   5   1
+   7 +4.891698557e-01 +1.245e-09   4 9.90e-01 2.87e-05   4   1
+Convergence criteria met---optimal solution found.
+[1] &quot;fit with 4000 data points and 67 grid points&quot;
+[1] &quot;runtime: 0.198000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
 [1] &quot;fitted ll_pi: -6153.168083&quot;
 [1] &quot;\n&quot;
-[1] &quot;log likelihood for lam:&quot;
-[1] &quot;mle    ll_lam: -2807.351047&quot;
-[1] &quot;oracle ll_lam: -4785.537170&quot;
-[1] &quot;fitted ll_lam: -8811.600827&quot;</code></pre>
+[1] &quot;RMSE with lam_oracle:&quot;
+[1] &quot;mle    : 0.003011&quot;
+[1] &quot;fitted : 0.003192&quot;</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -1476,8 +1567,6 @@ zihao12
 <ul>
 <li>Our grid selecting seems to work fine, as the posterior mean of <span class="math inline">\(\lambda\)</span>s are almost the same between the two experiments (use oracle grid VS estimate grid)</li>
 <li><span class="math inline">\(\ell(\pi_{est})\)</span> is slightly better than <span class="math inline">\(\ell(\pi_{true})\)</span></li>
-<li>It is suspicious that <span class="math inline">\(\ell(\lambda_{post})\)</span> is so much worse than oracle</li>
-<li></li>
 </ul>
 <br>
 <p>
