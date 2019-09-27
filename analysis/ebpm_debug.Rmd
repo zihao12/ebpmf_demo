@@ -1,0 +1,104 @@
+---
+title: "ebpm_debug"
+author: "zihao12"
+date: "2019-09-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+My code does not always get $RMSE(posterior, oracle) <  RMSE(MLE, oracle)$. Therefore  I  just use my model to generate posterior mean, which according to my derivation should be $$\sum_k \pi_k \frac{x_i + a_k}{s_i + b_k}$$
+where $\pi_k$ is known. \\
+See detail in  https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2
+
+```{r}
+library(mixsqp)
+library(gtools)
+
+```
+
+
+## EBPM-exponential-mixture
+* For now, I use mixture of exponential as prior family.
+* Under the exponential case, we discuss how to select the range of  the grid (of $\mu$, exponential mean). For convenience we use $exp(\mu)$ to denote exponential distribution with mean $\mu$:\
+The goal is: for each observation, we want to include the range of $\lambda$ "of  interest" (i.e. $log \ p(x | \lambda)$ is  close to that of the MLE, like within $log(0.1)$). \
+If $x = 0$, $\ell(\lambda) = - \lambda s$, in order to  have a good likelihood, we want the model to be able to choose  $\lambda \sim o(\frac{1}{s})$. Therefore, we want the smallest $\mu$ to be  in the order of $o(\frac{1}{s})$ if there  is 0 count.\
+If $x > 0$, the MLE would be $\frac{x}{s}$, and $\lambda$ too small would have bad likelihood. So we want the biggest $\mu$ to be of order $O(max(\frac{x}{s}))$
+
+## experiment setup
+* I simulate $\lambda_i \sim \sum_k \pi_k exp(b_k), k = 1, ...,  50$, where $b_k$ is the exponential rate, for $i = 1, ..., 4000$. 
+* Then I fit  EBPM with mixture of exponential as prior (our model knows the grid for $b_k$). I compare $\ell(\pi)$, which should be better than oracle; I also compare $\ell(\lambda)$ (it is not clear whether the posterior  will be better than oracle, but still  we can use it  to see how good the model is). 
+*  Then  I fit with the same model, without knowing the grid for $b_k$. 
+
+
+```{r}
+## ===========================================================================
+## ==========================ebpm_exponential_mixture=========================
+## ===========================================================================
+
+## debug ebpm_exponential_mixture problem
+ebpm_exponential_mixture_debug <- function(x,s, grid, pi){
+  a = grid$a
+  b = grid$b
+  cpm = outer(x,a,  "+")/outer(s, b, "+")
+  lam_pm = cpm %*% pi
+  ll_lam = sum(dpois(x, s*lam_pm, log = T))
+  return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,grid = grid))
+}
+
+## ===========================================================================
+## ==========================experiment setup=================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+sim_mgamma <- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+## simulate a poisson mean problem
+simulate_pm  <-  function(n, d, seed = 123){
+  set.seed(seed)
+  ## simulate grid
+  a = replicate(d,1)
+  b = 10*runif(d)
+  grid  = list(a = a, b = b)
+  pi <- matrix(rdirichlet(1,rep(1/d, d)), ncol = 1)
+  lam_true = replicate(n, sim_mgamma(a,b,pi))
+  s = replicate(length(lam_true), 1)
+  #s = 2*runif(length(lam_true))
+  x  = rpois(length(lam_true),s*lam_true)
+  ll_lam = sum(dpois(x, s*lam_true, log = T))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid, ll_lam = ll_lam))
+}
+
+rmse <- function(x,y){
+  return(sqrt(mean(x-y)^2))
+}
+```
+
+```{r}
+## test functions  above
+main <- function(n=1000, d = 50){
+  sim = simulate_pm(n, d)
+  x = sim$x 
+  s = sim$s
+  lam_true = sim$lam_true
+  
+  fit = ebpm_exponential_mixture_debug(x, s,sim$grid, sim$pi)
+
+  print(sprintf("%d data points and %d grid points", length(sim$x),length(fit$grid$b)))
+  print("RMSE with lam_oracle:")
+  print(sprintf("mle : %f", rmse(x/s, sim$lam_true)))
+  print(sprintf("pos : %f", rmse(fit$lam_pm, sim$lam_true)))
+}
+```
+
+
+## fit 
+```{r}
+for(n in 10^(seq(1,6,1))){
+  main(n)
+}
+```
+
