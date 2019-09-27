@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree522f45b1e57a12e8cb940ff22a9a44d85e207e43targetblank522f45ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/522f45b1e57a12e8cb940ff22a9a44d85e207e43" target="_blank">522f45b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree989021ea2b94ddcb11205707042adc4e33511833targetblank989021ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/989021ea2b94ddcb11205707042adc4e33511833" target="_blank">989021e</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree522f45b1e57a12e8cb940ff22a9a44d85e207e43targetblank522f45ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree989021ea2b94ddcb11205707042adc4e33511833targetblank989021ea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -590,6 +590,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/989021ea2b94ddcb11205707042adc4e33511833/analysis/ebpm_demo.Rmd" target="_blank">989021e</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+fix ebpm bug in rmse computation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/f854215b91ddff537dd90df4cdfef0dc4649ef68/docs/ebpm_demo.html" target="_blank">f854215</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1015,7 +1049,7 @@ simulate_pm  &lt;-  function(seed = 123){
 }
 
 rmse &lt;- function(x,y){
-  return(sqrt(mean(x-y)^2))
+  return(sqrt(mean((x-y)^2)))
 }</code></pre>
 <pre class="r"><code>## test functions  above
 main &lt;- function(know_grid = F){
@@ -1092,8 +1126,8 @@ Convergence criteria met---optimal solution found.
 [1] &quot;fitted ll_pi: -6153.161922&quot;
 [1] &quot;\n&quot;
 [1] &quot;RMSE with lam_oracle:&quot;
-[1] &quot;mle    : 0.003011&quot;
-[1] &quot;fitted : 0.003027&quot;</code></pre>
+[1] &quot;mle    : 0.112189&quot;
+[1] &quot;fitted : 0.087147&quot;</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
@@ -1117,6 +1151,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/f854215b91ddff537dd90df4cdfef0dc4649ef68/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">f854215</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-4-1.png" target="_blank">9a58a35</a>
@@ -1294,15 +1339,15 @@ iter        objective max(rdual) nnz stepsize max.diff nqp nls
    7 +4.891698557e-01 +1.245e-09   4 9.90e-01 2.87e-05   4   1
 Convergence criteria met---optimal solution found.
 [1] &quot;fit with 4000 data points and 67 grid points&quot;
-[1] &quot;runtime: 0.198000&quot;
+[1] &quot;runtime: 0.229000&quot;
 [1] &quot;\n&quot;
 [1] &quot;log likelihood for pi:&quot;
 [1] &quot;oracle ll_pi: -6154.499159&quot;
 [1] &quot;fitted ll_pi: -6153.168083&quot;
 [1] &quot;\n&quot;
 [1] &quot;RMSE with lam_oracle:&quot;
-[1] &quot;mle    : 0.003011&quot;
-[1] &quot;fitted : 0.003192&quot;</code></pre>
+[1] &quot;mle    : 0.112189&quot;
+[1] &quot;fitted : 0.087157&quot;</code></pre>
 <p><img src="figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -1326,6 +1371,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/f854215b91ddff537dd90df4cdfef0dc4649ef68/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" target="_blank">f854215</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-5-1.png" target="_blank">9a58a35</a>
@@ -1535,6 +1591,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/f854215b91ddff537dd90df4cdfef0dc4649ef68/docs/figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" target="_blank">f854215</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-26
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf/blob/9a58a35f66883e31cedc7a05c8153d23c03620e9/docs/figure/ebpm_demo.Rmd/unnamed-chunk-6-1.png" target="_blank">9a58a35</a>
