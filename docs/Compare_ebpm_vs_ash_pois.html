@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree255ebdecfdd9e2455df190c74f63f122ba3759b4targetblank255ebdea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/255ebdecfdd9e2455df190c74f63f122ba3759b4" target="_blank">255ebde</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftreef915feccd4451debcc3a8346e3a4dd323130a1aftargetblankf915feca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/f915feccd4451debcc3a8346e3a4dd323130a1af" target="_blank">f915fec</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree255ebdecfdd9e2455df190c74f63f122ba3759b4targetblank255ebdea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftreef915feccd4451debcc3a8346e3a4dd323130a1aftargetblankf915feca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -550,6 +550,7 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  analysis/ebpm_point_gamma_demo.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  docs/figure/test.Rmd/
 
@@ -590,6 +591,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/c966a858e58bd8f976c39ee9de1e009b28f5d4b6/docs/Compare_ebpm_vs_ash_pois.html" target="_blank">c966a85</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -664,9 +682,9 @@ out_ash = ash_pois(sim$x, scale = sim$s, link = &quot;identity&quot;)
 out_ash[[&quot;runtime&quot;]] = (proc.time() - start)[[3]]
 
 print(sprintf(&quot;runtime for ebpm_exponential_mixture: %f&quot;, out_ebpm_exponential_mixture$runtime))</code></pre>
-<pre><code>[1] &quot;runtime for ebpm_exponential_mixture: 0.157000&quot;</code></pre>
+<pre><code>[1] &quot;runtime for ebpm_exponential_mixture: 0.147000&quot;</code></pre>
 <pre class="r"><code>print(sprintf(&quot;runtime for ash_pois                : %f&quot;, out_ash$runtime))</code></pre>
-<pre><code>[1] &quot;runtime for ash_pois                : 3.204000&quot;</code></pre>
+<pre><code>[1] &quot;runtime for ash_pois                : 3.212000&quot;</code></pre>
 </div>
 <div id="compare-rmse-against-lambda_true" class="section level2">
 <h2>compare RMSE against <span class="math inline">\(\lambda_{true}\)</span></h2>
@@ -677,7 +695,7 @@ print(sprintf(&quot;runtime for ebpm_exponential_mixture: %f&quot;, out_ebpm_exp
 print(sprintf(&quot;rmse(lam_ash_pois, lam_true)                     = %f&quot;, rmse(df$lam_true, df$lam_hat_ash_pois)))</code></pre>
 <pre><code>[1] &quot;rmse(lam_ash_pois, lam_true)                     = 0.122928&quot;</code></pre>
 <pre class="r"><code>print(sprintf(&quot;rmse(lam_hat_ebpm_exponential_mixture, lam_true) = %f&quot;, rmse(df$lam_true, df$lam_hat_ebpm_exponential_mixture)))</code></pre>
-<pre><code>[1] &quot;rmse(lam_hat_ebpm_exponential_mixture, lam_true) = 0.122430&quot;</code></pre>
+<pre><code>[1] &quot;rmse(lam_hat_ebpm_exponential_mixture, lam_true) = 0.122431&quot;</code></pre>
 </div>
 <div id="visualize-poasterior-means" class="section level2">
 <h2>visualize poasterior means</h2>
@@ -686,6 +704,43 @@ print(sprintf(&quot;rmse(lam_ash_pois, lam_true)                     = %f&quot;,
   labs(x = &quot;lam_hat_ash_pois&quot;, y = &quot;lam_hat_ebpm_exponential_mixture&quot;)+
   geom_abline(slope = 1, intercept = 0)</code></pre>
 <p><img src="figure/Compare_ebpm_vs_ash_pois.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/c966a858e58bd8f976c39ee9de1e009b28f5d4b6/docs/figure/Compare_ebpm_vs_ash_pois.Rmd/unnamed-chunk-5-1.png" target="_blank">c966a85</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>df_sort = df[order(df$x),]
 df_sort$n = 1:length(sim$x)
 
@@ -696,6 +751,43 @@ ggplot(df_sort) +
   geom_point(aes(x = n, y = lam_hat_ash_pois, color = &quot;ash&quot;), cex = 0.5) +
   guides(fill = &quot;color&quot;)</code></pre>
 <p><img src="figure/Compare_ebpm_vs_ash_pois.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/c966a858e58bd8f976c39ee9de1e009b28f5d4b6/docs/figure/Compare_ebpm_vs_ash_pois.Rmd/unnamed-chunk-6-1.png" target="_blank">c966a85</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -719,14 +811,14 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.2.0   ashr_2.2-38     ebpm_0.0.0.9000 gtools_3.8.1   
+[1] ggplot2_3.2.1   ashr_2.2-38     ebpm_0.0.0.9000 gtools_3.8.1   
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.2        pillar_1.4.1      compiler_3.5.1   
+ [1] Rcpp_1.0.2        pillar_1.4.2      compiler_3.5.1   
  [4] git2r_0.25.2      workflowr_1.4.0   iterators_1.0.12 
- [7] tools_3.5.1       digest_0.6.19     evaluate_0.14    
+ [7] tools_3.5.1       digest_0.6.21     evaluate_0.14    
 [10] tibble_2.1.3      gtable_0.3.0      lattice_0.20-38  
-[13] pkgconfig_2.0.2   rlang_0.4.0       Matrix_1.2-17    
+[13] pkgconfig_2.0.3   rlang_0.4.0       Matrix_1.2-17    
 [16] foreach_1.4.7     yaml_2.2.0        parallel_3.5.1   
 [19] xfun_0.8          withr_2.1.2       dplyr_0.8.1      
 [22] stringr_1.4.0     knitr_1.25        fs_1.3.1         
