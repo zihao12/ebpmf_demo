@@ -99,7 +99,9 @@ ebpm_exponential_mixture <- function(x,s,m = 2, grid = NULL, seed = 123){
   ll_pi = sum(log(exp(l_rowmax) * L %*%  fit$x))
   pi = fit$x
   cpm = outer(x,a,  "+")/outer(s, b, "+")
-  lam_pm = cpm %*% pi
+  Pi_tilde = t(t(L) * pi)
+  Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
+  lam_pm = rowSums(Pi_tilde * cpm) 
   ll_lam = sum(dpois(x, s*lam_pm, log = T))
   return(list(pi = pi, lam_pm = lam_pm, ll_lam = ll_lam,ll_pi = ll_pi,L = L,grid = grid))
 }
