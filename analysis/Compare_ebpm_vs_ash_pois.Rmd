@@ -1,0 +1,112 @@
+---
+title: "Compare_ebpm_vs_ash_pois"
+author: "zihao12"
+date: "2019-09-28"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Compare `ebpm_exponential_mixture` vs `ash_pois`
+I use `ebpm` from https://github.com/stephenslab/ebpm, (branch "zihao")\ 
+and `ash_pois` from https://github.com/stephens999/ashr/blob/master/R/ash_pois.R
+
+## Experiment setup
+I simulate $x_i \sim pois(s_i \lambda_i), \lambda_i \sim \sum_k^{K} \pi_k exp(b_k), \forall i = 1 ,..., 4000$ with $K = 50$. I use $s_i = 1$. \
+
+Then I fit `ash_pois` and `ebpm_exponential_mixture` on given  $x, s$s
+
+```{r}
+library(gtools)
+library(ebpm)
+library(ashr)
+library(ggplot2)
+
+n = 4000
+d = 50
+```
+
+```{r}
+sim_mgamma <- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+## simulate a poisson mean problem
+simulate_pm  <-  function(n, d, seed = 123){
+  set.seed(seed)
+  ## simulate grid
+  a = replicate(d,1)
+  b = 10*runif(d)
+  grid  = list(a = a, b = b)
+  pi <- rdirichlet(1,rep(1/d, d))
+  lam_true = replicate(n, sim_mgamma(a,b,pi))
+  s = replicate(length(lam_true), 1)
+  #s = 2*runif(length(lam_true))
+  x  = rpois(length(lam_true),s*lam_true)
+  ll_lam = sum(dpois(x, s*lam_true, log = T))
+  return(list(x =  x, s = s, lam_true = lam_true, pi = pi, grid = grid))
+}
+
+rmse <- function(x,y){
+  return(sqrt(mean((x-y)^2)))
+}
+```
+
+```{r}
+sim = simulate_pm(n = n, d = d)
+
+start = proc.time()
+out_ebpm_exponential_mixture = ebpm_exponential_mixture(sim$x, s = sim$s, m = 1.1)
+out_ebpm_exponential_mixture[["runtime"]] = (proc.time() - start)[[3]]
+
+start = proc.time()
+out_ash = ash_pois(sim$x, scale = sim$s, link = "identity")
+out_ash[["runtime"]] = (proc.time() - start)[[3]]
+
+print(sprintf("runtime for ebpm_exponential_mixture: %f", out_ebpm_exponential_mixture$runtime))
+print(sprintf("runtime for ash_pois                : %f", out_ash$runtime))
+```
+
+## compare RMSE against $\lambda_{true}$
+```{r}
+df = data.frame(n = 1:length(sim$x), x = sim$x, s =  sim$s, lam_true = sim$lam_true, 
+                lam_hat_ebpm_exponential_mixture = out_ebpm_exponential_mixture$lam_pm,
+                lam_hat_ash_pois = out_ash$result[["PosteriorMean"]])
+
+print(sprintf("rmse(lam_ash_pois, lam_true)                     = %f", rmse(df$lam_true, df$lam_hat_ash_pois)))
+print(sprintf("rmse(lam_hat_ebpm_exponential_mixture, lam_true) = %f", rmse(df$lam_true, df$lam_hat_ebpm_exponential_mixture)))
+```
+
+## visualize poasterior means
+```{r}
+ggplot(df) +
+  geom_point(aes(x = lam_hat_ash_pois, y = lam_hat_ebpm_exponential_mixture), color = "blue") +
+  labs(x = "lam_hat_ash_pois", y = "lam_hat_ebpm_exponential_mixture")+
+  geom_abline(slope = 1, intercept = 0)
+```
+
+```{r}
+df_sort = df[order(df$x),]
+df_sort$n = 1:length(sim$x)
+
+ggplot(df_sort) +
+  geom_point(aes(x = n, y = lam_true, color = "true"), cex = 0.5) +
+    labs(x = "index", y = "lam", title = "ash_pois vs ebpm_exponential_mixture") +
+  geom_point(aes(x = n, y = lam_hat_ebpm_exponential_mixture, color = "ebpm_exponential_mixture"), cex = 0.5) +
+  geom_point(aes(x = n, y = lam_hat_ash_pois, color = "ash"), cex = 0.5) +
+  guides(fill = "color")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
