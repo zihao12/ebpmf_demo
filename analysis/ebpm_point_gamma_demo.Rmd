@@ -150,7 +150,19 @@ library(ebpm)
 start = proc.time()
 fit <- ebpm_point_gamma(sim$x, sim$s)
 runtime = proc.time() - start
-print(sprintf("fit %d data with runtime %f", n, runtime[[3]]))
+print(sprintf("fit %d data with runtime %f  seconds", n, runtime[[3]]))
+```
+
+Compare RMSE with $\lambda_{oracle}$
+```{r echo = F}
+rmse <- function(x,y){
+  return(sqrt(mean((x-y)^2)))
+}
+
+print("RMSE with lam_oracle:")
+mle_lam = sim$x/sim$s
+print(sprintf("mle    : %f", rmse(mle_lam, sim$lam)))
+print(sprintf("fitted : %f", rmse(fit$lam_pm, sim$lam)))
 ```
 
 
