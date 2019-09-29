@@ -14,9 +14,10 @@ set.seed(123)
 ```
 
 
-## ebpm with spike-and-slab prior
+# Goal
+I want to implement the `ebpm_point_gamma` algortihm, and test it against data generated the same way as described in the model below. 
 
-## EBPM problem
+## EBPM problem with spike-and-slab prior
 $$
 \begin{align}
   & x_i \sim Pois(s_i \lambda_i)\\
@@ -78,13 +79,13 @@ simulate_pm <- function(s, param){
   b  = param[3]
   lam = replicate(length(s), sim_spike_one(pi, a, b))
   x = rpois(length(s), s*lam)
-  ll = pg_nlm_fn(param, x, s)
+  ll = -pg_nlm_fn(transform_param(param), x, s)
   return(list(x = x, s= s, lam = lam, param = param, ll = ll))
 }
 ```
 
 ```{r}
-n = 1000
+n = 4000
 s = replicate(n, 1)
 pi  = 0.8
 a = 100
@@ -97,16 +98,18 @@ sim = simulate_pm(s, param)
 init_par = c(0.5,1,1)
 opt = nlm(pg_nlm_fn, transform_param(init_par), sim$x, sim$s)
 opt_par = transform_param_back(opt$estimate)
+```
 
+```{r echo=F}
 print(sprintf("oracle ll: %f", -pg_nlm_fn(transform_param(sim$param), sim$x, sim$s)))
 print(sprintf("opt    ll: %f", -pg_nlm_fn(transform_param(opt_par), sim$x, sim$s)))
-
-print("oracle:")
-print(c(pi, a, b))
-print("estimate")
-print(opt_par)
+print("oracle:pi, a, b")
+print(round(param, digits = 2))
+print("estimate: pi, a, b")
+print(round(opt_par, digits = 2))
 
 ```
+
 
 ##### Comment:
 * Estimated parameter gets better loglikelihood than oracle, and is similar to oracle (in a sense). 
@@ -118,7 +121,7 @@ It is easy to deduce posterior mean:
 
 $$
 \begin{align}
-  \text{posterior mean} = (1-\pi_0)NB(x; a, \frac{b}{b + s}) \frac{a+x}{b+s}
+  \text{posterior mean} = \frac{(1-\pi_0)NB(x; a, \frac{b}{b + s}) \frac{a+x}{b+s}}{\pi_0 \delta(x) + (1-\pi_0)NB(x; a , \frac{b}{b + s})}
 \end{align}
 $$
 
@@ -134,22 +137,52 @@ ebpm_point_gamma <- function(x, s, init_par = c(0.5,1,1), seed = 123){
   pi = opt_par[1]
   a =  opt_par[2]
   b =  opt_par[3]
-  pm = (1-pi)*dnbinom(x, size = a, prob = b/(b+s))*(a+x)/(b+s)
+  nb = dnbinom(x, size = a, prob = b/(b+s))
+  pm = ((1-pi)*nb*(a+x)/(b+s))/(pi*as.integer(x ==  0) + (1-pi)*nb)
   return(list(param = opt_par, lam_pm = pm, ll = ll))
 }
 ```
 
 ```{r warning=FALSE}
+start = proc.time()
 fit <- ebpm_point_gamma(sim$x, sim$s)
+runtime = proc.time() - start
+print(sprintf("fit %d data with runtime %f", n, runtime[[3]]))
 ```
 
 
 ```{r}
 df <- data.frame(n = 1:length(sim$x), x = sim$x, s = sim$s, lam = sim$lam, lam_pm = fit$lam_pm)
 ggplot(df)  + geom_point(aes(x = x/s, y = lam_pm), color = "blue", cex = 0.5) +
-    labs(x = "x/s", y = "lam_pm", title = "ebpm_point_gamma") +
+    labs(x = "x/s", y = "lam_pm", title = "ebpm_point_gamma: x/s vs lam_posterior_mean") +
     guides(fill = "color")
 ```
 
-##### Comment
-Clearly wrong in posterior mean.
+```{r echo = F}
+print("max posterior mean when x = 0")
+print(max(df[df$x ==0, "lam_pm"]))
+```
+
+
+
+Let's take a look at the nonzero (for x) parts.\
+Note that for $x \neq 0$, we have posterior mean $\frac{a+x}{b+s}$. Therefore we expect to see a line, with slope $1/(1 + \frac{b}{s})$
+```{r}
+df_nz = df[df$x != 0, ]
+ggplot(df_nz)  + geom_point(aes(x = x/s, y = lam_pm), color = "blue", cex = 0.5) +
+    labs(x = "x/s", y = "lam_pm", title = "ebpm_point_gamma: x/s vs lam_posterior_mean") +
+    geom_abline(slope = 1, intercept = 0)+
+    guides(fill = "color")
+```
+
+now let's compare $\lambda_{true}, \lambda_{\text{posterior mean}}$
+```{r}
+ggplot(df_nz)  + geom_point(aes(x = lam, y = lam_pm), color = "blue", cex = 0.5) +
+    labs(x = "lam_true", y = "lam_pm", title = "ebpm_point_gamma: lam _true lam_posterior_mean") +
+    geom_abline(slope = 1, intercept = 0)+
+    guides(fill = "color")
+```
+
+
+
+
