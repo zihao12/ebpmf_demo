@@ -126,7 +126,7 @@ $$
 $$
 
 ```{r}
-ebpm_point_gamma <- function(x, s, init_par = c(0.5,1,1), seed = 123){
+ebpm_point_gamma_demo <- function(x, s, init_par = c(0.5,1,1), seed = 123){
   set.seed(seed) ## though seems determined
   ## MLE
   opt = nlm(pg_nlm_fn, transform_param(init_par), x, s)
@@ -143,7 +143,10 @@ ebpm_point_gamma <- function(x, s, init_par = c(0.5,1,1), seed = 123){
 }
 ```
 
+
+I have packaged the functions above into the `ebpm` package functin `ebpm_point_gamma`. Try it out!
 ```{r warning=FALSE}
+library(ebpm)
 start = proc.time()
 fit <- ebpm_point_gamma(sim$x, sim$s)
 runtime = proc.time() - start
