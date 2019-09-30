@@ -10,8 +10,8 @@ editor_options:
 
 Welcome to my research website.
 
-My demo for EBPM with mixture of exponential is here: https://zihao12.github.io/ebpmf/ebpm_demo.html
+My demo for EBPM with mixture of exponential is here: https://zihao12.github.io/ebpmf_demo/ebpm_demo.html
 
-My demo for EBPM with  point gamma is here: https://zihao12.github.io/ebpmf/ebpm_point_gamma_demo.html
+My demo for EBPM with  point gamma is here: https://zihao12.github.io/ebpmf_demo/ebpm_point_gamma_demo.html
 
-My Comparison of EBPM vs ash_pois is here: https://zihao12.github.io/ebpmf/Compare_ebpm_vs_ash_pois.html
+My Comparison of EBPM vs ash_pois is here: https://zihao12.github.io/ebpmf_demo/Compare_ebpm_vs_ash_pois.html
