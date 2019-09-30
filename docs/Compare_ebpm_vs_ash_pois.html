@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree3ee50d300d07159b5f21bf4772a96c9b8028466atargetblank3ee50d3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/3ee50d300d07159b5f21bf4772a96c9b8028466a" target="_blank">3ee50d3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree2c4ab4636fff96aae20cef7aa08e5931e9ef2988targetblank2c4ab46a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf/tree/2c4ab4636fff96aae20cef7aa08e5931e9ef2988" target="_blank">2c4ab46</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree3ee50d300d07159b5f21bf4772a96c9b8028466atargetblank3ee50d3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmftree2c4ab4636fff96aae20cef7aa08e5931e9ef2988targetblank2c4ab46a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -590,6 +590,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf/blob/2c4ab4636fff96aae20cef7aa08e5931e9ef2988/analysis/Compare_ebpm_vs_ash_pois.Rmd" target="_blank">2c4ab46</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-30
+</td>
+<td>
+update demo after library changes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf/f73f9348013c846543529728c66d5c9895a676df/docs/Compare_ebpm_vs_ash_pois.html" target="_blank">f73f934</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-09-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -709,7 +743,7 @@ rmse &lt;- function(x,y){
 <pre class="r"><code>sim = simulate_pm(n = n, d = d)
 
 start = proc.time()
-out_ebpm_exponential_mixture = ebpm_exponential_mixture(sim$x, s = sim$s, m = 1.1)
+out_ebpm_exponential_mixture = ebpm::ebpm_exponential_mixture(sim$x, s = sim$s, m = 1.1)
 out_ebpm_exponential_mixture[[&quot;runtime&quot;]] = (proc.time() - start)[[3]]
 
 start = proc.time()
@@ -717,14 +751,14 @@ out_ash = ash_pois(sim$x, scale = sim$s, link = &quot;identity&quot;)
 out_ash[[&quot;runtime&quot;]] = (proc.time() - start)[[3]]
 
 print(sprintf(&quot;runtime for ebpm_exponential_mixture: %f&quot;, out_ebpm_exponential_mixture$runtime))</code></pre>
-<pre><code>[1] &quot;runtime for ebpm_exponential_mixture: 0.156000&quot;</code></pre>
+<pre><code>[1] &quot;runtime for ebpm_exponential_mixture: 0.167000&quot;</code></pre>
 <pre class="r"><code>print(sprintf(&quot;runtime for ash_pois                : %f&quot;, out_ash$runtime))</code></pre>
-<pre><code>[1] &quot;runtime for ash_pois                : 3.252000&quot;</code></pre>
+<pre><code>[1] &quot;runtime for ash_pois                : 3.344000&quot;</code></pre>
 </div>
 <div id="compare-rmse-against-lambda_true" class="section level2">
 <h2>compare RMSE against <span class="math inline">\(\lambda_{true}\)</span></h2>
 <pre class="r"><code>df = data.frame(n = 1:length(sim$x), x = sim$x, s =  sim$s, lam_true = sim$lam_true, 
-                lam_hat_ebpm_exponential_mixture = out_ebpm_exponential_mixture$lam_pm,
+                lam_hat_ebpm_exponential_mixture = out_ebpm_exponential_mixture$posterior$mean,
                 lam_hat_ash_pois = out_ash$result[[&quot;PosteriorMean&quot;]])
 
 print(sprintf(&quot;rmse(lam_ash_pois, lam_true)                     = %f&quot;, rmse(df$lam_true, df$lam_hat_ash_pois)))</code></pre>
@@ -875,8 +909,8 @@ other attached packages:
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.2        pillar_1.4.2      compiler_3.5.1   
  [4] git2r_0.25.2      workflowr_1.4.0   iterators_1.0.12 
- [7] tools_3.5.1       digest_0.6.21     tibble_2.1.3     
-[10] evaluate_0.14     gtable_0.3.0      lattice_0.20-38  
+ [7] tools_3.5.1       digest_0.6.21     evaluate_0.14    
+[10] tibble_2.1.3      gtable_0.3.0      lattice_0.20-38  
 [13] pkgconfig_2.0.3   rlang_0.4.0       Matrix_1.2-17    
 [16] foreach_1.4.7     yaml_2.2.0        parallel_3.5.1   
 [19] xfun_0.8          withr_2.1.2       dplyr_0.8.1      
