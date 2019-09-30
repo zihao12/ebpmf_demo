@@ -1,7 +1,7 @@
-name: ebpmf
+name: ebpmf_demo
 output_dir: ../docs
 navbar:
-  title: ebpmf
+  title: ebpmf_demo
   left:
   - text: Home
     href: index.html

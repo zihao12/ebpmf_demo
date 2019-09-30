@@ -1,4 +1,4 @@
-# ebpmf
+# ebpmf_demo
 
 A [workflowr][] project.
 
