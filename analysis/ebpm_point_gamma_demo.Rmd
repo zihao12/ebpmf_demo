@@ -162,12 +162,12 @@ rmse <- function(x,y){
 print("RMSE with lam_oracle:")
 mle_lam = sim$x/sim$s
 print(sprintf("mle    : %f", rmse(mle_lam, sim$lam)))
-print(sprintf("fitted : %f", rmse(fit$lam_pm, sim$lam)))
+print(sprintf("fitted : %f", rmse(fit$posterior$mean, sim$lam)))
 ```
 
 
 ```{r}
-df <- data.frame(n = 1:length(sim$x), x = sim$x, s = sim$s, lam = sim$lam, lam_pm = fit$lam_pm)
+df <- data.frame(n = 1:length(sim$x), x = sim$x, s = sim$s, lam = sim$lam, lam_pm = fit$posterior$mean)
 ggplot(df)  + geom_point(aes(x = x/s, y = lam_pm), color = "blue", cex = 0.5) +
     labs(x = "x/s", y = "lam_pm", title = "ebpm_point_gamma: x/s vs lam_posterior_mean") +
     guides(fill = "color")

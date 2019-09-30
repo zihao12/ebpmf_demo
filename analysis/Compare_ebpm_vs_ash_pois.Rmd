@@ -58,7 +58,7 @@ rmse <- function(x,y){
 sim = simulate_pm(n = n, d = d)
 
 start = proc.time()
-out_ebpm_exponential_mixture = ebpm_exponential_mixture(sim$x, s = sim$s, m = 1.1)
+out_ebpm_exponential_mixture = ebpm::ebpm_exponential_mixture(sim$x, s = sim$s, m = 1.1)
 out_ebpm_exponential_mixture[["runtime"]] = (proc.time() - start)[[3]]
 
 start = proc.time()
@@ -72,7 +72,7 @@ print(sprintf("runtime for ash_pois                : %f", out_ash$runtime))
 ## compare RMSE against $\lambda_{true}$
 ```{r}
 df = data.frame(n = 1:length(sim$x), x = sim$x, s =  sim$s, lam_true = sim$lam_true, 
-                lam_hat_ebpm_exponential_mixture = out_ebpm_exponential_mixture$lam_pm,
+                lam_hat_ebpm_exponential_mixture = out_ebpm_exponential_mixture$posterior$mean,
                 lam_hat_ash_pois = out_ash$result[["PosteriorMean"]])
 
 print(sprintf("rmse(lam_ash_pois, lam_true)                     = %f", rmse(df$lam_true, df$lam_hat_ash_pois)))
