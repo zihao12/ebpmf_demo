@@ -21,6 +21,7 @@ library(gtools)
 library(ebpm)
 library(ashr)
 library(ggplot2)
+library(mixsqp)
 
 n = 4000
 d = 50
@@ -86,6 +87,8 @@ ggplot(df) +
   geom_abline(slope = 1, intercept = 0)
 ```
 
+
+Below I sort $x$ and plot $\lambda$s against the sorting index. Expecting to  see horizontal lines ($x$ takes  value in integers,and for fixed $x$, the posterior mean is fixed). 
 ```{r}
 df_sort = df[order(df$x),]
 df_sort$n = 1:length(sim$x)
