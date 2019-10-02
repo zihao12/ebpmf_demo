@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="zihao12" />
+
+<meta name="date" content="2019-09-30" />
+
+<title>ebpmf_rank1_demo</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ebpmf_demo</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zihao12/ebpmf">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ebpmf_rank1_demo</h1>
+<h4 class="author">zihao12</h4>
+<h4 class="date">2019-09-30</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-10-01
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20190923code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20190923)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20190923code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20190923)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree77126b47a3532c41d2f46a9ff0e4f1c442f8454etargetblank77126b4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/77126b47a3532c41d2f46a9ff0e4f1c442f8454e" target="_blank">77126b4</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree77126b47a3532c41d2f46a9ff0e4f1c442f8454etargetblank77126b4a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  docs/figure/test.Rmd/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/77126b47a3532c41d2f46a9ff0e4f1c442f8454e/analysis/ebpmf_rank1_demo.Rmd" target="_blank">77126b4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-01
+</td>
+<td>
+demo for ebpmf_rank1
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>This is a demo for the implementation for Empirical Bayes Poisson Matrix Factorization (rank-1) case.</p>
+<pre class="r"><code>library(ebpm)
+library(gtools)
+library(mixsqp)
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>library(NNLM)</code></pre>
+<div id="model-ebpmf-rank1" class="section level2">
+<h2>Model: EBPMF-rank1</h2>
+<p><span class="math display">\[
+\begin{align}
+      &amp; X_{ij} \sim Pois(l_i f_j)\\
+    &amp; l_i \sim g_L(.), g_L \in \mathcal{G}\\
+    &amp; f_j \sim g_F(.), g_F \in \mathcal{G}
+\end{align}
+\]</span></p>
+</div>
+<div id="algorithm" class="section level2">
+<h2>Algorithm</h2>
+<p>Described in <a href="https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2" class="uri">https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2</a></p>
+<p>I start implememting it for mixture of exponential as <span class="math inline">\(\mathcal{G}\)</span>.</p>
+<p>Seems that one iteration is enough. Is it the same case as in MLE for pmf?</p>
+<pre class="r"><code># X: a matrix/array of shape n by p 
+ebpmf_rank1_exponential &lt;- function(X, init, m = 2, maxiter = 1){
+  n = nrow(X)
+  p = ncol(X)
+  #El = init$ql$mean
+  ql = init$ql
+  #E_f = get_exp_F(init)
+  for(i in 1:maxiter){
+    ## update q(f), g(f)
+    sum_El = sum(ql$mean)
+    tmp = ebpm_exponential_mixture(x = colSums(X), s = replicate(p,sum_El), m = m)
+    qf = tmp$posterior
+    gf = tmp$fitted_g
+    ll_f = tmp$log_likelihood
+    ## update q(l), g(l)
+    sum_Ef = sum(qf$mean)
+    tmp = ebpm_exponential_mixture(x = rowSums(X), s = replicate(n,sum_Ef), m = m)
+    ql = tmp$posterior
+    gl = tmp$fitted_g
+    ll_l = tmp$log_likelihood
+    qg = list(ql = ql, gl = gl, qf = qf, gf = gf, ll_f = ll_f, ll_l = ll_l)
+    # elbo = compute_elbo(X, qg)
+    # print(sprintf(&quot;ELBO: %f&quot;, elbo))
+  }
+  return(qg)
+}
+
+
+compute_elbo &lt;- function(X, qg){
+  ql = qg$ql
+  gl = qg$gl
+  qf = qg$qf
+  gf = qg$gf
+  ll_f = qg$ll_f
+  ll_l = qg$ll_l
+  ## compute Eq(logp(X | l, f))
+  term1 = sum(- outer(ql$mean, qf$mean, &quot;*&quot;) + X*outer(ql$mean_log, qf$mean_log, &quot;+&quot;))
+  ## compute Eq(log(gL(l)/qL(l)))
+  term2 = ll_l - sum(sum(qf$mean)*ql$mean + rowSums(X)*ql$mean_log)
+  ## compute Eq(log(gF(f)/qF(f)))
+  term3 = ll_f - sum(sum(ql$mean)*qf$mean + colSums(X)*qf$mean_log)
+  return(term1 + term2 + term3)
+}</code></pre>
+<pre class="r"><code>## ===========================================================================
+## ==========================experiment setup=================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+sim_mgamma &lt;- function(dist){
+  pi = dist$pi
+  a = dist$a
+  b = dist$b
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+
+## simulate a poisson mean problem
+## to do: 
+## compute loglik for g (well, is it do-able?)
+simulate_pm  &lt;-  function(n, p, dl, df, seed = 123){
+  set.seed(seed)
+  ## simulate l
+  a = replicate(dl,1)
+  b = 0.1*runif(dl)
+  pi &lt;- rdirichlet(1,rep(1/dl, dl))
+  gl = list(pi = pi, a = a, b= b)
+  l = matrix(replicate(n, sim_mgamma(gl)), ncol = 1)
+  ## simulate f
+  a = replicate(df,1)
+  b = 0.1*runif(df)
+  pi &lt;- rdirichlet(1,rep(1/df, df))
+  gf = list(pi = pi, a = a, b= b)
+  f = t(matrix(replicate(p, sim_mgamma(gf)), nrow = 1))
+  ## simulate X
+  lam = l %*% t(f)
+  X = matrix(rpois(n*p, lam), nrow = n)
+  Y = matrix(rpois(n*p, lam), nrow = n)
+  ## prepare output
+  g = list(gl = gl, gf = gf)
+  out = list(X = X, Y = Y, l = l, f = f, g = g)
+  return(out)
+}
+
+## ===========================================================================
+## ==========================helper functions ================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+
+rmse &lt;- function(x,y){
+  return(sqrt(mean((x-y)^2)))
+}
+
+compute_ll &lt;- function(X, lam){
+  return(sum(dpois(X, lam, log = T)))
+}</code></pre>
+<pre class="r"><code>n = 5000
+p = 10000
+# n = 1000
+# p = 2000
+dl = 3
+df = 5  
+sim = simulate_pm(n, p, dl, df)
+
+# ## init
+# tmp = nnmf(sim$X, k = 1, loss  = &quot;mkl&quot;,max.iter = 10)
+# ql = list(mean = tmp$W[,1])
+# qf = list(mean = tmp$H[1,])
+# init = list(ql = ql, qf = qf)
+
+ql = list(mean = runif(n, 0, 1))
+qf = list(mean = runif(p, 0, 1))
+init = list(ql = ql, qf = qf)</code></pre>
+<pre class="r"><code>start =  proc.time()
+out_ebpmf = ebpmf_rank1_exponential(sim$X, init,maxiter = 1)
+runtime = (proc.time() - start)[[3]]
+out_ebpmf[[&quot;runtime&quot;]] = runtime</code></pre>
+<pre><code>[1] &quot;ebpmf_rank1_exponential fit with 0.498000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll_train using posterior mean: -205678888.633225&quot;</code></pre>
+<pre><code>[1] &quot;ll_val   using posterior mean: -205690092.505170&quot;</code></pre>
+<ul>
+<li>ELBO stops increasing after the first iteration … though there are small updates going on still. Is it because one iteration can get to optimum, or is there a bug?</li>
+<li>Note it can be very slow if we choose <code>m</code> (multiple when selecting grid) to be small (like 1.1)</li>
+</ul>
+<pre class="r"><code># plot(sim$l,out_ebpmf$ql$mean, xlab =  &quot;l_sim&quot;, ylab = &quot;l_fit&quot;, main = &quot;l_sim vs l_fit&quot;)
+# plot(sim$f,out_ebpmf$qf$mean, xlab =  &quot;f_sim&quot;, ylab = &quot;f_fit&quot;, main = &quot;f_sim vs f_fit&quot;)</code></pre>
+<p>Let’s see how <code>nmf</code> does on this dataset</p>
+<pre class="r"><code>start =  proc.time()
+tmp = nnmf(sim$X, k = 1, loss  = &quot;mkl&quot;,method = &quot;lee&quot;,max.iter = 1, rel.tol = -1, verbose = 1)</code></pre>
+<pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
+init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
+<pre class="r"><code>runtime = (proc.time() - start)[[3]]
+out_nnmf = list(l = tmp$W[,1], f = tmp$H[1,], runtime = runtime)</code></pre>
+<pre><code>[1] &quot;nnmf fit with 3.677000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll_train using MLE         : -205678888.620561&quot;</code></pre>
+<pre><code>[1] &quot;ll_val   using MLE         : -205690092.967152&quot;</code></pre>
+<pre class="r"><code># plot(sim$l, out_nnmf$l, xlab =  &quot;l_sim&quot;, ylab =  &quot;l_fit&quot;, main = &quot;l_sim vs l_fit&quot;)
+# plot(sim$f, out_nnmf$f, xlab =  &quot;f_sim&quot;, ylab =  &quot;f_fit&quot;, main = &quot;f_sim vs f_fit&quot;)</code></pre>
+<p>Note that we only need to run <code>nnmf</code> with <code>lee</code>’s update one iteration to get optimal (up to scaling between L,F), as we have shown before (there is analytic solution, and EM, which Lee’s is, gets to that solution in one step). However, if we use “scd”, one iteration is not enough!</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] NNLM_0.4.2      ggplot2_3.2.1   mixsqp_0.1-120  gtools_3.8.1   
+[5] ebpm_0.0.0.9000
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.2       compiler_3.5.1   pillar_1.4.2     git2r_0.25.2    
+ [5] workflowr_1.4.0  tools_3.5.1      digest_0.6.21    evaluate_0.14   
+ [9] tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.3  rlang_0.4.0     
+[13] yaml_2.2.0       xfun_0.8         withr_2.1.2      stringr_1.4.0   
+[17] dplyr_0.8.1      knitr_1.25       fs_1.3.1         rprojroot_1.3-2 
+[21] grid_3.5.1       tidyselect_0.2.5 glue_1.3.1       R6_2.4.0        
+[25] rmarkdown_1.13   purrr_0.3.2      magrittr_1.5     whisker_0.3-2   
+[29] backports_1.1.4  scales_1.0.0     htmltools_0.3.6  assertthat_0.2.1
+[33] colorspace_1.4-1 stringi_1.4.3    lazyeval_0.2.2   munsell_0.5.0   
+[37] crayon_1.3.4    </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
