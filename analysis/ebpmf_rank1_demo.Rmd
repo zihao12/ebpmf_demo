@@ -1,0 +1,206 @@
+---
+title: "ebpmf_rank1_demo"
+author: "zihao12"
+date: "2019-09-30"
+header-includes:
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+This is a demo for the implementation for Empirical Bayes Poisson Matrix Factorization (rank-1) case. 
+
+```{r}
+library(ebpm)
+library(gtools)
+library(mixsqp)
+library(ggplot2)
+library(NNLM)
+```
+
+
+## Model: EBPMF-rank1
+$$
+\begin{align}
+      & X_{ij} \sim Pois(l_i f_j)\\
+    & l_i \sim g_L(.), g_L \in \mathcal{G}\\
+    & f_j \sim g_F(.), g_F \in \mathcal{G}
+\end{align}
+$$
+
+##  Algorithm
+Described in https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2
+
+I start implememting it for mixture of  exponential as $\mathcal{G}$. 
+
+Seems that one iteration is enough. Is it the same case as in MLE for pmf?
+
+```{r}
+# X: a matrix/array of shape n by p 
+ebpmf_rank1_exponential <- function(X, init, m = 2, maxiter = 1){
+  n = nrow(X)
+  p = ncol(X)
+  #El = init$ql$mean
+  ql = init$ql
+  #E_f = get_exp_F(init)
+  for(i in 1:maxiter){
+    ## update q(f), g(f)
+    sum_El = sum(ql$mean)
+    tmp = ebpm_exponential_mixture(x = colSums(X), s = replicate(p,sum_El), m = m)
+    qf = tmp$posterior
+    gf = tmp$fitted_g
+    ll_f = tmp$log_likelihood
+    ## update q(l), g(l)
+    sum_Ef = sum(qf$mean)
+    tmp = ebpm_exponential_mixture(x = rowSums(X), s = replicate(n,sum_Ef), m = m)
+    ql = tmp$posterior
+    gl = tmp$fitted_g
+    ll_l = tmp$log_likelihood
+    qg = list(ql = ql, gl = gl, qf = qf, gf = gf, ll_f = ll_f, ll_l = ll_l)
+    # elbo = compute_elbo(X, qg)
+    # print(sprintf("ELBO: %f", elbo))
+  }
+  return(qg)
+}
+
+
+compute_elbo <- function(X, qg){
+  ql = qg$ql
+  gl = qg$gl
+  qf = qg$qf
+  gf = qg$gf
+  ll_f = qg$ll_f
+  ll_l = qg$ll_l
+  ## compute Eq(logp(X | l, f))
+  term1 = sum(- outer(ql$mean, qf$mean, "*") + X*outer(ql$mean_log, qf$mean_log, "+"))
+  ## compute Eq(log(gL(l)/qL(l)))
+  term2 = ll_l - sum(sum(qf$mean)*ql$mean + rowSums(X)*ql$mean_log)
+  ## compute Eq(log(gF(f)/qF(f)))
+  term3 = ll_f - sum(sum(ql$mean)*qf$mean + colSums(X)*qf$mean_log)
+  return(term1 + term2 + term3)
+}
+```
+
+```{r}
+## ===========================================================================
+## ==========================experiment setup=================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+sim_mgamma <- function(dist){
+  pi = dist$pi
+  a = dist$a
+  b = dist$b
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+
+## simulate a poisson mean problem
+## to do: 
+## compute loglik for g (well, is it do-able?)
+simulate_pm  <-  function(n, p, dl, df, seed = 123){
+  set.seed(seed)
+  ## simulate l
+  a = replicate(dl,1)
+  b = 0.1*runif(dl)
+  pi <- rdirichlet(1,rep(1/dl, dl))
+  gl = list(pi = pi, a = a, b= b)
+  l = matrix(replicate(n, sim_mgamma(gl)), ncol = 1)
+  ## simulate f
+  a = replicate(df,1)
+  b = 0.1*runif(df)
+  pi <- rdirichlet(1,rep(1/df, df))
+  gf = list(pi = pi, a = a, b= b)
+  f = t(matrix(replicate(p, sim_mgamma(gf)), nrow = 1))
+  ## simulate X
+  lam = l %*% t(f)
+  X = matrix(rpois(n*p, lam), nrow = n)
+  Y = matrix(rpois(n*p, lam), nrow = n)
+  ## prepare output
+  g = list(gl = gl, gf = gf)
+  out = list(X = X, Y = Y, l = l, f = f, g = g)
+  return(out)
+}
+
+## ===========================================================================
+## ==========================helper functions ================================
+## ===========================================================================
+## sample from mixture of gamm distribution
+
+rmse <- function(x,y){
+  return(sqrt(mean((x-y)^2)))
+}
+
+compute_ll <- function(X, lam){
+  return(sum(dpois(X, lam, log = T)))
+}
+```
+
+```{r}
+n = 5000
+p = 10000
+# n = 1000
+# p = 2000
+dl = 3
+df = 5  
+sim = simulate_pm(n, p, dl, df)
+
+# ## init
+# tmp = nnmf(sim$X, k = 1, loss  = "mkl",max.iter = 10)
+# ql = list(mean = tmp$W[,1])
+# qf = list(mean = tmp$H[1,])
+# init = list(ql = ql, qf = qf)
+
+ql = list(mean = runif(n, 0, 1))
+qf = list(mean = runif(p, 0, 1))
+init = list(ql = ql, qf = qf)
+```
+
+
+```{r}
+start =  proc.time()
+out_ebpmf = ebpmf_rank1_exponential(sim$X, init,maxiter = 1)
+runtime = (proc.time() - start)[[3]]
+out_ebpmf[["runtime"]] = runtime
+```
+
+
+```{r echo = F}
+print(sprintf("ebpmf_rank1_exponential fit with %f seconds", runtime))
+print(sprintf("ll_train using posterior mean: %f", compute_ll(sim$X, outer(out_ebpmf$ql$mean, out_ebpmf$qf$mean, "*"))))
+print(sprintf("ll_val   using posterior mean: %f", compute_ll(sim$Y, outer(out_ebpmf$ql$mean, out_ebpmf$qf$mean, "*"))))
+```
+
+
+* ELBO stops increasing after the first iteration ... though there are small updates going on still. Is it because one iteration can get to optimum, or is there a bug? 
+* Note it can be very slow if we choose  `m` (multiple when selecting grid) to be small (like 1.1)
+
+```{r}
+# plot(sim$l,out_ebpmf$ql$mean, xlab =  "l_sim", ylab = "l_fit", main = "l_sim vs l_fit")
+# plot(sim$f,out_ebpmf$qf$mean, xlab =  "f_sim", ylab = "f_fit", main = "f_sim vs f_fit")
+```
+
+
+Let's see how `nmf` does on this dataset
+```{r}
+start =  proc.time()
+tmp = nnmf(sim$X, k = 1, loss  = "mkl",method = "lee",max.iter = 1, rel.tol = -1, verbose = 1)
+runtime = (proc.time() - start)[[3]]
+out_nnmf = list(l = tmp$W[,1], f = tmp$H[1,], runtime = runtime)
+```
+
+```{r echo = F}
+print(sprintf("nnmf fit with %f seconds", runtime))
+print(sprintf("ll_train using MLE         : %f", compute_ll(sim$X, outer(out_nnmf$l, out_nnmf$f, "*"))))
+print(sprintf("ll_val   using MLE         : %f", compute_ll(sim$Y, outer(out_nnmf$l, out_nnmf$f, "*"))))
+```
+
+
+
+```{r}
+# plot(sim$l, out_nnmf$l, xlab =  "l_sim", ylab =  "l_fit", main = "l_sim vs l_fit")
+# plot(sim$f, out_nnmf$f, xlab =  "f_sim", ylab =  "f_fit", main = "f_sim vs f_fit")
+```
+Note that we only need to run `nnmf` with `lee`'s update one iteration to get optimal (up to scaling between L,F), as we have shown before (there is analytic solution, and EM, which Lee's is, gets to that solution in one step). However, if we use "scd", one iteration is not enough!
+
+
