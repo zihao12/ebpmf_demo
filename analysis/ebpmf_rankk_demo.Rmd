@@ -35,7 +35,7 @@ ebpmf_rankk_exponential <- function(X, K, m = 2, maxiter.out = 10, maxiter.int =
       ## get row & column sum of <Z_ijk>
       Ez = get_Ez(X, qg, k) 
       ## update q, g
-      tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,NULL,m, maxiter.int) ## need to deal with (manipulate) sparse matrix
+      tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,NULL,m, maxiter.int) 
       qg = update_qg(tmp, qg, k)
     }
   }
@@ -178,7 +178,6 @@ print(sprintf("nonzero ratio: %f", sum(sim$X != 0)/(n*p)))
 
 ## Run `ebpmf_rankk_exponential`
 ```{r}
-#out = initialize_qg(X, K)
 start = proc.time()
 out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
 runtime = proc.time() -  start
