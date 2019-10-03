@@ -205,7 +205,7 @@ print(sprintf("ll val   = %f", ll_val))
 ## Run `nnmf` with random initialization
 ```{r warning=F}
 start = proc.time()
-out_nmf = nnmf(sim$X, K, loss = "mkl", method = "lee", max.iter = 20, rel.tol = -1)
+out_nmf = nnmf(sim$X, K, loss = "mkl", method = "lee", max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start
 ```
 
@@ -226,7 +226,7 @@ W0 = out_ebpmf$qls_mean
 H0 = t(out_ebpmf$qfs_mean)
 
 start = proc.time()
-out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = 20, rel.tol = -1)
+out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start
 ```
 
