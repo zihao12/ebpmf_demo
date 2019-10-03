@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-02
+<strong>Last updated:</strong> 2019-10-03
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree2851c1b372e93c5a28fd08b46f18e5d7a1a0dfbctargetblank2851c1ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/2851c1b372e93c5a28fd08b46f18e5d7a1a0dfbc" target="_blank">2851c1b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8c5114a6493a5de1b8ecc0171019c63405096aa0targetblank8c5114aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/8c5114a6493a5de1b8ecc0171019c63405096aa0" target="_blank">8c5114a</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree2851c1b372e93c5a28fd08b46f18e5d7a1a0dfbctargetblank2851c1ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8c5114a6493a5de1b8ecc0171019c63405096aa0targetblank8c5114aa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -600,6 +600,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8c5114a6493a5de1b8ecc0171019c63405096aa0/analysis/ebpmf_rankk_demo.Rmd" target="_blank">8c5114a</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-03
+</td>
+<td>
+very naive implementation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/fa5fa67ff28fbf7582f727aad589666c28e54650/docs/ebpmf_rankk_demo.html" target="_blank">fa5fa67</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-02
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2851c1b372e93c5a28fd08b46f18e5d7a1a0dfbc/analysis/ebpmf_rankk_demo.Rmd" target="_blank">2851c1b</a>
 </td>
 <td>
@@ -619,8 +653,12 @@ start developing ebpmf rank k
 </div>
 </div>
 </div>
-<pre class="r"><code>library(ebpm)
-library(matrixStats)</code></pre>
+<pre class="r"><code>rm(list = ls())
+library(ebpm)
+library(matrixStats)
+library(Matrix)</code></pre>
+<pre><code>Warning: package &#39;Matrix&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>library(gtools)</code></pre>
 <pre class="r"><code>## Note: in rank1 case, what we need is just row and  column sum of X
 
 ## TODO: 
@@ -632,31 +670,62 @@ library(matrixStats)</code></pre>
 # # ... gls, gfs
 
 ## 2. think about the importance of initialization, and how to
+## well it is not important at all!! only need the sum of say sum_k &lt;l_ik&gt;, and elbo is &quot;scale invariant&quot;&quot;
 
-ebpmf_rankk_exponential &lt;- function(X, K, m, init, maxiter.out = 10, maxiter.int = 1, seed){
+ebpmf_rankk_exponential &lt;- function(X, K, m = 2, maxiter.out = 10, maxiter.int = 1, seed = 123){
   X = as(X, &quot;dgTMatrix&quot;) ## triplet representation: i,j, x
   set.seed(123)
-  qg = init
-  for(i in 1:maxiter.out){
+  qg = initialize_qg(X, K)
+  for(iter in 1:maxiter.out){
     for(k in 1:K){
       ## get row &amp; column sum of &lt;Z_ijk&gt;
       Ez = get_Ez(X, qg, k) 
       ## update q, g
-      tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,qg$qls_mean[,k],m, maxiter.int) ## need to deal with (manipulate) sparse matrix
+      tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,NULL,m, maxiter.int) ## need to deal with (manipulate) sparse matrix
       qg = update_qg(tmp, qg, k)
     }
   }
   return(qg)
 }
 
+## for each pair of l, f, give them 1/k of the row &amp; col sum
+initialize_qg &lt;- function(X, K, seed = 123){
+  set.seed(seed)
+  X_rsum = rowSums(X)
+  X_csum = colSums(X)
+  prob_r = replicate(n, rdirichlet(1,replicate(K, 1/K)))[1,,] ## K by n
+  prob_c = replicate(p, rdirichlet(1,replicate(K, 1/K)))[1,,] ## K  by p
+  rsums = matrix(replicate(K*n,0), nrow = K)
+  csums = matrix(replicate(K*p,0), nrow = K)
+  for(i in  1:n){
+    if(X_rsum[i] == 0){rsums[,i] = replicate(K, 0)}
+    else{rsums[,i] = rmultinom(1, X_rsum[i],prob_r[,i])}
+  }
+  for(j in  1:p){
+    if(X_csum[j] == 0){csums[,j] = replicate(K, 0)}
+    else{csums[,j] = rmultinom(1, X_csum[j],prob_c[,j])}
+  }
+  qg = list(qls_mean = matrix(replicate(n*K, 0), ncol =  K), qls_mean_log = matrix(replicate(n*K, 0), ncol =  K), gls = replicate(K, list(NaN)), 
+            qfs_mean = matrix(replicate(p*K, 0), ncol =  K), qfs_mean_log = matrix(replicate(p*K, 0), ncol =  K), gfs = replicate(K, list(NaN))
+            )
+  for(k in 1:K){
+    qg_ = ebpmf_rank1_exponential_helper(rsums[k,], csums[k, ], init = NULL, m = 2, maxiter = 1)
+    qg   = update_qg(qg_, qg, k)
+  }  
+  return(qg)
+}
+
+
+
 ## compute the row &amp; col sum of &lt;Z_ijk&gt; for a given k
 ## since &lt;Z_ijk&gt; != 0 only if X_ij != 0, we only need to loop over nonzero elements of X
 get_Ez &lt;- function(X, qg, k){
-  rsum = replicate(nrow(x), 0)
-  csum = replicate(ncol(x), 0)
+  #browser()
+  rsum = replicate(nrow(X), 0)
+  csum = replicate(ncol(X), 0)
   for(l in 1:length(X@i)){
-    i = X@i[l]
-    j = X@j[l]
+    i = X@i[l] + 1
+    j = X@j[l] + 1 ## well the index is  zero-based
     current = X[i,j] * softmax1d(qg$qls_mean_log[i,] + qg$qfs_mean_log[j,])[k] ## &lt;Z_ijk&gt; = X_ij * psi_ijk
     rsum[i] = rsum[i] + current
     csum[j] = csum[j] + current
@@ -682,12 +751,13 @@ update_qg &lt;- function(tmp, qg, k){
 # different in that only row and column sum of X is provided
 ebpmf_rank1_exponential_helper &lt;- function(X_rowsum,X_colsum, init, m = 2, maxiter = 1){
   #El = init$ql$mean
+  if(is.null(init)){init = list(mean = runif(length(X_rowsum), 0, 1))}
   ql = init
   #E_f = get_exp_F(init)
   for(i in 1:maxiter){
     ## update q(f), g(f)
     sum_El = sum(ql$mean)
-    tmp = ebpm_exponential_mixture(x = X_colsum, s = replicate(p,sum_El), m = m)
+    tmp = ebpm::ebpm_exponential_mixture(x = X_colsum, s = replicate(p,sum_El), m = m)
     qf = tmp$posterior
     gf = tmp$fitted_g
     ll_f = tmp$log_likelihood
@@ -703,6 +773,69 @@ ebpmf_rank1_exponential_helper &lt;- function(X_rowsum,X_colsum, init, m = 2, ma
   }
   return(qg)
 }</code></pre>
+<pre class="r"><code>sim_mgamma &lt;- function(dist){
+  pi = dist$pi
+  a = dist$a
+  b = dist$b
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+
+## simulate a poisson mean problem
+## to do: 
+## compute loglik for g (well, is it do-able?)
+simulate_pm  &lt;-  function(n, p, dl, df, K,scale_b = 10, seed = 123){
+  set.seed(seed)
+  ## simulate l
+  a = replicate(dl,1)
+  b = 10*runif(dl)
+  pi &lt;- rdirichlet(1,rep(1/dl, dl))
+  gl = list(pi = pi, a = a, b= b)
+  L = matrix(replicate(n*K, sim_mgamma(gl)), ncol = K)
+  ## simulate f
+  a = replicate(df,1)
+  b = 10*runif(df)
+  pi &lt;- rdirichlet(1,rep(1/df, df))
+  gf = list(pi = pi, a = a, b= b)
+  F = matrix(replicate(p*K, sim_mgamma(gf)), ncol = K)
+  ## simulate X
+  lam = L %*% t(F)
+  X = matrix(rpois(n*p, lam), nrow = n)
+  Y = matrix(rpois(n*p, lam), nrow = n)
+  ## prepare output
+  g = list(gl = gl, gf = gf)
+  out = list(X = X, Y = Y, L = L, F = F, g = g)
+  return(out)
+}</code></pre>
+<p>I generate a very sparse, small matrix.<br />
+Note that for some data matrix, we get an error when computing L in later iterations. <code>Error in verify.likelihood.matrix(L) :    Input argument &quot;L&quot; should be a numeric matrix with &gt;= 2 columns, &gt;= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive</code></p>
+<pre class="r"><code>n = 100
+p = 50
+K = 2
+dl = 10
+df = 10 
+sim = simulate_pm(n, p, dl, df, K, scale_b = 8)
+print(sprintf(&quot;nonzero ratio: %f&quot;, sum(sim$X != 0)/(n*p)))</code></pre>
+<pre><code>[1] &quot;nonzero ratio: 0.082800&quot;</code></pre>
+<p>Run <code>ebpmf_rankk_exponential</code></p>
+<pre class="r"><code>#out = initialize_qg(X, K)
+start = proc.time()
+out = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
+runtime = proc.time() -  start</code></pre>
+<p>It is very slow, and when the data gets much denser, it will be even much slower…</p>
+<pre><code>[1] &quot;runtime: 13.664000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll train = -1228.332333&quot;</code></pre>
+<pre><code>[1] &quot;ll val   = -1379.921692&quot;</code></pre>
+<pre class="r"><code>library(NNLM)
+start = proc.time()
+out_nmf = nnmf(sim$X, K, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 20, rel.tol = -1)</code></pre>
+<pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
+init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
+<pre class="r"><code>runtime = proc.time() -  start</code></pre>
+<pre><code>[1] &quot;runtime: 0.099000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll train = -1215.263872&quot;</code></pre>
+<pre><code>[1] &quot;ll val   = -Inf&quot;</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -726,15 +859,16 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] matrixStats_0.54.0 ebpm_0.0.0.9000   
+[1] NNLM_0.4.2         gtools_3.8.1       Matrix_1.2-17     
+[4] matrixStats_0.54.0 ebpm_0.0.0.9000   
 
 loaded via a namespace (and not attached):
- [1] workflowr_1.4.0 Rcpp_1.0.2      digest_0.6.21   rprojroot_1.3-2
- [5] backports_1.1.4 git2r_0.25.2    magrittr_1.5    evaluate_0.14  
- [9] stringi_1.4.3   fs_1.3.1        whisker_0.3-2   rmarkdown_1.13 
-[13] tools_3.5.1     stringr_1.4.0   glue_1.3.1      mixsqp_0.1-120 
-[17] xfun_0.8        yaml_2.2.0      compiler_3.5.1  htmltools_0.3.6
-[21] knitr_1.25     </code></pre>
+ [1] workflowr_1.4.0 Rcpp_1.0.2      lattice_0.20-38 digest_0.6.21  
+ [5] rprojroot_1.3-2 grid_3.5.1      backports_1.1.5 git2r_0.25.2   
+ [9] magrittr_1.5    evaluate_0.14   stringi_1.4.3   fs_1.3.1       
+[13] whisker_0.3-2   rmarkdown_1.13  tools_3.5.1     stringr_1.4.0  
+[17] glue_1.3.1      mixsqp_0.1-120  xfun_0.8        yaml_2.2.0     
+[21] compiler_3.5.1  htmltools_0.3.6 knitr_1.25     </code></pre>
 </div>
 
 
