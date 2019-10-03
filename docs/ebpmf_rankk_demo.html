@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec0cced7747720d1efac263be87cb4d596a142f06targetblankc0cced7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c0cced7747720d1efac263be87cb4d596a142f06" target="_blank">c0cced7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4528871912e86aeea2d9aaa82f5534c9e24207fbtargetblank4528871a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/4528871912e86aeea2d9aaa82f5534c9e24207fb" target="_blank">4528871</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec0cced7747720d1efac263be87cb4d596a142f06targetblankc0cced7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4528871912e86aeea2d9aaa82f5534c9e24207fbtargetblank4528871a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -595,6 +595,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/4528871912e86aeea2d9aaa82f5534c9e24207fb/analysis/ebpmf_rankk_demo.Rmd" target="_blank">4528871</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-03
+</td>
+<td>
+update ebpmf_rankk_demo
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/72909fb8591c37e212d8ecd854f9a805e9e006c6/docs/ebpmf_rankk_demo.html" target="_blank">72909fb</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -919,17 +953,17 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)</code></pre>
 out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
 runtime = proc.time() -  start</code></pre>
 <p>It is very slow, and when the data gets much denser, it will be even much slower…</p>
-<pre><code>[1] &quot;runtime: 47.006000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 49.857000 seconds&quot;</code></pre>
 <pre><code>[1] &quot;ll train = -4759.116930&quot;</code></pre>
 <pre><code>[1] &quot;ll val   = -5615.310826&quot;</code></pre>
 </div>
 <div id="run-nnmf-with-random-initialization" class="section level2">
 <h2>Run <code>nnmf</code> with random initialization</h2>
 <pre class="r"><code>start = proc.time()
-out_nmf = nnmf(sim$X, K, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 20, rel.tol = -1)
+out_nmf = nnmf(sim$X, K, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start</code></pre>
-<pre><code>[1] &quot;runtime: 0.102000 seconds&quot;</code></pre>
-<pre><code>[1] &quot;ll train = -4761.496686&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 0.136000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll train = -4716.149696&quot;</code></pre>
 <pre><code>[1] &quot;ll val   = -Inf&quot;</code></pre>
 </div>
 <div id="run-nnmf-with-initialization-from-ebpmf-result" class="section level2">
@@ -938,11 +972,11 @@ runtime = proc.time() -  start</code></pre>
 H0 = t(out_ebpmf$qfs_mean)
 
 start = proc.time()
-out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 20, rel.tol = -1)
+out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start</code></pre>
-<pre><code>[1] &quot;runtime: 0.104000 seconds&quot;</code></pre>
-<pre><code>[1] &quot;ll train = -4481.989318&quot;</code></pre>
-<pre><code>[1] &quot;ll val   = -6088.991684&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 0.165000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;ll train = -4448.016719&quot;</code></pre>
+<pre><code>[1] &quot;ll val   = -6670.583905&quot;</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
