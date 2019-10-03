@@ -10,10 +10,16 @@ editor_options:
 
 Welcome to my research website.
 
+## Demo for algorithms
+
 My demo for EBPM with mixture of exponential is here: https://zihao12.github.io/ebpmf_demo/ebpm_demo.html
 
 My demo for EBPM with  point gamma is here: https://zihao12.github.io/ebpmf_demo/ebpm_point_gamma_demo.html
 
 My demo for EBPMF_rank1 is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rank1_demo.html
 
+
+## Some experiments
 My Comparison of EBPM vs ash_pois is here: https://zihao12.github.io/ebpmf_demo/Compare_ebpm_vs_ash_pois.html
+
+My experiments on efficient softmax function in R is here: https://zihao12.github.io/ebpmf_demo/softmax_experiments.html
