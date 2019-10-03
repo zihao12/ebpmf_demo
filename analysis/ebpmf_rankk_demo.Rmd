@@ -171,9 +171,16 @@ dl = 10
 df = 10 
 scale_b = 5
 sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)
-print(sprintf("nonzero ratio: %f", sum(sim$X != 0)/(n*p)))
 ```
 
+A summary of the simulation:
+```{r echo = F}
+print(sprintf("nonzero ratio: %f", sum(sim$X != 0)/(n*p)))
+ll_train = sum(dpois(sim$X, lambda = sim$L %*% t(sim$F), log = T))
+ll_val = sum(dpois(sim$Y, lambda = sim$L %*% t(sim$F), log = T))
+print(sprintf("ll train = %f", ll_train))
+print(sprintf("ll val   = %f", ll_val))
+```
 
 
 ## Run `ebpmf_rankk_exponential`
