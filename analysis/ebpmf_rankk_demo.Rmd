@@ -7,36 +7,31 @@ editor_options:
   chunk_output_type: console
 ---
 
-
 ```{r}
 rm(list = ls())
 library(ebpm)
 library(matrixStats)
 library(Matrix)
 library(gtools)
+library(NNLM)
 ```
+
+## Algorithm
+See  detail in https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2
+
+(Note: in rank1 case, we only need row & column sum of X as input)
 
 
 ```{r}
-## Note: in rank1 case, what we need is just row and  column sum of X
-
-## TODO: 
-## 1. think about how to store qg. They include:
-# qls_mean_log = matrix(replicate(n*K, 0), ncol =  K)
-# qfs_mean_log = matrix(replicate(p*K, 0), ncol =  K)
-# qls_mean = matrix(replicate(n*K, 0), ncol =  K)
-# qfs_mean = matrix(replicate(p*K, 0), ncol =  K)
-# # ... gls, gfs
-
-## 2. think about the importance of initialization, and how to
-## well it is not important at all!! only need the sum of say sum_k <l_ik>, and elbo is "scale invariant""
-
+## ================== main function ==================================
 ebpmf_rankk_exponential <- function(X, K, m = 2, maxiter.out = 10, maxiter.int = 1, seed = 123){
   X = as(X, "dgTMatrix") ## triplet representation: i,j, x
   set.seed(123)
   qg = initialize_qg(X, K)
   for(iter in 1:maxiter.out){
+    #print(sprintf("iter: %d", iter))
     for(k in 1:K){
+      #print(sprintf("k: %d", k))
       ## get row & column sum of <Z_ijk>
       Ez = get_Ez(X, qg, k) 
       ## update q, g
@@ -46,7 +41,7 @@ ebpmf_rankk_exponential <- function(X, K, m = 2, maxiter.out = 10, maxiter.int =
   }
   return(qg)
 }
-
+## ================== helper functions ==================================
 ## for each pair of l, f, give them 1/k of the row & col sum
 initialize_qg <- function(X, K, seed = 123){
   set.seed(seed)
@@ -73,8 +68,6 @@ initialize_qg <- function(X, K, seed = 123){
   }  
   return(qg)
 }
-
-
 
 ## compute the row & col sum of <Z_ijk> for a given k
 ## since <Z_ijk> != 0 only if X_ij != 0, we only need to loop over nonzero elements of X
@@ -106,13 +99,9 @@ update_qg <- function(tmp, qg, k){
   return(qg)
 }
 
-# X: a matrix/array of shape n by p 
-# different in that only row and column sum of X is provided
-ebpmf_rank1_exponential_helper <- function(X_rowsum,X_colsum, init, m = 2, maxiter = 1){
-  #El = init$ql$mean
+ebpmf_rank1_exponential_helper <- function(X_rowsum,X_colsum, init = NULL, m = 2, maxiter = 1){
   if(is.null(init)){init = list(mean = runif(length(X_rowsum), 0, 1))}
   ql = init
-  #E_f = get_exp_F(init)
   for(i in 1:maxiter){
     ## update q(f), g(f)
     sum_El = sum(ql$mean)
@@ -127,16 +116,15 @@ ebpmf_rank1_exponential_helper <- function(X_rowsum,X_colsum, init, m = 2, maxit
     gl = tmp$fitted_g
     ll_l = tmp$log_likelihood
     qg = list(ql = ql, gl = gl, qf = qf, gf = gf, ll_f = ll_f, ll_l = ll_l)
-    # elbo = compute_elbo(X, qg)
-    # print(sprintf("ELBO: %f", elbo))
   }
   return(qg)
 }
-
 ```
 
 
-
+##  Experiment Setup
+I simulate all columns of $L$ from the same exponential mixture, and all columns of $F$ from another exponential mixture. Then I get $X_{ij} \sim Pois(\sum_k l_{ik} f_{jk})$ as training, and $Y_{ij} \sim Pois(\sum_k l_{ik} f_{jk})$ as validation. \
+In order to get a sparse matrix, I  set the rate (`scale_b`) for the exponential to be large.   
 ```{r}
 sim_mgamma <- function(dist){
   pi = dist$pi
@@ -146,19 +134,17 @@ sim_mgamma <- function(dist){
   return(rgamma(1, shape = a[idx], rate =  b[idx]))
 }
 
-
 ## simulate a poisson mean problem
 ## to do: 
-## compute loglik for g (well, is it do-able?)
 simulate_pm  <-  function(n, p, dl, df, K,scale_b = 10, seed = 123){
   set.seed(seed)
-  ## simulate l
+  ## simulate L
   a = replicate(dl,1)
   b = 10*runif(dl)
   pi <- rdirichlet(1,rep(1/dl, dl))
   gl = list(pi = pi, a = a, b= b)
   L = matrix(replicate(n*K, sim_mgamma(gl)), ncol = K)
-  ## simulate f
+  ## simulate F
   a = replicate(df,1)
   b = 10*runif(df)
   pi <- rdirichlet(1,rep(1/df, df))
@@ -176,41 +162,42 @@ simulate_pm  <-  function(n, p, dl, df, K,scale_b = 10, seed = 123){
 ```
 
 
-I generate a very sparse, small matrix.\
-Note that for some data matrix, we get an error when computing L in later iterations. ```Error in verify.likelihood.matrix(L) : 
-  Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive```
+I generate a very sparse, small matrix.
 ```{r}
 n = 100
-p = 50
+p = 200
 K = 2
 dl = 10
 df = 10 
-sim = simulate_pm(n, p, dl, df, K, scale_b = 8)
+scale_b = 5
+sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)
 print(sprintf("nonzero ratio: %f", sum(sim$X != 0)/(n*p)))
 ```
 
 
 
-Run `ebpmf_rankk_exponential`
+## Run `ebpmf_rankk_exponential`
 ```{r}
 #out = initialize_qg(X, K)
 start = proc.time()
-out = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
+out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
 runtime = proc.time() -  start
 ```
 It is very  slow, and when the data gets much  denser, it will be even much slower...
 
 ```{r echo = F}
 print(sprintf("runtime: %f seconds", runtime[[3]]))
-lam_pm = out$qls_mean %*% t(out$qfs_mean)
+lam_pm = out_ebpmf$qls_mean %*% t(out_ebpmf$qfs_mean)
 ll_train = sum(dpois(sim$X, lambda = lam_pm, log = T))
 ll_val = sum(dpois(sim$Y, lambda = lam_pm, log = T))
 print(sprintf("ll train = %f", ll_train))
 print(sprintf("ll val   = %f", ll_val))
 ```
 
-```{r}
-library(NNLM)
+
+
+## Run `nnmf` with random initialization
+```{r warning=F}
 start = proc.time()
 out_nmf = nnmf(sim$X, K, loss = "mkl", method = "lee", max.iter = 20, rel.tol = -1)
 runtime = proc.time() -  start
@@ -221,6 +208,27 @@ print(sprintf("runtime: %f seconds", runtime[[3]]))
 lam_nmf = out_nmf$W %*% out_nmf$H
 ll_train = sum(dpois(sim$X, lambda = lam_nmf, log = T))
 ll_val = sum(dpois(sim$Y, lambda = lam_nmf, log = T))
+print(sprintf("ll train = %f", ll_train))
+print(sprintf("ll val   = %f", ll_val))
+```
+
+
+
+## Run `nnmf` with initialization from ebpmf result  
+```{r warning=F}
+W0 = out_ebpmf$qls_mean
+H0 = t(out_ebpmf$qfs_mean)
+
+start = proc.time()
+out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = 20, rel.tol = -1)
+runtime = proc.time() -  start
+```
+
+```{r echo = F}
+print(sprintf("runtime: %f seconds", runtime[[3]]))
+lam_nmf_init = out_nmf_init$W %*% out_nmf_init$H
+ll_train = sum(dpois(sim$X, lambda = lam_nmf_init, log = T))
+ll_val = sum(dpois(sim$Y, lambda = lam_nmf_init, log = T))
 print(sprintf("ll train = %f", ll_train))
 print(sprintf("ll val   = %f", ll_val))
 ```
