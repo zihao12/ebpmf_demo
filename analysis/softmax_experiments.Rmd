@@ -1,0 +1,127 @@
+---
+title: "softmax_experiments"
+author: "zihao12"
+date: "2019-10-02"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+I need to compute softmax along an axis in 3d array (see equation below), but it often takes too long for a moderately sized array.  
+
+$$
+\begin{align}
+  \frac{exp(X_{ijk})}{\sum_k exp(X_{ijk})}
+\end{align}
+$$
+
+```{r}
+## x is 3d array, and we want to do softmax along the 3rd axis, so sum_k prob_ijk = 1
+softmax <- function(x){
+  score.exp <- exp(x)
+  probs <-sweep(score.exp, MARGIN = c(1,2), apply(score.exp, MARGIN = c(1,2), sum), '/')
+  return(probs)
+}
+
+# n = 1000
+# p = 5000
+# k = 10
+# x = array(runif(n*p*k), dim = c(n, p,k)) ## this step also takes a long time!!
+# start = proc.time()
+# x.softmax = softmax(x)
+# runtime = proc.time() - start
+# print(runtime[[3]])
+## [1] 12.928
+# x.softmax.sum =  apply(x.softmax, MARGIN = c(1,2), sum)
+# print(all.equal(x.softmax.sum, matrix(replicate(n*p, 1), nrow = n)))
+## TRUE
+```
+
+Here is how scipy implements it:  ```np.exp(x - logsumexp(x, axis=axis, keepdims=True))```
+
+So do that in the log space first:
+
+$$
+\begin{align}
+  exp(X_{ijk} - \sum_k logsumexp(X_{ijk}))
+\end{align}
+$$
+
+```{r}
+library(matrixStats)
+softmax2 <- function(x){
+  k = dim(x)[3]
+  x.logsumexp = apply(x, c(1,2), logSumExp)
+  x.softmax = exp(x - replicate(k, x.logsumexp))
+  return(x.softmax)
+}
+# n = 1000
+# p = 5000
+# k = 10
+# x = array(runif(n*p*k), dim = c(n, p,k)) ## this step also takes a long time!!
+# start = proc.time()
+# x.softmax = softmax2(x)
+# runtime = proc.time() - start
+# print(runtime[[3]])
+## [1] 16.445
+# x.softmax.sum =  apply(x.softmax, MARGIN = c(1,2), sum)
+# print(all.equal(x.softmax.sum, matrix(replicate(n*p, 1), nrow = n)))
+## [1] TRUE
+```
+It is even slower
+
+
+From Matthew:
+```{r}
+softmax <- function(x){
+  score.exp <- exp(x)
+  probs <-sweep(score.exp, MARGIN = c(1,2), apply(score.exp, MARGIN = c(1,2), sum), '/')
+  return(probs)
+}
+softmax2 <- function(x){
+  score.exp <- exp(x)
+  probs <-sweep(score.exp, MARGIN = c(1,2), rowSums(score.exp,dims=2), '/')
+  return(probs)
+}
+softmax3 <- function(x){
+  score.exp <- exp(x)
+  browser()
+  probs <-as.vector(score.exp)/as.vector(rowSums(score.exp,dims=2))
+  dim(probs) <- dim(x)
+  return(probs)
+}
+# n = 1000
+# p = 5000
+# k = 10
+# x = array(runif(n*p*k), dim = c(n, p,k)) ## this step also takes a long time!!
+# start = proc.time()
+# x.softmax = softmax(x)
+# runtime = proc.time() - start
+# print(runtime[[3]])
+# start = proc.time()
+# x.softmax2 = softmax2(x)
+# runtime = proc.time() - start
+# print(runtime[[3]])
+# start = proc.time()
+# x.softmax3 = softmax3(x)
+# runtime = proc.time() - start
+# print(runtime[[3]])
+# identical(x.softmax3,x.softmax)
+# identical(x.softmax2,x.softmax)
+# 
+# # [1] 11.188
+# # [1] 2.662
+# # [1] 1.685
+# # [1] TRUE
+# # [1] TRUE
+```
+
+
+## Lesson
+* try to avoid "apply": `rowSums(score.exp,dims=2)` is much faster than apply(score.exp, MARGIN = c(1,2), sum)\
+* R is column major, so be aware of what `as.vector` does \
+* operations between vectors of different lengths: shorter vectors are recycled until it matches the lengths of the longer vector
+
+
+
