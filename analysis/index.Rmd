@@ -16,7 +16,9 @@ My demo for EBPM with mixture of exponential is here: https://zihao12.github.io/
 
 My demo for EBPM with  point gamma is here: https://zihao12.github.io/ebpmf_demo/ebpm_point_gamma_demo.html
 
-My demo for EBPMF_rank1 is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rank1_demo.html
+My demo for EBPMF_rank_1 is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rank1_demo.html
+
+My demo for EBPMF_rank_k is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo.html
 
 
 ## Some experiments
