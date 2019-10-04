@@ -41,8 +41,8 @@ $$
 #### functions for optimization in "nlm"
 ```{r}
 pg_nlm_fn <- function(par, x, s){
-  pi = log(par[1]) - log(1-par[1])
-  a = par[2]
+  pi = 1/(1+ exp(-par[1]))
+  a = exp(par[2])
   b  =  exp(par[3])
   d <- dnbinom(x, a, b/(b+s), log = F) 
   c = as.integer(x ==  0) - d
@@ -51,16 +51,17 @@ pg_nlm_fn <- function(par, x, s){
 
 transform_param <- function(par0){
   par = rep(0,length(par0))
-  par[1] = 1/(1+exp(-par0[1]))
-  par[2] = par0[2]
+  par[1] = log(par0[1]/(1-par0[1]))
+  par[2] = log(par0[2])
   par[3] = log(par0[3])
   return(par)
 }
 
 transform_param_back <- function(par){
   par0 = rep(0,length(par))
-  par0[1] = log(par[1]) - log(1-par[1])
-  par0[2] = par[2]
+  #par0[1] = log(par[1]) - log(1-par[1])
+  par0[1] = 1/(1+ exp(-par[1]))
+  par0[2] = exp(par[2])
   par0[3] = exp(par[3])
   return(par0)
 }
@@ -152,6 +153,7 @@ fit <- ebpm_point_gamma(sim$x, sim$s)
 runtime = proc.time() - start
 print(sprintf("fit %d data with runtime %f  seconds", n, runtime[[3]]))
 ```
+
 
 Compare RMSE with $\lambda_{oracle}$
 ```{r echo = F}
