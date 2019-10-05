@@ -20,6 +20,7 @@ My demo for EBPMF_rank_1 is here: https://zihao12.github.io/ebpmf_demo/ebpmf_ran
 
 My demo for EBPMF_rank_k is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo.html
 
+My demo for EBPMF_rank_k (speed up) is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html
 
 ## Some experiments
 My Comparison of EBPM vs ash_pois is here: https://zihao12.github.io/ebpmf_demo/Compare_ebpm_vs_ash_pois.html
