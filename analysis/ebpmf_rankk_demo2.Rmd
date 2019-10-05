@@ -10,6 +10,7 @@ editor_options:
 ```{r}
 rm(list = ls())
 library(ebpm)
+library(ebpmf)
 library(matrixStats)
 library(Matrix)
 library(gtools)
@@ -218,9 +219,11 @@ print(sprintf("ll val   = %f", ll_val))
 
 
 ## Run `ebpmf_rankk_exponential`
+I put the functions above into a function in package `ebpmf`. 
 ```{r}
 start = proc.time()
-out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
+##out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
+out_ebpmf = ebpmf::ebpmf_exponential_mixture(sim$X, K, maxiter.out = 100)
 runtime = proc.time() -  start
 ```
 
