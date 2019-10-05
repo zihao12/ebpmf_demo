@@ -1,0 +1,124 @@
+---
+title: "pois_mode_est"
+author: "Zihao Wang"
+date: "2019-10-04"
+header-includes:
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Description  and summary
+* I copied from https://stephens999.github.io/misc/pois_mode_est.html. I fixed the bug  that Matthew found and continued comparison. (`ashr` seems not to be updated in github so the result here isn't as good as Matthew's result)
+
+* The data is from https://users.rcc.uchicago.edu/~aksarkar/singlecell-modes/poisson.html#orga229ff0
+
+Basically, the model is
+
+$$
+\begin{align}
+  & x_i \sim Pois(s_i \lambda_i)\\
+  & \lambda_i \sim \delta_{\mu}(.)\\
+\end{align}
+$$
+Then  we have $\hat{\mu} = \frac{\sum_i x_i}{\sum_i s_i}$. So we expect to see our fitted prior to be close to a point mass close to $\hat{\mu}$. 
+
+
+Some results:\
+
+* loglikelihood: `ebpm_point_gamma` (-2008) > `ashr_pois` (-2097) > `ebpm_exponential_mixture` (-2350)\
+
+* Although `ebpm_exponential_mixture` puts all weight on one exponential distribution, whose mean is close to $\hat{\mu}$, it does not look like a point mass due to the shape constraint of exponential (variance is not small enough).  
+
+
+```{r}
+library(ashr)
+library(ebpm)
+```
+
+## Data summary
+
+```{r}
+d = readRDS("data/pois-mode-est.Rds")
+print(sprintf("muhat: %5e", sum(d$x)/sum(d$s)))
+hist(d$x)
+summary(d$s)
+```
+
+## `ashr_pois`
+```{r}
+res.ash = ash_pois(d$x,d$s,link="identity")
+```
+
+
+```{r echo = F}
+print(sprintf("loglikelihood:  %f", res.ash$loglik))
+print("fitted g")
+print(res.ash$fitted_g)
+plot(res.ash,xmin=0,xmax=1e-4)
+abline(v=res.ash$fitted_g$a,col=1)
+abline(v=res.ash$fitted_g$b,col=2)
+```
+
+
+## `ebpm_point_gamma`:
+```{r warning=F}
+res.ebpm.point = ebpm::ebpm_point_gamma(d$x,d$s)
+```
+
+```{r echo = F}
+print(sprintf("loglikelihood:  %f", res.ebpm.point$log_likelihood))
+print("fitted g")
+print(res.ebpm.point$fitted_g)
+print(sprintf("mean: a/b = %5e", res.ebpm.point$fitted_g$a/res.ebpm.point$fitted_g$b))
+print(sprintf("var a/b^2 =  %5e", res.ebpm.point$fitted_g$a/(res.ebpm.point$fitted_g$b^2)))
+
+compute_cdf_point <- function(pi, a, b, max, min = 0, bins = 100){
+  lams = seq(min, max, (max-min)/bins)
+  cdf = pi*(as.integer(lams == 0)) + (1-pi)*pgamma(q = lams, shape = a, rate = b, lower.tail = T)
+  out = list(cdf = cdf, lam = lams)
+  return(out)
+}
+
+out = compute_cdf_point(res.ebpm.point$fitted_g$pi, res.ebpm.point$fitted_g$a, res.ebpm.point$fitted_g$b, max = 1e-4, bins = 1000)
+plot(out$lam, out$cdf, type = "l", xlab = "lambda", ylab = "cdf")
+```
+
+## `ebpm_exponential_mixture`:
+```{r warning=F}
+res.ebpm.mixture = ebpm::ebpm_exponential_mixture(d$x,d$s, m = 1.1)
+```
+
+Below I  show the cdf plots, with exponential means (selected grids) of the exponentials. 
+```{r, echo=F}
+print(sprintf("loglikelihood:  %f", res.ebpm.mixture$log_likelihood))
+print("fitted g")
+print(res.ebpm.mixture$fitted_g)
+idx = which.max(res.ebpm.mixture$fitted_g$pi)
+print(sprintf("max pi = %f", res.ebpm.mixture$fitted_g$pi[idx]))
+print(sprintf("mean for that exponential %5e", 1/res.ebpm.mixture$fitted_g$b[idx]))
+print(sprintf("variance for that exponential %5e", 1/(res.ebpm.mixture$fitted_g$b[idx]^2)))
+
+
+compute_cdf_mix <- function(pi, a, b, max, min = 0, bins = 100){
+  lams = seq(min, max, (max-min)/bins)
+  n = length(lams)
+  d = length(a)
+  ## P(X < x) = \sum_k  \pi_k Gamma(X < x; a_k , b_k)
+  cdf = replicate(n, 0)
+  ## need to speed up
+  for(i in 1:n){
+    for(k in 1:d){
+      cdf[i] = cdf[i] + pi[k]*pgamma(q = lams[i], shape = a[k], rate = b[k], lower.tail = T)
+    }
+  }
+  out = list(cdf = cdf, lam = lams)
+  #plot(out$lam, out$cdf, type = "l")
+  return(out)
+}
+
+out = compute_cdf_mix(res.ebpm.mixture$fitted_g$pi, res.ebpm.mixture$fitted_g$a, res.ebpm.mixture$fitted_g$b, max = 1e-4, bins = 1000)
+plot(out$lam, out$cdf, type = "l", xlab = "lambda", ylab = "cdf")
+abline(v=1/res.ebpm.mixture$fitted_g$b,col=2)
+```
+
