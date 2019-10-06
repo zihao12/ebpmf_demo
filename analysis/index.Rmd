@@ -22,9 +22,13 @@ My demo for EBPMF_rank_k is here: https://zihao12.github.io/ebpmf_demo/ebpmf_ran
 
 My demo for EBPMF_rank_k (speed up) is here: https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html
 
-## Some experiments
+## Some experiments  & Issues
 My Comparison of EBPM vs ash_pois is here: https://zihao12.github.io/ebpmf_demo/Compare_ebpm_vs_ash_pois.html
 
 My experiments on efficient softmax function in R is here: https://zihao12.github.io/ebpmf_demo/softmax_experiments.html
 
 My experiments on estimating mode: https://zihao12.github.io/ebpmf_demo/pois_mode_est.html
+
+My issues onebpmf: https://zihao12.github.io/ebpmf_demo/Issues_ebpmf_rankk.html
+
+
