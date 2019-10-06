@@ -14,17 +14,25 @@ It is the same as in https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html
 ## Issues:
 * ELBO does not strictly increase. I think, if we can really solve each `ebpm` problem optimally within that prior family $\mathcal{G}$, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of $\mathcal{G}$ (based on our chosen grid), we may not solve each subproblem well. In fact, the second issue below is a good example. \ 
 
-* Numerical issue when computing `L`: at iteration 107, I get ` Error in verify.likelihood.matrix(L) : 
-  Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive`. It happens in `ebpm` when computing $L_{ik} = NB(x_i; a_k, \frac{b_k}{b_k + s})$. Only the first column of L (corresponding to the smallest chosen mean (biggest rate)) are all -inf. Why it happens? This is how we choose the grid
+* Numerical issue when computing `L`: at iteration 107, I get ` Error in verify.likelihood.matrix(L) : Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive`. 
+  It happens in `ebpm` when computing $l_{ik} = log \ NB(x_i; a_k, \frac{b_k}{b_k + s})$. Only the first column of l (corresponding to the smallest chosen mean (biggest rate)) are all -inf. Why it happens? This is how we choose the grid
 ```
 xprime = x
 xprime[x == 0] = xprime[x == 0] + 1
 mu_grid_min =  0.05*min(xprime/s)
 mu_grid_max = 2*max(x/s)
 ```
-In this case, the smallest nonzero $x$ is very small, so `mu_grid_min` becomes very small ($10^{-18}$). As  a result, the loglikelihood is `-Inf`. So we must revise our way of choosing the grid!!
-  
+  In this case, the smallest nonzero $x$ is very small, so `mu_grid_min` becomes very small ($10^{-18}$). As  a result, the loglikelihood is `-Inf` for nonzero $x$ (which is fine, as `exp(-Inf) = 0`), and `NAN` for zeros. The latter is strange as my code does not handle `big - small` number very well, and R produces `NAN` for  `0*-Inf`: 
+```
+x = 0; prob = 1 - 1e-20;
+x*log(1-prob)
+## [1] NaN 
+```
+  I use this for my implementation of the "continous" negative binomial loglikelihood. 
 
+Below I reproduce issue one. 
+
+## Experiments
 ```{r}
 library(NNLM)
 library(gtools)
@@ -80,7 +88,7 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)
 Run `ebpmf` and plot ELBO. 
 ```{r}
 ## ebpmf
-out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 100, verbose = F)
+out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 106, verbose = F)
 elbo_ebpmf= out$ELBO
 out_ebpmf = out$qg
 #elbo_ebpmf = elbo_ebpmf - min(elbo_ebpmf)
