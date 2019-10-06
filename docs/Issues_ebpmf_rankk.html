@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee7336281b25eb34c4dac3928d8e3f5f233ef07d7targetblanke733628a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e7336281b25eb34c4dac3928d8e3f5f233ef07d7" target="_blank">e733628</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreebd748763ff1cb402197c415fc8d8091d13fde0eftargetblankbd74876a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/bd748763ff1cb402197c415fc8d8091d13fde0ef" target="_blank">bd74876</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee7336281b25eb34c4dac3928d8e3f5f233ef07d7targetblanke733628a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreebd748763ff1cb402197c415fc8d8091d13fde0eftargetblankbd74876a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -601,6 +601,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bd748763ff1cb402197c415fc8d8091d13fde0ef/analysis/Issues_ebpmf_rankk.Rmd" target="_blank">bd74876</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-06
+</td>
+<td>
+update issue
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/66b65bde386033efebb74712350671827415b0af/docs/Issues_ebpmf_rankk.html" target="_blank">66b65bd</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -703,7 +737,7 @@ issues encountered in ebpmf
 <div id="issues" class="section level2">
 <h2>Issues:</h2>
 <ul>
-<li><p>ELBO does not strictly increase. I think, if we can really solve each <code>ebpm</code> problem optimally within that prior family <span class="math inline">\(\mathcal{G}\)</span>, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of <span class="math inline">\(\mathcal{G}\)</span> (based on our chosen grid), we may not solve each subproblem well. In fact, the second issue below is a good example.  </p></li>
+<li><p>ELBO does not strictly increase. I think, if we can really solve each <code>ebpm</code> problem optimally within that prior family <span class="math inline">\(\mathcal{G}\)</span>, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of <span class="math inline">\(\mathcal{G}\)</span> (based on our chosen grid), we may not solve each subproblem well.  </p></li>
 <li><p>Numerical issue when computing <code>L</code>: at iteration 107, I get <code>Error in verify.likelihood.matrix(L) : Input argument &quot;L&quot; should be a numeric matrix with &gt;= 2 columns, &gt;= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive</code>. It happens in <code>ebpm</code> when computing <span class="math inline">\(l_{ik} = log \ NB(x_i; a_k, \frac{b_k}{b_k + s})\)</span>. Only the first column of l (corresponding to the smallest chosen mean (biggest rate)) are all -inf. Why it happens? This is how we choose the grid</p>
 <pre><code>xprime = x
 xprime[x == 0] = xprime[x == 0] + 1
@@ -768,9 +802,9 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)</code></pre>
 <pre class="r"><code>## ebpmf
 out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 106, verbose = F)</code></pre>
 <pre><code>[1] &quot;summary of  runtime:&quot;
-[1] &quot;init           : 0.028000&quot;
+[1] &quot;init           : 0.031000&quot;
 [1] &quot;Ez     per time: 0.001344&quot;
-[1] &quot;rank1  per time: 0.017745&quot;</code></pre>
+[1] &quot;rank1  per time: 0.017637&quot;</code></pre>
 <pre class="r"><code>elbo_ebpmf= out$ELBO
 out_ebpmf = out$qg
 distance_max =  max(elbo_ebpmf) - elbo_ebpmf
