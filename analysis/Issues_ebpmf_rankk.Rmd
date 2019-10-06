@@ -14,7 +14,7 @@ editor_options:
 
 
 ## Issues:
-* ELBO does not strictly increase. I think, if we can really solve each `ebpm` problem optimally within that prior family $\mathcal{G}$, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of $\mathcal{G}$ (based on our chosen grid), we may not solve each subproblem well. In fact, the second issue below is a good example. \ 
+* ELBO does not strictly increase. I think, if we can really solve each `ebpm` problem optimally within that prior family $\mathcal{G}$, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of $\mathcal{G}$ (based on our chosen grid), we may not solve each subproblem well. \ 
 
 * Numerical issue when computing `L`: at iteration 107, I get ` Error in verify.likelihood.matrix(L) : Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive`. 
   It happens in `ebpm` when computing $l_{ik} = log \ NB(x_i; a_k, \frac{b_k}{b_k + s})$. Only the first column of l (corresponding to the smallest chosen mean (biggest rate)) are all -inf. Why it happens? This is how we choose the grid
