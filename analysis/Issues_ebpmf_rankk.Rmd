@@ -8,7 +8,9 @@ editor_options:
 ---
 
 ## Experiment setup
-It is the same as in https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html except that I record the ELBO function. (from `ebpmf::ebpmf_exponential_mixture_experiment` function). 
+* I put my code for https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html into a pacakge: https://github.com/zihao12/ebpmf
+
+* It is the same as in https://zihao12.github.io/ebpmf_demo/ebpmf_rankk_demo2.html except that I record the ELBO function (from `ebpmf::ebpmf_exponential_mixture_experiment` function) and find a few issues.  
 
 
 ## Issues:
@@ -91,7 +93,6 @@ Run `ebpmf` and plot ELBO.
 out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 106, verbose = F)
 elbo_ebpmf= out$ELBO
 out_ebpmf = out$qg
-#elbo_ebpmf = elbo_ebpmf - min(elbo_ebpmf)
 distance_max =  max(elbo_ebpmf) - elbo_ebpmf
 plot(1:length(distance_max), distance_max, xlab = "niter", ylab = "distance to max (ELBO)", type = "l", col = "blue")
 ```
