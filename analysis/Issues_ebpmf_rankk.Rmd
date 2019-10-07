@@ -16,7 +16,7 @@ editor_options:
 ## Issues:
 * ELBO does not strictly increase. I think, if we can really solve each `ebpm` problem optimally within that prior family $\mathcal{G}$, we should mamke ELBO nondecreasing (which is why coordinate ascend works?). But since in practice, we only optimize it over a subset of $\mathcal{G}$ (based on our chosen grid), we may not solve each subproblem well. \ 
 
-* Numerical issue when computing `L`: at iteration 107, I get ` Error in verify.likelihood.matrix(L) : Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive`. 
+* [solved] Numerical issue when computing `L`: at iteration 107, I get ` Error in verify.likelihood.matrix(L) : Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive`. 
   It happens in `ebpm` when computing $l_{ik} = log \ NB(x_i; a_k, \frac{b_k}{b_k + s})$. Only the first column of l (corresponding to the smallest chosen mean (biggest rate)) are all -inf. Why it happens? This is how we choose the grid
 ```
 xprime = x
@@ -31,9 +31,9 @@ x*log(1-prob)
 ## [1] NaN 
 ```
   I use this for my implementation of the "continous" negative binomial loglikelihood. 
+  I solve it (probably not the best way) by setting that term to 0 "manually". 
 
-Below I reproduce issue one. 
-
+I have solved issue 2 and reproduce issue 1 here.  
 ## Experiments
 ```{r}
 library(NNLM)
@@ -90,7 +90,7 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)
 Run `ebpmf` and plot ELBO. 
 ```{r}
 ## ebpmf
-out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 106, verbose = F)
+out = ebpmf::ebpmf_exponential_mixture_experiment(sim$X, K, maxiter.out = 150, verbose = F)
 elbo_ebpmf= out$ELBO
 out_ebpmf = out$qg
 distance_max =  max(elbo_ebpmf) - elbo_ebpmf
