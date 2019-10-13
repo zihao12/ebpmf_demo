@@ -1,0 +1,163 @@
+---
+title: "Compare_ebpmf_nmf"
+author: "zihao12"
+date: "2019-10-13"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+rm(list = ls())
+library(ebpmf)
+library(gtools)
+library(NNLM)
+library(ggplot2)
+```
+
+
+## Goal
+In previous experiments https://zihao12.github.io/ebpmf_demo/Issue_ebpmf_issue2.html, we  found  `ebpmf` and `nmf` (I use Lee's multiplicative update, so it is EM algorithm for solving the  MLE) have different performance on different dataset. Here I want to simulate data from a quantifiable noise level, as described  here https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2 (pve.tex), and see their performance. 
+
+
+## Data  setup  and Comparison  Metric
+
+$$
+\begin{align}
+    & X_{ij} \sim Pois(\Lambda_{ij} U_{ij})\\
+    & \Lambda_{ij} = \sum_k L_{ik} F_{jk}\\
+    & L_{ik} \sim Gamma(a_L, b_L)\\
+    & F_{jk} \sim Gamma(a_F, b_F)\\
+    & U_{ij} \sim Gamma(1/a, 1/a)\\
+\end{align}
+$$
+
+Given $a_L, a_F, b_L, b_F$, I simulate $L, F$, and  get $\Lambda_{true} = L F^t$. \\
+Then for a chosen  level of pve (according to  the  writeup), I compute the corresponding $a$, then sample $Y_{train}$, and $Y_{val}$ by: firstsampling $U_{train}, U_{val}$, then forming the mean matrix and sampling from the Poisson.\\
+"ll_train" is $log p(Y_{train}|\hat{\Lambda})$; "ll_val" is $log p(Y_{val}|\hat{\Lambda})$; "RMSE" is $RMSE(\Lambda_{true}, \hat{\Lambda})$.
+
+
+```{r}
+simulate_data <- function(n, p, K, params, seed = 123){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = params$al, rate = params$bl), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = params$af, rate = params$bf), ncol = K)
+  Lam =  L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  pve = compute_pve(K, a =  params$a, al = params$al, af = params$af,bl = params$bl, bf = params$bf)
+  return(list(params = params,Lam = Lam,X = X, Y = Y,  pve =  pve))
+}
+
+
+simulate_Lam <- function(n, p, K, params, seed = 123){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = params$al, rate = params$bl), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = params$af, rate = params$bf), ncol = K)
+  Lam =  L %*% t(F)
+  return(list(params = params,Lam = Lam,L = L, F = F))
+}
+
+simulate_X <- function(sim, params){
+  n = nrow(sim$Lam)
+  p = ncol(sim$Lam)
+  U1 = matrix(rgamma(n*p, shape = 1/params$a, rate = 1/params$a), nrow = n)
+  U_Lam1 = sim$Lam * U1
+  X = matrix(rpois(n*p, U_Lam1), nrow = n)
+  U2 = matrix(rgamma(n*p, shape = 1/params$a, rate = 1/params$a), nrow = n)
+  U_Lam2 = sim$Lam * U2
+  Y = matrix(rpois(n*p, U_Lam2), nrow = n) ## do we need to sample a different U?
+  pve = compute_pve(K, a =  params$a, al = params$al, af = params$af,bl = params$bl, bf = params$bf)
+  return(list(params = params,Lam = sim$Lam,X = X, Y = Y,  pve =  pve))
+}
+
+
+compute_pve <- function(K, a, al, af, bl, bf){
+  var_lam = K * (1 + al + af) * al * af/(bl * bf)^2
+  var_x = (a + 1) * var_lam + a * (K * al * af / (bl *  bf))^2
+  return(var_lam/var_x)
+}
+
+compute_rmse <- function(lam1, lam2){
+  return(sqrt(mean((lam1 - lam2)^2)))
+}
+
+compute_ll <- function(X, lam){
+  return(sum(dpois(X,lam, log = T)))
+}
+
+## Fix  other params and choose "a" that can achieve the  targeted  pve
+adjust_a_by_pve  <- function(params, K, pve){
+  al = params$al
+  af = params$af
+  bl = params$bl
+  bf = params$bf
+  var_lam = K * (1 + al + af) * al * af/(bl * bf)^2
+  numer = var_lam/pve - var_lam
+  denom = var_lam + (K* al*af/(bl*bf))^2
+  params[["a"]] = numer/denom
+  return(params)
+}
+```
+
+```{r warning=F}
+n = 100
+p = 200
+K = 2
+params = list(al = 10, bl =  10, af = 10, bf = 10, a = NA)
+m = 2  ## for ebpmf_exp
+maxiter = 100
+
+pve_ = 0.1*seq(1, 10, 2)
+pves = c(); methods = c(); ll_trains  = c(); ll_vals  = c(); RMSEs = c();
+sim_ = simulate_Lam(n, p, K, params)
+
+for(pve in pve_){
+  params = adjust_a_by_pve(params, K, pve)
+  sim = simulate_X(sim_, params)
+  out_ebpmf_exp = ebpmf::ebpmf_exponential_mixture(sim$X, K = K, m = m, maxiter.out = maxiter)
+  out_ebpmf_exp[["lam"]] = out_ebpmf_exp$qg$qls_mean %*% t(out_ebpmf_exp$qg$qfs_mean)
+  ll_trains = c(ll_trains, compute_ll(sim$X, out_ebpmf_exp[["lam"]]))
+  ll_vals = c(ll_vals, compute_ll(sim$Y,out_ebpmf_exp[["lam"]]))
+  RMSEs = c(RMSEs, compute_rmse(sim$Lam, out_ebpmf_exp[["lam"]]))
+  methods = c(methods,"ebpmf_exp")
+  pves = c(pves, sim$pve)
+
+  out_ebpmf_point = ebpmf::ebpmf_point_gamma(sim$X, K = K, maxiter.out = maxiter)
+  out_ebpmf_point[["lam"]] = out_ebpmf_point$qg$qls_mean %*% t(out_ebpmf_point$qg$qfs_mean)
+  ll_trains = c(ll_trains, compute_ll(sim$X, out_ebpmf_point[["lam"]]))
+  ll_vals = c(ll_vals, compute_ll(sim$Y,out_ebpmf_point[["lam"]]))
+  RMSEs = c(RMSEs, compute_rmse(sim$Lam, out_ebpmf_point[["lam"]]))
+  methods = c(methods,"ebpmf_point")
+  pves = c(pves, sim$pve)
+
+  out_nnmf = NNLM::nnmf(sim$X, k = K, max.iter = maxiter, method = "lee")
+  out_nnmf[["lam"]] = out_nnmf$W %*% out_nnmf$H
+  ll_trains = c(ll_trains, compute_ll(sim$X, out_nnmf[["lam"]]))
+  ll_vals = c(ll_vals, compute_ll(sim$Y,out_nnmf[["lam"]]))
+  RMSEs = c(RMSEs, compute_rmse(sim$Lam, out_nnmf[["lam"]]))
+  methods = c(methods,"nnmf")
+  pves = c(pves, sim$pve)
+}
+
+df = data.frame(pve = pves, method = methods, ll_train = ll_trains, ll_val = ll_vals, RMSE = RMSEs)
+```
+
+Below are the results  (the black line in the first two plots are likelihood for oracle)
+
+```{r plot}
+ggplot(df)+
+  geom_point(aes(x = pve, y = ll_train, color = method))+
+  geom_line(aes(x = pve, y = ll_train, color = method))+
+  geom_abline(slope = 0, intercept = compute_ll(sim$X, sim$Lam))
+
+ggplot(df)+
+  geom_point(aes(x = pve, y = ll_val, color = method))+
+  geom_line(aes(x = pve, y = ll_val, color = method))+
+  geom_abline(slope = 0, intercept = compute_ll(sim$Y, sim$Lam))
+
+ggplot(df)+
+  geom_point(aes(x = pve, y = RMSE, color = method)) +
+  geom_line(aes(x = pve, y = RMSE, color = method))
+```
+
