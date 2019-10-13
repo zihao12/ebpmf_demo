@@ -396,7 +396,7 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/zihao12/ebpmf">
+  <a href="https://github.com/zihao12/ebpmf_demo">
     <span class="fa fa-github"></span>
      
     Source code
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed42555c2a5bf5494fa60f32c6bde91ef8238acc0targetblankd42555ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/d42555c2a5bf5494fa60f32c6bde91ef8238acc0" target="_blank">d42555c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec3ecc2c341a49f53ca3cabaa5b46ed017fdd5a20targetblankc3ecc2ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c3ecc2c341a49f53ca3cabaa5b46ed017fdd5a20" target="_blank">c3ecc2c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed42555c2a5bf5494fa60f32c6bde91ef8238acc0targetblankd42555ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec3ecc2c341a49f53ca3cabaa5b46ed017fdd5a20targetblankc3ecc2ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -605,6 +605,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/c3ecc2c341a49f53ca3cabaa5b46ed017fdd5a20/analysis/Issue_ebpmf_issue2.Rmd" target="_blank">c3ecc2c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+<td>
+Issue_ebpmf_issue2.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/244ee32c83c28a034cb670be1e741dd54a52f218/docs/Issue_ebpmf_issue2.html" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/d42555c2a5bf5494fa60f32c6bde91ef8238acc0/analysis/Issue_ebpmf_issue2.Rmd" target="_blank">d42555c</a>
 </td>
 <td>
@@ -646,7 +680,7 @@ library(gtools)
 library(NNLM)</code></pre>
 <div id="goal" class="section level2">
 <h2>Goal</h2>
-<p>I encountered two issues in my experiments, and I reproduce them here:<br />
+<p>I encountered two issues in my experiments for <code>ebpmf</code> (<a href="https://github.com/stephenslab/ebpmf" class="uri">https://github.com/stephenslab/ebpmf</a>), and I reproduce them here:<br />
 * ELBO is not montonically increasing (and even decreasing). Either my ELBO formula is wrong, or my algorithm has a bug (it maximizes ELBO using coordinate descent, so should increase in each step). But the trend for RMSE (compare our posterior estimate for <span class="math inline">\(\Lambda\)</span> with the true one) is decreasing (though there are small exceptions).<br />
 * In simulated dataset(simulate from a mixture of gamma), <code>ebpmf</code> methods get much better validation likelihood and RMSE. However, in real 10x genomics dataset, it is getting much worse result on validation set. (<span class="math inline">\(X\)</span> is the real data. <span class="math inline">\(Y^{train}_{ij} \sim Bin(0.5, X_{ij})\)</span> and <span class="math inline">\(Y^{val}_{ij} = X_{ij} - Y^{train}_{ij}\)</span>).</p>
 </div>
@@ -660,6 +694,43 @@ print(dim(real$X))</code></pre>
 <pre><code>[1] 2611  359</code></pre>
 <pre class="r"><code>hist(real$X, breaks = 100, main = &quot;hist for Y_train&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-2-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>simulated dataset</p>
 <pre class="r"><code>sim_mgamma &lt;- function(dist){
   pi = dist$pi
@@ -706,6 +777,43 @@ print(dim(sim$X))</code></pre>
 <pre><code>[1]  50 100</code></pre>
 <pre class="r"><code>hist(sim$X, breaks = 100, main = &quot;hist for Y_train&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-3-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="elbos-and-rmse" class="section level2">
 <h2>ELBOs and RMSE</h2>
@@ -719,8 +827,82 @@ print(dim(sim$X))</code></pre>
 out_ebpmf_exp = ebpmf::ebpmf_exponential_mixture(sim$X, K, m = m, maxiter.out = 100)
 plot(out_ebpmf_exp$ELBO, type = &quot;l&quot;, xlab = &quot;niter&quot;, ylab = &quot;ELBO&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-4-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(out_ebpmf_exp$KL, type = &quot;l&quot;, xlab = &quot;niter&quot;, ylab = &quot;KL&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-4-2.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## experiment to see RMSE on Lambda
 Lam_true = sim$L %*% t(sim$F)
 try_experiment_rmse &lt;- function(iter, Lam_true){
@@ -741,14 +923,125 @@ rmses</code></pre>
 <pre class="r"><code>plot(iters, rmses - min(rmses), main  = &quot;distance to smallest rmse&quot;, xlab = &quot;iter&quot;, type = &quot;l&quot;)
 points(iters, rmses - min(rmses))</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-5-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="ebpmf_exponential_mixture-1" class="section level4">
 <h4><code>ebpmf_exponential_mixture</code></h4>
 <pre class="r"><code>out_ebpmf_exp = ebpmf::ebpmf_point_gamma(sim$X, K, maxiter.out = 100)
 plot(out_ebpmf_exp$ELBO, type = &quot;l&quot;, xlab = &quot;niter&quot;, ylab = &quot;ELBO&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-6-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(out_ebpmf_exp$KL, type = &quot;l&quot;, xlab = &quot;niter&quot;, ylab = &quot;KL&quot;)</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-6-2.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## experiment to see RMSE on Lambda
 Lam_true = sim$L %*% t(sim$F)
 try_experiment_rmse &lt;- function(iter, Lam_true){
@@ -769,6 +1062,43 @@ rmses</code></pre>
 <pre class="r"><code>plot(iters, rmses - min(rmses), main  = &quot;distance to smallest rmse&quot;, xlab = &quot;iter&quot;, type = &quot;l&quot;)
 points(iters, rmses - min(rmses))</code></pre>
 <p><img src="figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/244ee32c83c28a034cb670be1e741dd54a52f218/docs/figure/Issue_ebpmf_issue2.Rmd/unnamed-chunk-7-1.png" target="_blank">244ee32</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
