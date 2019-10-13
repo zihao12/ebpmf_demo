@@ -12,7 +12,7 @@ navbar:
   right:
   - icon: fa-github
     text: Source code
-    href: https://github.com/zihao12/ebpmf
+    href: https://github.com/zihao12/ebpmf_demo
 output:
   workflowr::wflow_html:
     toc: yes
