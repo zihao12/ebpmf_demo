@@ -13,10 +13,24 @@ library(gtools)
 library(NNLM)
 ```
 
-## Compare `ebpmf` and `nnmf`
+## Goal
+I encountered two issues in my experiments, and I reproduce them here:\
 
-### simulation data
-I simulate data from  a mixture of gamma. 
+* ELBO is not montonically increasing (and even decreasing). Either my  ELBO formula is wrong, or  my algorithm has a  bug (it maximizes ELBO using coordinate descent, so should increase in each step). But the trend for  RMSE (compare our posterior estimate for $\Lambda$ with the true one) is decreasing  (though  there  are small exceptions). \
+
+* In simulated dataset(simulate from  a mixture of  gamma), `ebpmf` methods get much better validation likelihood and RMSE. However, in real 10x genomics dataset, it is getting much worse result on validation set. ($X$ is the real data. $Y^{train}_{ij} \sim Bin(0.5, X_{ij})$ and $Y^{val}_{ij} = X_{ij} - Y^{train}_{ij}$). 
+
+## dataset
+10X genomics  dataset
+```{r}
+X = read.csv("data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Y.csv")
+Y = read.csv("data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Yhat.csv")
+real = list(X = as.matrix(X), Y = as.matrix(Y))
+print(dim(real$X))
+hist(real$X, breaks = 100, main = "hist for Y_train")
+```
+
+simulated dataset
 ```{r}
 sim_mgamma <- function(dist){
   pi = dist$pi
@@ -59,11 +73,82 @@ dl = 10
 df = 10
 scale_b = 5
 sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b, seed =12)
-
+print(dim(sim$X))
+hist(sim$X, breaks = 100, main = "hist for Y_train")
 ```
 
 
-```{r warning  = F, message=F, results='hide'}
+
+## ELBOs and RMSE
+I cannot get a strictly increasing ELBO. Either the ELBO is wrong, or my algorithm is wrong. Then I check to see if RMSE with true $\Lambda$ is decreasing, and it seems to. 
+
+###  ELBO and KL
+Note the KL is $KL(q_L || g_L)  + KL(q_F || g_F)$. Detail in write  up. 
+
+####  `ebpmf_exponential_mixture`
+```{r warning  = F}
+m = 2
+out_ebpmf_exp = ebpmf::ebpmf_exponential_mixture(sim$X, K, m = m, maxiter.out = 100)
+plot(out_ebpmf_exp$ELBO, type = "l", xlab = "niter", ylab = "ELBO")
+plot(out_ebpmf_exp$KL, type = "l", xlab = "niter", ylab = "KL")
+```
+
+
+```{r warning  = F}
+## experiment to see RMSE on Lambda
+Lam_true = sim$L %*% t(sim$F)
+try_experiment_rmse <- function(iter, Lam_true){
+  test = ebpmf::ebpmf_exponential_mixture(sim$X, K, m = m, maxiter.out = iter)
+  Lam = test$qg$qls_mean %*% t(test$qg$qfs_mean)
+  return(sqrt(mean((Lam - Lam_true)^2)))
+}
+
+iters = seq(10,100,10)
+rmses <- c()
+for(iter in iters){
+  rmse = try_experiment_rmse(iter, Lam_true)
+  rmses = c(rmses, rmse)
+}
+rmses
+plot(iters, rmses - min(rmses), main  = "distance to smallest rmse", xlab = "iter", type = "l")
+points(iters, rmses - min(rmses))
+```
+
+
+####  `ebpmf_exponential_mixture`
+```{r warning  = F}
+out_ebpmf_exp = ebpmf::ebpmf_point_gamma(sim$X, K, maxiter.out = 100)
+plot(out_ebpmf_exp$ELBO, type = "l", xlab = "niter", ylab = "ELBO")
+plot(out_ebpmf_exp$KL, type = "l", xlab = "niter", ylab = "KL")
+```
+
+
+```{r warning  = F}
+## experiment to see RMSE on Lambda
+Lam_true = sim$L %*% t(sim$F)
+try_experiment_rmse <- function(iter, Lam_true){
+  test = ebpmf::ebpmf_point_gamma(sim$X, K, maxiter.out = iter)
+  Lam = test$qg$qls_mean %*% t(test$qg$qfs_mean)
+  return(sqrt(mean((Lam - Lam_true)^2)))
+}
+
+iters = seq(10,100,10)
+rmses <- c()
+for(iter in iters){
+  rmse = try_experiment_rmse(iter, Lam_true)
+  rmses = c(rmses, rmse)
+}
+rmses
+plot(iters, rmses - min(rmses), main  = "distance to smallest rmse", xlab = "iter", type = "l")
+points(iters, rmses - min(rmses))
+```
+
+
+## Compare `ebpmf` and `nnmf`
+
+### simulation data
+(The execution  of  the same code below is done in an  interactive session in midway, and the result is shown below) 
+```{r warning  = F, message=F, results='hide', eval = F}
 methods = c(); runtimes = c(); ll_trains = c(); ll_vals = c(); RMSEs = c()
 ## ebpmf_exponential_mixture
 start = proc.time()
@@ -115,14 +200,71 @@ df <- data.frame(method = methods, runtime = runtimes, ll_train = ll_trains, ll_
 ```
 
 ```{r}
+df = readRDS("output/Issue_ebpmf_issue2_df1.Rds")
 df
 ```
 
 
 ###  real data
+```{r}
+K = 2
+maxiter.out = 100
+```
+
+(The execution  of  the same code below is done in an  interactive session in midway, and the result is shown below) 
+```{r warning  = F, message=F, results='hide', eval = F}
+methods = c(); runtimes = c(); ll_trains = c(); ll_vals = c(); 
+## ebpmf_exponential_mixture
+start = proc.time()
+out = ebpmf::ebpmf_exponential_mixture(real$X, K, m = 2, maxiter.out = maxiter.out)
+runtime = proc.time() - start
+lam_fit = out$qg$qls_mean %*% t(out$qg$qfs_mean)
+ll_train = sum(dpois(real$X, lambda = lam_fit, log = T))
+ll_val   = sum(dpois(real$Y, lambda = lam_fit, log = T))
+
+methods = c(methods, "ebpmf_exponential_mixture")
+runtimes = c(runtimes, runtime[[3]])
+ll_trains = c(ll_trains, ll_train)
+ll_vals   = c(ll_vals, ll_val)
+
+## nnmf
+W0 = out$qg$qls_mean
+H0 = t(out$qg$qfs_mean)
+start = proc.time()
+out = NNLM::nnmf(real$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = maxiter.out, rel.tol = -1)
+runtime = proc.time() - start
+lam_fit = out$W %*% out$H
+ll_train = sum(dpois(real$X, lambda = lam_fit, log = T))
+ll_val   = sum(dpois(real$Y, lambda = lam_fit, log = T))
+
+methods = c(methods, "NNMF")
+runtimes = c(runtimes, runtime[[3]])
+ll_trains = c(ll_trains, ll_train)
+ll_vals   = c(ll_vals, ll_val)
+
+## ebpmf_point_gamma
+start = proc.time()
+out = ebpmf::ebpmf_point_gamma(real$X, K,maxiter.out = maxiter.out)
+runtime = proc.time() - start
+lam_fit = out$qg$qls_mean %*% t(out$qg$qfs_mean)
+ll_train = sum(dpois(real$X, lambda = lam_fit, log = T))
+ll_val   = sum(dpois(real$Y, lambda = lam_fit, log = T))
+methods = c(methods, "ebpmf_point_gamma")
+runtimes = c(runtimes, runtime[[3]])
+ll_trains = c(ll_trains, ll_train)
+ll_vals   = c(ll_vals, ll_val)
+
+df <- data.frame(method = methods, runtime = runtimes, ll_train = ll_trains, ll_val = ll_vals)
+```
 
 
+```{r}
+df = readRDS("output/Issue_ebpmf_issue2_df2.Rds")
+df
+```
 
+### Comment
+Our `ebpmf` methods do better in simulation data in validation, but much worse in real 10x-genomics dataset. 
 
 
 
