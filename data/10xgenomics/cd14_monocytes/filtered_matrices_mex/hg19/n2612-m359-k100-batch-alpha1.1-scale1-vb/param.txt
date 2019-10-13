@@ -1,0 +1,20 @@
+n: 2612
+k: 100
+t: 2
+test_ratio: 0.200000000
+validation_ratio: 0.010000000
+seed: 0.000000000
+alpha: 1.100000000
+scale: 1.000000000
+reportfreq: 10
+natgrad_seq_updates: False
+vb: True
+kappa: 0.500000000
+tau0: 0.000000000
+training ratings: 391745
+statistics: read 2612 users, 359 movies, 391745 ratings
+c: 1.000000000
+beta_shape_prior: 0.300000000
+beta_rate_prior: 0.300000000
+test ratings: 391745
+validation ratings: 38801
