@@ -45,6 +45,7 @@ K = 2
 dl = 10
 df = 10
 scale_b = 5
+maxiter = 500
 sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b, seed =12)
 
 
@@ -53,7 +54,7 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b, seed =12)
 methods = c(); runtimes = c(); ll_trains = c(); ll_vals = c(); RMSEs = c()
 ## ebpmf_exponential_mixture
 start = proc.time()
-out = ebpmf::ebpmf_exponential_mixture(sim$X, K, m = 2, maxiter.out = 100)
+out = ebpmf::ebpmf_exponential_mixture(sim$X, K, m = 2, maxiter.out = maxiter)
 runtime = proc.time() - start
 lam_fit = out$qg$qls_mean %*% t(out$qg$qfs_mean)
 ll_train = sum(dpois(sim$X, lambda = lam_fit, log = T))
@@ -70,7 +71,7 @@ RMSEs = c(RMSEs, RMSE)
 W0 = out$qg$qls_mean
 H0 = t(out$qg$qfs_mean)
 start = proc.time()
-out = NNLM::nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = 100, rel.tol = -1)
+out = NNLM::nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = "mkl", method = "lee", max.iter = maxiter, rel.tol = -1)
 runtime = proc.time() - start
 lam_fit = out$W %*% out$H
 ll_train = sum(dpois(sim$X, lambda = lam_fit, log = T))
@@ -85,7 +86,7 @@ RMSEs = c(RMSEs, RMSE)
 
 ## ebpmf_point_gamma
 start = proc.time()
-out = ebpmf::ebpmf_point_gamma(sim$X, K,maxiter.out = 100)
+out = ebpmf::ebpmf_point_gamma(sim$X, K,maxiter.out = maxiter)
 runtime = proc.time() - start
 lam_fit = out$qg$qls_mean %*% t(out$qg$qfs_mean)
 ll_train = sum(dpois(sim$X, lambda = lam_fit, log = T))
@@ -99,17 +100,18 @@ RMSEs = c(RMSEs, RMSE)
 
 df <- data.frame(method = methods, runtime = runtimes, ll_train = ll_trains, ll_val = ll_vals, RMSE = RMSEs)
 
+saveRDS(df, "../output/Issue_ebpmf_issue2_df1.Rds")
 
 ## ------------------------------------------------------------------------
-df
-
+print(df)
+rm(df)
 
 ## ------------------------------------------------------------------------
-X = read.csv("../10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Y.csv")
-Y = read.csv("../10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Yhat.csv")
+X = read.csv("../data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Y.csv")
+Y = read.csv("../data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Yhat.csv")
 real = list(X = as.matrix(X), Y = as.matrix(Y))
 K = 2
-maxiter.out = 20
+maxiter.out = 500
 
 
 ## ----warning  = F, message=F, results='hide'-----------------------------
@@ -154,9 +156,9 @@ runtimes = c(runtimes, runtime[[3]])
 ll_trains = c(ll_trains, ll_train)
 ll_vals   = c(ll_vals, ll_val)
 
-df <- data.frame(method = methods, runtime = runtimes, ll_train = ll_trains, ll_val = ll_vals, RMSE = RMSEs)
-
+df <- data.frame(method = methods, runtime = runtimes, ll_train = ll_trains, ll_val = ll_vals)
+saveRDS(df, "../output/Issue_ebpmf_issue2_df2.Rds")
 
 ## ------------------------------------------------------------------------
-df
+print(df)
 
