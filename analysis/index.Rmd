@@ -29,6 +29,8 @@ My experiments on efficient softmax function in R is here: https://zihao12.githu
 
 My experiments on estimating mode: https://zihao12.github.io/ebpmf_demo/pois_mode_est.html
 
-My issues onebpmf: https://zihao12.github.io/ebpmf_demo/Issues_ebpmf_rankk.html
+My issues on ebpmf: https://zihao12.github.io/ebpmf_demo/Issues_ebpmf_rankk.html (fixed part of it and it continues to appear in the next issue...)
+
+More issues on ebpmf https://zihao12.github.io/ebpmf_demo/Issue_ebpmf_issue2.html
 
 
