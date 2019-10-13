@@ -14,7 +14,7 @@ library(NNLM)
 ```
 
 ## Goal
-I encountered two issues in my experiments, and I reproduce them here:\
+I encountered two issues in my experiments for `ebpmf` (https://github.com/stephenslab/ebpmf), and I reproduce them here:\
 
 * ELBO is not montonically increasing (and even decreasing). Either my  ELBO formula is wrong, or  my algorithm has a  bug (it maximizes ELBO using coordinate descent, so should increase in each step). But the trend for  RMSE (compare our posterior estimate for $\Lambda$ with the true one) is decreasing  (though  there  are small exceptions). \
 
