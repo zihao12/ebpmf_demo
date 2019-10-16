@@ -1,0 +1,73 @@
+---
+title: "Issue_ebpmf_rank1"
+author: "zihao12"
+date: "2019-10-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Issues
+In my experiments with rank-1 ebpmf-point-gamma, I observe the following things  (reproduced below):\
+
+* After the first  iteration, ELBO only has small changes (not monotonic!!) and $\sum_i <l_i>$, $\sum_j <f_j>$  also only  has  small changes. \
+
+* Different initialization results in  similar ELBO (though estimates for  L, F are very different individually) adn similar estimate of $\Lambda$
+
+
+
+## Discussion
+* first, after writing down  the  update euqation for $s : =\sum_i <l_i>$, it should  be changing each iteration (it is a very complicated form). If we simplify and suppose the  point mass at 0 are all 0, we  have 
+$$s_{t+1} = \frac{n a_L  + \sum_{ij} X_{ij}}{b_L + \frac{pa_F + \sum_{ij} X_{ij}}{b_F + s_t}}$$
+As in our data we have $\sum_{ij} X_{ij >>n a_L, pa_F}$ and $s >> b_L, b_F$, we can see $s_{t+1} \approx s_t$. But analytically  we cannot draw the equivalence. Thus the changes  in  ELBO probably are not  just  due to  numerical issues, and we need to checkj  if the ELBO is  wrong.\\
+
+* we  can  draw the connection to the EM for the MLE of PMF (lee's multiplicative update). In the rank  one case, we can arrive at  optimal in one step. Why? Since, given $f_j$s, the optimal $l_i$ is $l_i = \frac{\sum_j  X_{ij}}{\sum_j  f_{j}}$. This is equivalent to the MLE for the poisson mean problem, where  $x_i := \sum_j X_{ij}$ and $s_i := \sum_j f_j$. Then we can easily see that $\sum_i l_i$, $\sum_j f_j$ stays the same throught iterations, so $l_i, f_j$ will not be changing after the first  iteration. But in `ebpmf-point-gamma`, we have a nonlinear shrinkage operator on the  the MLE result, so we don't expect to see the same constant bahavior here.
+
+```{r warning = F}
+rm(list  = ls())
+
+library(NNLM)
+#library(gtools)
+#library(ebpmf)
+
+simulate_data <- function(n, p, K, params, seed = 123){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = params$al, rate = params$bl), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = params$af, rate = params$bf), ncol = K)
+  Lam =  L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  return(list(params = params,Lam = Lam,X = X, Y = Y))
+}
+
+n = 100
+p = 200
+K = 5
+params = list(al = 10, bl =  10, af = 10, bf = 10, a = 1)
+
+
+sim = simulate_data(n, p, K, params)
+
+init1 = list(mean = runif(n, 0, 1))
+init100 = list(mean = 100*runif(n, 0, 1))
+out_ebpmf1 = ebpmf::ebpmf_rank1_point_gamma(sim$X, maxiter = 10, init = init1, verbose = T)
+out_ebpmf100 = ebpmf::ebpmf_rank1_point_gamma(sim$X, maxiter = 10, init = init100, verbose = T)
+```
+
+
+
+Let's see compare the posterior estimate of  $\Lambda$ from different initializations. 
+```{r}
+lam1 = out_ebpmf1$ql$mean %*% t(out_ebpmf1$qf$mean)
+
+lam100 = out_ebpmf100$ql$mean %*% t(out_ebpmf100$qf$mean)
+
+max(abs((lam1 - lam100)/(lam1 + lam100)))
+
+```
+
+
+
+
+
+
