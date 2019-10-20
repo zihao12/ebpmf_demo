@@ -10,6 +10,10 @@ editor_options:
 
 Welcome to my research website.
 
+## Vignette 
+Vignette for `ebpm_exponential_mixture`:  https://zihao12.github.io/ebpmf_demo/vignette_ebpm.html
+
+
 ## Demo for algorithms
 
 My demo for EBPM with mixture of exponential is here: https://zihao12.github.io/ebpmf_demo/ebpm_demo.html
@@ -35,4 +39,4 @@ More issues on ebpmf https://zihao12.github.io/ebpmf_demo/Issue_ebpmf_issue2.htm
 
 Comparisons between `ebpmf` and  `nmf`: https://zihao12.github.io/ebpmf_demo/Compare_ebpmf_nmf.html
 
-Comparisons between `ebpmf` and  `nmf`: https://zihao12.github.io/ebpmf_demo/ebpmf_rank1_demo3.html
+Investigation of rank 1 again: https://zihao12.github.io/ebpmf_demo/ebpmf_rank1_demo3.html
