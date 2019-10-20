@@ -1,0 +1,137 @@
+---
+title: "vignette_ebpm"
+author: "zihao12"
+date: "2019-10-20"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## EBPM problem
+$$
+\begin{align}
+  & x_i \sim Pois(s_i \lambda_i)\\
+  & \lambda_i \sim g(.)\\
+  & g \in \mathcal{G}
+\end{align}
+$$
+Our goal is to estimate $\hat{g}$ (MLE), then  compute posterior $p(\lambda_i | x_i, \hat{g})$. Here  I use  mixture of exponential as prior family. 
+
+See model details and derivations in https://github.com/stephenslab/ebpm/blob/master/derivations/ebpm.pdf
+
+```{r warning=F}
+devtools::load_all("../ebpm")
+set.seed(123)
+library(ebpm)
+library(ggplot2)
+library(gtools)
+require(gridExtra)
+```
+
+
+## experiment setup
+I simulate data from the mixture of exponential, and compare fitting  the poisson mean problem with MLE  ($\hat{\lambda}^{mle}_i = \frac{x_i}{s_i}$), and  `ebpm_exponential_mixture` with  different options. \
+
+For `ebpm`, the options are: 
+* `fit_true_g`: use the true $g$ \
+* `fit_true_scale`: use the true mixture components to estimate $\hat{g}$ 
+* `fit_est_scale`: estimate mixture components from data, then  estimate $\hat{g}$ 
+
+
+```{r}
+## simulate data
+n = 2000
+d = 20
+sim = ebpm::simulate_pois_expmix(n, d)
+hist(log(sim$x+1), breaks = 100, xlab = "log(x + 1)", main = "hist for log(x + 1)")
+```
+
+
+```{r}
+rmse <- function(x,y){
+  return(sqrt(mean((x-y)^2)))
+}
+methods = c()
+ll_gs = c()
+rmses = c()
+## true
+methods = c(methods, "true")
+ll_gs = c(ll_gs, sim$ll)
+rmses = c(rmses, 0)
+
+## MLE
+methods = c(methods, "mle")
+ll_gs = c(ll_gs, NA)
+rmses = c(rmses, rmse(sim$x/sim$s, sim$lam))
+
+
+## fit (with known g)
+fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, g_init = sim$g, fix_g = T)
+methods = c(methods, "fit_true_g")
+ll_gs = c(ll_gs, fit$log_likelihood)
+rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
+rm(fit)
+
+## fit (with known true scale (mixture components))
+fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = list(a = sim$g$a, b = sim$g$b))
+methods = c(methods, "fit_true_scale")
+ll_gs = c(ll_gs, fit$log_likelihood)
+rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
+rm(fit)
+
+## fit (estimate scale)
+fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
+methods = c(methods, "fit_est_scale")
+ll_gs = c(ll_gs, fit$log_likelihood)
+rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
+rm(fit)
+
+data.frame(method = methods, ll_g = ll_gs, rmse = rmses)
+```
+
+
+
+## plot the $\lambda$s 
+```{r}
+fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
+df = data.frame(lam_true = sim$lam,lam_hat_mle = sim$x/sim$s, lam_hat_ebpm = fit$posterior$mean)
+ggplot(df)+
+  geom_point(aes(x = log(lam_true + 1), y = log(lam_hat_ebpm +1)), color = "blue")+
+  geom_abline(slope = 1, intercept = 0)+
+  guides(fill = "color")+
+  ggtitle("lam_true vs lam_hat_ebpm")
+
+ggplot(df)+
+  geom_point(aes(x = log(lam_true + 1), y = log(lam_hat_mle + 1)), color = "blue")+
+  geom_abline(slope = 1, intercept = 0)+
+  guides(fill = "color")+
+  ggtitle("lam_true vs lam_hat_mle")
+
+ggplot(df)+
+  geom_point(aes(x = log(lam_hat_mle + 1), y = log(lam_hat_ebpm + 1)), color = "blue")+
+  geom_abline(slope = 1, intercept = 0)+
+  guides(fill = "color")+
+  ggtitle("lam_hat_mle vs lam_hat_ebpm")
+```
+
+## With outliers
+What if there are outliers in our data?
+I add a few very numbers to the original data. Let's see  what will `ebpm` and MLE give us:
+```{r}
+n_outlier = 10
+sim2 = sim
+sim2$x = c(sim2$x, runif(n_outlier, 1e+4, 1e+5))
+sim2$s = c(sim$s, replicate(n_outlier, 1))
+
+fit2 = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
+
+## MLE estimate
+tail(sim2$x/sim2$s, n_outlier)
+
+## `ebpm` estimate
+tail(fit2$posterior$mean, n_outlier)
+```
+So `ebpm` shrinks those abnormally big data towards smaller values. 
+
+
+
