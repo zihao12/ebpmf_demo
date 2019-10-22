@@ -12,6 +12,7 @@ Welcome to my research website.
 
 ## Vignette 
 Vignette for `ebpm_exponential_mixture`:  https://zihao12.github.io/ebpmf_demo/vignette_ebpm.html
+Vignette for `ebpm_point_gamma`        :  https://zihao12.github.io/ebpmf_demo/vignette_ebpm2.html
 
 
 ## Demo for algorithms

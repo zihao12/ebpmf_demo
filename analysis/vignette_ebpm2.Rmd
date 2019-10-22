@@ -1,5 +1,5 @@
 ---
-title: "vignette_ebpm"
+title: "vignette_ebpm2"
 author: "zihao12"
 date: "2019-10-20"
 output: workflowr::wflow_html
@@ -15,7 +15,7 @@ $$
   & g \in \mathcal{G}
 \end{align}
 $$
-Our goal is to estimate $\hat{g}$ (MLE), then  compute posterior $p(\lambda_i | x_i, \hat{g})$. Here  I use  mixture of exponential as prior family. 
+Our goal is to estimate $\hat{g}$ (MLE), then  compute posterior $p(\lambda_i | x_i, \hat{g})$. Here  I use  point gamma (spike-and-slab) as prior family. 
 
 See model details and derivations in https://github.com/stephenslab/ebpm/blob/master/derivations/ebpm.pdf
 
@@ -40,13 +40,13 @@ For `ebpm`, the options are:
 
 ```{r}
 ## simulate data
-n = 2000
-sim = ebpm::simulate_pois_expmix(n, seed = 123)
+n = 20000
+sim = ebpm::simulate_pois_point_gamma(n, g_init = point_gamma(0.4,1,1))
 hist(log(sim$x+1), breaks = 100, xlab = "log(x + 1)", main = "hist for log(x + 1)")
 ```
 
 
-```{r}
+```{r warning=F}
 rmse <- function(x,y){
   return(sqrt(mean((x-y)^2)))
 }
@@ -65,22 +65,16 @@ rmses = c(rmses, rmse(sim$x/sim$s, sim$lam))
 
 
 ## fit (with known g)
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, g_init = sim$g, fix_g = T)
+fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s, g_init = sim$g, fix_g = T)
 methods = c(methods, "fit_true_g")
 ll_gs = c(ll_gs, fit$log_likelihood)
 rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
 rm(fit)
 
-## fit (with known true scale (mixture components))
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = list(shape = sim$g$shape, scale = sim$g$scale))
-methods = c(methods, "fit_true_scale")
-ll_gs = c(ll_gs, fit$log_likelihood)
-rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
-rm(fit)
 
 ## fit (estimate scale)
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
-methods = c(methods, "fit_est_scale")
+fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
+methods = c(methods, "fit_est_g")
 ll_gs = c(ll_gs, fit$log_likelihood)
 rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
 rm(fit)
@@ -91,8 +85,8 @@ data.frame(method = methods, ll_g = ll_gs, rmse = rmses)
 
 
 ## plot the $\lambda$s 
-```{r}
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
+```{r warning=F}
+fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
 df = data.frame(lam_true = sim$lam,lam_hat_mle = sim$x/sim$s, lam_hat_ebpm = fit$posterior$mean)
 ggplot(df)+
   geom_point(aes(x = log(lam_true + 1), y = log(lam_hat_ebpm +1)), color = "blue")+
@@ -116,13 +110,13 @@ ggplot(df)+
 ## With outliers
 What if there are outliers in our data?
 I add a few very numbers to the original data. Let's see  what will `ebpm` and MLE give us:
-```{r}
+```{r warning=F}
 n_outlier = 10
 sim2 = sim
 sim2$x = c(sim2$x, runif(n_outlier, 1e+4, 1e+5))
 sim2$s = c(sim$s, replicate(n_outlier, 1))
 
-fit2 = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
+fit2 = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
 
 ## MLE estimate
 tail(sim2$x/sim2$s, n_outlier)
