@@ -13,7 +13,7 @@
 
 <meta name="date" content="2019-10-20" />
 
-<title>vignette_ebpm</title>
+<title>vignette_ebpm2</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -418,7 +418,7 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">vignette_ebpm</h1>
+<h1 class="title toc-ignore">vignette_ebpm2</h1>
 <h4 class="author">zihao12</h4>
 <h4 class="date">2019-10-20</h4>
 
@@ -557,7 +557,6 @@ Untracked files:
     Untracked:  data/trash/
     Untracked:  docs/figure/Experiment_ebpmf_rankk.Rmd/
     Untracked:  docs/figure/test.Rmd/
-    Untracked:  docs/figure/vignette_ebpm2.Rmd/
     Untracked:  verbose_log_1571583163.21966.txt
     Untracked:  verbose_log_1571583324.71036.txt
     Untracked:  verbose_log_1571583741.94199.txt
@@ -580,86 +579,9 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
-
 <p>
-These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+There are no past versions. Publish this analysis with <code>wflow_publish()</code> to start tracking its development.
 </p>
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-File
-</th>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-<th>
-Message
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/08b994838840b133639d3caaf71fe3b153224ae2/analysis/vignette_ebpm.Rmd" target="_blank">08b9948</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-22
-</td>
-<td>
-add vignette for ebpm point gamma
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/8abb68410decc62de063f29c4a2da06b61750e63/docs/vignette_ebpm.html" target="_blank">8abb684</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/0ac263708b7d82b65a2fb1f55491e526374669b9/analysis/vignette_ebpm.Rmd" target="_blank">0ac2637</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-<td>
-vignette for ebpm
-</td>
-</tr>
-</tbody>
-</table>
-</div>
 <hr>
 </div>
 </div>
@@ -672,7 +594,7 @@ vignette for ebpm
   &amp; \lambda_i \sim g(.)\\
   &amp; g \in \mathcal{G}
 \end{align}
-\]</span> Our goal is to estimate <span class="math inline">\(\hat{g}\)</span> (MLE), then compute posterior <span class="math inline">\(p(\lambda_i | x_i, \hat{g})\)</span>. Here I use mixture of exponential as prior family.</p>
+\]</span> Our goal is to estimate <span class="math inline">\(\hat{g}\)</span> (MLE), then compute posterior <span class="math inline">\(p(\lambda_i | x_i, \hat{g})\)</span>. Here I use point gamma (spike-and-slab) as prior family.</p>
 <p>See model details and derivations in <a href="https://github.com/stephenslab/ebpm/blob/master/derivations/ebpm.pdf" class="uri">https://github.com/stephenslab/ebpm/blob/master/derivations/ebpm.pdf</a></p>
 <pre class="r"><code>devtools::load_all(&quot;../ebpm&quot;)</code></pre>
 <pre><code>Loading ebpm</code></pre>
@@ -689,47 +611,10 @@ require(gridExtra)</code></pre>
 For <code>ebpm</code>, the options are: * <code>fit_true_g</code>: use the true <span class="math inline">\(g\)</span><br />
 * <code>fit_true_scale</code>: use the true mixture components to estimate <span class="math inline">\(\hat{g}\)</span> * <code>fit_est_scale</code>: estimate mixture components from data, then estimate <span class="math inline">\(\hat{g}\)</span></p>
 <pre class="r"><code>## simulate data
-n = 2000
-sim = ebpm::simulate_pois_expmix(n, seed = 123)
+n = 20000
+sim = ebpm::simulate_pois_point_gamma(n, g_init = point_gamma(0.4,1,1))
 hist(log(sim$x+1), breaks = 100, xlab = &quot;log(x + 1)&quot;, main = &quot;hist for log(x + 1)&quot;)</code></pre>
-<p><img src="figure/vignette_ebpm.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8abb68410decc62de063f29c4a2da06b61750e63/docs/figure/vignette_ebpm.Rmd/unnamed-chunk-2-1.png" target="_blank">8abb684</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/vignette_ebpm2.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>rmse &lt;- function(x,y){
   return(sqrt(mean((x-y)^2)))
 }
@@ -748,167 +633,49 @@ rmses = c(rmses, rmse(sim$x/sim$s, sim$lam))
 
 
 ## fit (with known g)
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, g_init = sim$g, fix_g = T)
+fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s, g_init = sim$g, fix_g = T)
 methods = c(methods, &quot;fit_true_g&quot;)
 ll_gs = c(ll_gs, fit$log_likelihood)
 rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
 rm(fit)
 
-## fit (with known true scale (mixture components))
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = list(shape = sim$g$shape, scale = sim$g$scale))
-methods = c(methods, &quot;fit_true_scale&quot;)
-ll_gs = c(ll_gs, fit$log_likelihood)
-rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
-rm(fit)
 
 ## fit (estimate scale)
-fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = &quot;estimate&quot;)
-methods = c(methods, &quot;fit_est_scale&quot;)
+fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
+methods = c(methods, &quot;fit_est_g&quot;)
 ll_gs = c(ll_gs, fit$log_likelihood)
 rmses = c(rmses, rmse(fit$posterior$mean, sim$lam))
 rm(fit)
 
 data.frame(method = methods, ll_g = ll_gs, rmse = rmses)</code></pre>
-<pre><code>          method      ll_g      rmse
-1           true -2909.614 0.0000000
-2            mle        NA 1.0556360
-3     fit_true_g -2909.614 0.7873792
-4 fit_true_scale -2909.307 0.7870354
-5  fit_est_scale -2911.056 0.7900987</code></pre>
+<pre><code>      method      ll_g      rmse
+1       true -20247.31 0.0000000
+2        mle        NA 0.7742208
+3 fit_true_g -20247.31 0.5822832
+4  fit_est_g -20245.22 0.5824073</code></pre>
 </div>
 <div id="plot-the-lambdas" class="section level2">
 <h2>plot the <span class="math inline">\(\lambda\)</span>s</h2>
-<pre class="r"><code>fit = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = &quot;estimate&quot;)
+<pre class="r"><code>fit = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
 df = data.frame(lam_true = sim$lam,lam_hat_mle = sim$x/sim$s, lam_hat_ebpm = fit$posterior$mean)
 ggplot(df)+
   geom_point(aes(x = log(lam_true + 1), y = log(lam_hat_ebpm +1)), color = &quot;blue&quot;)+
   geom_abline(slope = 1, intercept = 0)+
   guides(fill = &quot;color&quot;)+
   ggtitle(&quot;lam_true vs lam_hat_ebpm&quot;)</code></pre>
-<p><img src="figure/vignette_ebpm.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
-Past versions of unnamed-chunk-4-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-4-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8abb68410decc62de063f29c4a2da06b61750e63/docs/figure/vignette_ebpm.Rmd/unnamed-chunk-4-1.png" target="_blank">8abb684</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/vignette_ebpm2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(df)+
   geom_point(aes(x = log(lam_true + 1), y = log(lam_hat_mle + 1)), color = &quot;blue&quot;)+
   geom_abline(slope = 1, intercept = 0)+
   guides(fill = &quot;color&quot;)+
   ggtitle(&quot;lam_true vs lam_hat_mle&quot;)</code></pre>
-<p><img src="figure/vignette_ebpm.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
-Past versions of unnamed-chunk-4-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-4-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8abb68410decc62de063f29c4a2da06b61750e63/docs/figure/vignette_ebpm.Rmd/unnamed-chunk-4-2.png" target="_blank">8abb684</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/vignette_ebpm2.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(df)+
   geom_point(aes(x = log(lam_hat_mle + 1), y = log(lam_hat_ebpm + 1)), color = &quot;blue&quot;)+
   geom_abline(slope = 1, intercept = 0)+
   guides(fill = &quot;color&quot;)+
   ggtitle(&quot;lam_hat_mle vs lam_hat_ebpm&quot;)</code></pre>
-<p><img src="figure/vignette_ebpm.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-3">
-Past versions of unnamed-chunk-4-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-4-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8abb68410decc62de063f29c4a2da06b61750e63/docs/figure/vignette_ebpm.Rmd/unnamed-chunk-4-3.png" target="_blank">8abb684</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-10-20
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/vignette_ebpm2.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="with-outliers" class="section level2">
 <h2>With outliers</h2>
@@ -918,16 +685,16 @@ sim2 = sim
 sim2$x = c(sim2$x, runif(n_outlier, 1e+4, 1e+5))
 sim2$s = c(sim$s, replicate(n_outlier, 1))
 
-fit2 = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = &quot;estimate&quot;)
+fit2 = ebpm::ebpm_point_gamma(x = sim$x, s = sim$s)
 
 ## MLE estimate
 tail(sim2$x/sim2$s, n_outlier)</code></pre>
-<pre><code> [1] 92784.87 88839.60 77665.37 54542.54 24372.73 62643.89 96880.65
- [8] 92920.31 80323.68 80200.52</code></pre>
+<pre><code> [1] 82892.51 66284.71 36595.39 95580.53 98246.45 57903.75 99663.95
+ [8] 46440.66 32593.94 26183.92</code></pre>
 <pre class="r"><code>## `ebpm` estimate
 tail(fit2$posterior$mean, n_outlier)</code></pre>
-<pre><code> [1] 0.4546687 1.0402662 0.4546687 1.6189692 0.4546687 1.6189692 0.4546687
- [8] 0.4546687 0.4546687 1.0402662</code></pre>
+<pre><code> [1] 0.2140541 0.2140541 0.2140541 2.4975590 0.9693591 0.2140541 0.2140541
+ [8] 0.2140541 0.2140541 0.2140541</code></pre>
 <p>So <code>ebpm</code> shrinks those abnormally big data towards smaller values.</p>
 <br>
 <p>
@@ -969,11 +736,11 @@ loaded via a namespace (and not attached):
 [31] rprojroot_1.3-2     glue_1.3.1          R6_2.4.0           
 [34] processx_3.3.1      rmarkdown_1.13      sessioninfo_1.1.1  
 [37] mixsqp_0.1-121      purrr_0.3.2         callr_3.2.0        
-[40] magrittr_1.5        whisker_0.3-2       scales_1.0.0       
-[43] backports_1.1.5     ps_1.3.0            ellipsis_0.3.0     
-[46] htmltools_0.3.6     usethis_1.5.1       assertthat_0.2.1   
-[49] colorspace_1.4-1    labeling_0.3        stringi_1.4.3      
-[52] lazyeval_0.2.2      munsell_0.5.0       crayon_1.3.4       </code></pre>
+[40] magrittr_1.5        scales_1.0.0        backports_1.1.5    
+[43] ps_1.3.0            ellipsis_0.3.0      htmltools_0.3.6    
+[46] usethis_1.5.1       assertthat_0.2.1    colorspace_1.4-1   
+[49] labeling_0.3        stringi_1.4.3       lazyeval_0.2.2     
+[52] munsell_0.5.0       crayon_1.3.4       </code></pre>
 </div>
 </div>
 
