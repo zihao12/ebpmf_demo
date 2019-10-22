@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="zihao12" />
+
+<meta name="date" content="2019-10-22" />
+
+<title>debug_ebpmf_point_gamma</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ebpmf_demo</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zihao12/ebpmf_demo">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">debug_ebpmf_point_gamma</h1>
+<h4 class="author">zihao12</h4>
+<h4 class="date">2019-10-22</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-10-22
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20190923code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20190923)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20190923code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20190923)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7814be61099175554dd6b96d59bf82ff1a18783ftargetblank7814be6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/7814be61099175554dd6b96d59bf82ff1a18783f" target="_blank">7814be6</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7814be61099175554dd6b96d59bf82ff1a18783ftargetblank7814be6a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/softmax_experiments.ipynb
+    Untracked:  data/trash/
+    Untracked:  docs/figure/Experiment_ebpmf_rankk.Rmd/
+    Untracked:  docs/figure/test.Rmd/
+    Untracked:  verbose_log_1571583163.21966.txt
+    Untracked:  verbose_log_1571583324.71036.txt
+    Untracked:  verbose_log_1571583741.94199.txt
+    Untracked:  verbose_log_1571588102.40356.txt
+
+Unstaged changes:
+    Modified:   analysis/ebpmf_rank1_demo.Rmd
+    Modified:   analysis/ebpmf_rankk_demo.Rmd
+    Modified:   analysis/softmax_experiments.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7814be61099175554dd6b96d59bf82ff1a18783f/analysis/debug_ebpmf_point_gamma.Rmd" target="_blank">7814be6</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-22
+</td>
+<td>
+debug point gamma
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>I managed to find the bug in <code>ebpmf_point_gamma</code>.Now <code>ELBO</code> increases monotonically.</p>
+<p>Also noteworthy is the differences in RMSE compared with <a href="https://zihao12.github.io/ebpmf_demo/debug_ebpmf_exponential_mixture.html" class="uri">https://zihao12.github.io/ebpmf_demo/debug_ebpmf_exponential_mixture.html</a> . Note the data generating process is almost the same. I would further compare the two <code>ebpmf</code> methods.</p>
+<pre class="r"><code>rm(list  = ls())
+devtools::load_all(&quot;../ebpmf&quot;)</code></pre>
+<pre><code>Warning: 1 components of `...` were not used.
+
+We detected these problematic arguments:
+* `action`
+
+Did you misspecify an argument?</code></pre>
+<pre><code>Loading ebpmf</code></pre>
+<pre><code>Warning: package &#39;testthat&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>set.seed(123)
+library(NNLM)
+library(ebpmf)
+
+simulate_data &lt;- function(n, p, K, params, seed = 1234){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = params$al, rate = params$bl), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = params$af, rate = params$bf), ncol = K)
+  Lam =  L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  return(list(params = params,Lam = Lam,X = X, Y = Y))
+}
+n = 100
+p = 200
+K = 3
+params = list(al = 100, bl =  109, af = 100, bf = 100, a = 1)
+sim = simulate_data(n, p, K, params, seed =  1234)
+
+maxiter = 100</code></pre>
+<div id="rank-1" class="section level2">
+<h2>rank 1</h2>
+<div id="mle" class="section level3">
+<h3>mle</h3>
+<pre class="r"><code>## MLE
+mle_rank1 = NNLM::nnmf(A = sim$X, k = 1, method = &quot;lee&quot;, loss = &quot;mkl&quot;, max.iter = 1)
+lam_mle_rank1 =  mle_rank1$W %*% mle_rank1$H
+ll_train_mle_rank1  = sum(dpois(sim$X, lam_mle_rank1, log = T))
+ll_val_mle_rank1  = sum(dpois(sim$Y, lam_mle_rank1, log = T))
+rmse_mle_rank1 = sqrt(mean((lam_mle_rank1 - sim$Lam)^2))
+data.frame(ll_train = ll_train_mle_rank1,  ll_val = ll_val_mle_rank1, rmse = rmse_mle_rank1)</code></pre>
+<pre><code>   ll_train    ll_val      rmse
+1 -37606.75 -37849.52 0.1978021</code></pre>
+</div>
+<div id="ebpmf" class="section level3">
+<h3>ebpmf</h3>
+<pre class="r"><code>## rank 1 case
+out_rank1 =  ebpmf::ebpmf_rank1_point_gamma_helper(X = sim$X, maxiter = 10, verbose = T)</code></pre>
+<pre><code>[1] &quot;iter         elbo        kl_l         kl_f       sum_El       sum_Ef&quot;
+[1] &quot;  1   1525.9978611673  45.3663647810   68.4682771405   55800.5672468702   1.0002757797&quot;
+[1] &quot;  2   1525.9978611679  45.3663647784   68.4682771320   55800.6149360006   1.0002749247&quot;
+[1] &quot;  3   1525.9978611699  45.3663647734   68.4682770954   55800.6626321327   1.0002740696&quot;
+[1] &quot;  4   1525.9978611658  45.3663647798   68.4682771807   55800.7103325295   1.0002732143&quot;
+[1] &quot;  5   1525.9978611681  45.3663647760   68.4682771288   55800.7580488383   1.0002723589&quot;
+[1] &quot;  6   1525.9978611788  45.3663647769   68.4682768710   55800.8057672442   1.0002715038&quot;
+[1] &quot;  7   1525.9978611697  45.3663647797   68.4682770847   55800.8534679000   1.0002706483&quot;
+[1] &quot;  8   1525.9978611703  45.3663647790   68.4682770717   55800.9011965519   1.0002697926&quot;
+[1] &quot;  9   1525.9978611726  45.3663647734   68.4682770288   55800.9489323133   1.0002689368&quot;
+[1] &quot; 10   1525.9978611725  45.3663647772   68.4682770196   55800.9966705828   1.0002680810&quot;</code></pre>
+<pre class="r"><code>lam_rank1 =  out_rank1$ql$mean  %*% t(out_rank1$qf$mean)
+ll_train_rank1  = sum(dpois(sim$X, lam_rank1, log = T))
+ll_val_rank1  = sum(dpois(sim$Y, lam_rank1, log = T))
+rmse_rank1 = sqrt(mean((lam_rank1 - sim$Lam)^2))
+data.frame(ll_train = ll_train_rank1,  ll_val = ll_val_rank1, rmse = rmse_rank1)</code></pre>
+<pre><code>   ll_train    ll_val      rmse
+1 -37674.75 -37791.54 0.1434967</code></pre>
+</div>
+</div>
+<div id="rank-k" class="section level2">
+<h2>rank-k:</h2>
+<pre class="r"><code>out =  ebpmf::ebpmf_point_gamma(X = sim$X, K = K, maxiter.out = 100, verbose = F, fix_g = F)
+
+lam_out =  out$qg$qls_mean  %*% t(out$qg$qfs_mean)
+ll_train_out  = sum(dpois(sim$X, lam_out, log = T))
+ll_val_out  = sum(dpois(sim$Y, lam_out, log = T))
+rmse_out = sqrt(mean((lam_out - sim$Lam)^2))
+
+d = length(out$ELBO)
+print(sprintf(&quot;ELBO monotonically  increasing? %s&quot;, all(out$ELBO[1:(d-1)] &lt; out$ELBO[2:d])))</code></pre>
+<pre><code>[1] &quot;ELBO monotonically  increasing? TRUE&quot;</code></pre>
+<pre class="r"><code>plot(out$ELBO)</code></pre>
+<p><img src="figure/debug_ebpmf_point_gamma.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>data.frame(ll_train = ll_train_out,  ll_val = ll_val_out, rmse = rmse_out)</code></pre>
+<pre><code>   ll_train    ll_val      rmse
+1 -37714.18 -37832.52 0.1671491</code></pre>
+<div id="mle-1" class="section level3">
+<h3>mle</h3>
+<pre class="r"><code>mle_rankK = NNLM::nnmf(A = sim$X, init = list(W0 = out$qg$qls_mean, H0 = t(out$qg$qfs_mean)),k = K, method = &quot;lee&quot;, loss = &quot;mkl&quot;, rel.tol = 1e-10, max.iter = 100)
+lam_mle_rankK =  mle_rankK$W %*% mle_rankK$H
+ll_train_mle_rankK  = sum(dpois(sim$X, lam_mle_rankK, log = T))
+ll_val_mle_rankK  = sum(dpois(sim$Y, lam_mle_rankK, log = T))
+rmse_mle_rankK = sqrt(mean((lam_mle_rankK - sim$Lam)^2))
+data.frame(ll_train = ll_train_mle_rankK,  ll_val = ll_val_mle_rankK, rmse = rmse_mle_rankK)</code></pre>
+<pre><code>   ll_train    ll_val      rmse
+1 -36870.87 -38462.89 0.4485559</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] NNLM_0.4.2     ebpmf_0.1.0    testthat_2.2.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.2          compiler_3.5.1      git2r_0.25.2       
+ [4] workflowr_1.4.0     prettyunits_1.0.2   remotes_2.1.0      
+ [7] tools_3.5.1         digest_0.6.21       pkgbuild_1.0.3     
+[10] pkgload_1.0.2       evaluate_0.14       memoise_1.1.0      
+[13] rlang_0.4.0         cli_1.1.0           rstudioapi_0.10    
+[16] yaml_2.2.0          xfun_0.8            withr_2.1.2        
+[19] stringr_1.4.0       knitr_1.25          gtools_3.8.1       
+[22] desc_1.2.0          fs_1.3.1            devtools_2.2.1.9000
+[25] rprojroot_1.3-2     glue_1.3.1          R6_2.4.0           
+[28] processx_3.3.1      rmarkdown_1.13      sessioninfo_1.1.1  
+[31] mixsqp_0.1-121      callr_3.2.0         magrittr_1.5       
+[34] whisker_0.3-2       backports_1.1.5     ps_1.3.0           
+[37] ellipsis_0.3.0      htmltools_0.3.6     usethis_1.5.1      
+[40] assertthat_0.2.1    stringi_1.4.3       ebpm_0.0.0.9001    
+[43] crayon_1.3.4       </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
