@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-I managed to find the bug in `ebpmf_exponential_mixture`. Now we can make `ELBO` increase monotonically if we fix the scale/grid. But when we unfix the grid, the `ELBO` does  not increase monotonically. 
+I managed to find the bug in `ebpmf_exponential_mixture`. Now we can make `ELBO` increase monotonically if we fix the scale/grid. When we unfix the grid, the `ELBO` also increase monotonically if the grids chosen are dense enough. (As suggested by [Jason](https://github.com/willwerscheid), setting $m = 2^{0.25}$ works). 
 
 Another thing that's unexpected is: rank-1 fit gets better RMSE than rank-K fit (where K is truth) in  both MLE and EBPMF. 
 
@@ -118,16 +118,16 @@ ll_val_out  = sum(dpois(sim$Y, lam_out, log = T))
 rmse_out = sqrt(mean((lam_out - sim$Lam)^2))
 data.frame(ll_train = ll_train_out,  ll_val = ll_val_out, rmse = rmse_out)
 plot(out$ELBO, xlab = "iter", ylab = "ELBO")
-
-
 ```
+
+
 
 ### ebpmf, free
 In  each iteration, the algorithm estimates scale (grid)
 ```{r message=F, warning=F}
 rm(out)
 ## rank-k: fix nothing
-out =  ebpmf::ebpmf_exponential_mixture(X = sim$X, K = K, maxiter.out = maxiter, verbose = F)
+out =  ebpmf::ebpmf_exponential_mixture(X = sim$X, K = K, maxiter.out = maxiter, verbose = F,m = sqrt(2))
 
 lam_out =  out$qg$qls_mean  %*% t(out$qg$qfs_mean)
 ll_train_out  = sum(dpois(sim$X, lam_out, log = T))
@@ -136,6 +136,24 @@ rmse_out = sqrt(mean((lam_out - sim$Lam)^2))
 data.frame(ll_train = ll_train_out,  ll_val = ll_val_out, rmse = rmse_out)
 plot(out$ELBO, xlab = "iter", ylab = "ELBO")
 ```
+
+Now it is not strictly increasing. Let's use denser grids:
+```{r message=F, warning=F}
+rm(out)
+## rank-k: fix nothing
+out =  ebpmf::ebpmf_exponential_mixture(X = sim$X, K = K, maxiter.out = maxiter, verbose = F,m = 2^0.25)
+
+lam_out =  out$qg$qls_mean  %*% t(out$qg$qfs_mean)
+ll_train_out  = sum(dpois(sim$X, lam_out, log = T))
+ll_val_out  = sum(dpois(sim$Y, lam_out, log = T))
+rmse_out = sqrt(mean((lam_out - sim$Lam)^2))
+data.frame(ll_train = ll_train_out,  ll_val = ll_val_out, rmse = rmse_out)
+plot(out$ELBO, xlab = "iter", ylab = "ELBO")
+```
+
+
+
+
 
 ### mle
 ```{r message=F, warning=F}
