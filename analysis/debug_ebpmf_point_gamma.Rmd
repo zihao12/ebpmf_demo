@@ -1,0 +1,94 @@
+---
+title: "debug_ebpmf_point_gamma"
+author: "zihao12"
+date: "2019-10-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+I managed to find the bug in `ebpmf_point_gamma`.Now `ELBO` increases monotonically. 
+
+Also noteworthy  is  the differences in RMSE compared with https://zihao12.github.io/ebpmf_demo/debug_ebpmf_exponential_mixture.html . Note the data generating process is almost  the same. I would further compare the two `ebpmf` methods. 
+```{r}
+rm(list  = ls())
+devtools::load_all("../ebpmf")
+set.seed(123)
+library(NNLM)
+library(ebpmf)
+
+simulate_data <- function(n, p, K, params, seed = 1234){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = params$al, rate = params$bl), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = params$af, rate = params$bf), ncol = K)
+  Lam =  L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  return(list(params = params,Lam = Lam,X = X, Y = Y))
+}
+n = 100
+p = 200
+K = 3
+params = list(al = 100, bl =  109, af = 100, bf = 100, a = 1)
+sim = simulate_data(n, p, K, params, seed =  1234)
+
+maxiter = 100
+```
+
+## rank 1
+
+### mle
+```{r message=F, warning=F}
+## MLE
+mle_rank1 = NNLM::nnmf(A = sim$X, k = 1, method = "lee", loss = "mkl", max.iter = 1)
+lam_mle_rank1 =  mle_rank1$W %*% mle_rank1$H
+ll_train_mle_rank1  = sum(dpois(sim$X, lam_mle_rank1, log = T))
+ll_val_mle_rank1  = sum(dpois(sim$Y, lam_mle_rank1, log = T))
+rmse_mle_rank1 = sqrt(mean((lam_mle_rank1 - sim$Lam)^2))
+data.frame(ll_train = ll_train_mle_rank1,  ll_val = ll_val_mle_rank1, rmse = rmse_mle_rank1)
+
+```
+
+### ebpmf
+```{r message=F, warning=F}
+## rank 1 case
+out_rank1 =  ebpmf::ebpmf_rank1_point_gamma_helper(X = sim$X, maxiter = 10, verbose = T)
+lam_rank1 =  out_rank1$ql$mean  %*% t(out_rank1$qf$mean)
+ll_train_rank1  = sum(dpois(sim$X, lam_rank1, log = T))
+ll_val_rank1  = sum(dpois(sim$Y, lam_rank1, log = T))
+rmse_rank1 = sqrt(mean((lam_rank1 - sim$Lam)^2))
+data.frame(ll_train = ll_train_rank1,  ll_val = ll_val_rank1, rmse = rmse_rank1)
+
+```
+
+
+
+
+
+## rank-k: 
+```{r message=F, warning=F}
+out =  ebpmf::ebpmf_point_gamma(X = sim$X, K = K, maxiter.out = 100, verbose = F, fix_g = F)
+
+lam_out =  out$qg$qls_mean  %*% t(out$qg$qfs_mean)
+ll_train_out  = sum(dpois(sim$X, lam_out, log = T))
+ll_val_out  = sum(dpois(sim$Y, lam_out, log = T))
+rmse_out = sqrt(mean((lam_out - sim$Lam)^2))
+
+d = length(out$ELBO)
+print(sprintf("ELBO monotonically  increasing? %s", all(out$ELBO[1:(d-1)] < out$ELBO[2:d])))
+plot(out$ELBO)
+data.frame(ll_train = ll_train_out,  ll_val = ll_val_out, rmse = rmse_out)
+
+```
+
+
+
+### mle
+```{r message=F, warning=F}
+mle_rankK = NNLM::nnmf(A = sim$X, init = list(W0 = out$qg$qls_mean, H0 = t(out$qg$qfs_mean)),k = K, method = "lee", loss = "mkl", rel.tol = 1e-10, max.iter = 100)
+lam_mle_rankK =  mle_rankK$W %*% mle_rankK$H
+ll_train_mle_rankK  = sum(dpois(sim$X, lam_mle_rankK, log = T))
+ll_val_mle_rankK  = sum(dpois(sim$Y, lam_mle_rankK, log = T))
+rmse_mle_rankK = sqrt(mean((lam_mle_rankK - sim$Lam)^2))
+data.frame(ll_train = ll_train_mle_rankK,  ll_val = ll_val_mle_rankK, rmse = rmse_mle_rankK)
+```
