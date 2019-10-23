@@ -20,18 +20,27 @@ py_config()
 ```{r}
 vae_out = py_load_object("data/poisson-normal.pkl", pickle = "pickle")
 vae_out = data.frame(vae_out)
+
+
+ggplot(vae_out)+
+  geom_histogram(aes(x = x))
+
 ggplot(vae_out)+
   geom_point(aes(x = x, y = posterior_vae))
 ```
 
 ## Compare with EBPM
-```{r}
+```{r warning=F}
 library(ebpm)
-fit_ebpm = ebpm_exponential_mixture(as.vector(vae_out$x), s = 1)
+fit_ebpm = ebpm_exponential_mixture(as.vector(vae_out$x), s = 1, m = 2^0.25)
 vae_out[["posterior_ebpm"]] = fit_ebpm$posterior$mean
 ggplot(vae_out)+
   geom_point(aes(x = x, y = posterior_ebpm))
 ```
 
 
+```{r}
+max(fit_ebpm$fitted_g$pi)
+fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]
+```
 
