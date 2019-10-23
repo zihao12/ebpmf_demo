@@ -40,7 +40,9 @@ ggplot(vae_out)+
 
 
 ```{r}
+## biggest weight
 max(fit_ebpm$fitted_g$pi)
+## the mean  of the exponential component corresponding to the biggest weight
 fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]
 ```
 
