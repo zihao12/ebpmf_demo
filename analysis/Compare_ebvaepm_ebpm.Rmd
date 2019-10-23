@@ -1,0 +1,37 @@
+---
+title: "Compare_ebvaepm_ebpm"
+author: "zihao12"
+date: "2019-10-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+devtools::load_all("../ebpm")
+library(ggplot2)
+library(reticulate)
+use_python("/anaconda3/bin")
+py_config()
+
+```
+
+## show VAE results
+```{r}
+vae_out = py_load_object("data/poisson-normal.pkl", pickle = "pickle")
+vae_out = data.frame(vae_out)
+ggplot(vae_out)+
+  geom_point(aes(x = x, y = posterior_vae))
+```
+
+## Compare with EBPM
+```{r}
+library(ebpm)
+fit_ebpm = ebpm_exponential_mixture(as.vector(vae_out$x), s = 1)
+vae_out[["posterior_ebpm"]] = fit_ebpm$posterior$mean
+ggplot(vae_out)+
+  geom_point(aes(x = x, y = posterior_ebpm))
+```
+
+
+
