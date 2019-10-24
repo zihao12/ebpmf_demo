@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb50f5ad48e9d560f7262f4c3534daa26ed4911ectargetblankb50f5ada"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b50f5ad48e9d560f7262f4c3534daa26ed4911ec" target="_blank">b50f5ad</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9339d2806f10ebf76ec720f62fcc2d31b6c47ef5targetblank9339d28a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/9339d2806f10ebf76ec720f62fcc2d31b6c47ef5" target="_blank">9339d28</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb50f5ad48e9d560f7262f4c3534daa26ed4911ectargetblankb50f5ada" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9339d2806f10ebf76ec720f62fcc2d31b6c47ef5targetblank9339d28a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -556,7 +556,6 @@ Untracked files:
     Untracked:  analysis/index.knit.md
     Untracked:  analysis/index.utf8.md
     Untracked:  analysis/softmax_experiments.ipynb
-    Untracked:  data/poisson-normal.pkl
     Untracked:  data/trash/
     Untracked:  docs/figure/Experiment_ebpmf_rankk.Rmd/
     Untracked:  docs/figure/test.Rmd/
@@ -568,7 +567,6 @@ Untracked files:
 Unstaged changes:
     Modified:   analysis/ebpmf_rank1_demo.Rmd
     Modified:   analysis/ebpmf_rankk_demo.Rmd
-    Modified:   analysis/ebvae-poisson-normal.ipynb
     Modified:   analysis/index.Rmd
     Modified:   analysis/softmax_experiments.Rmd
 
@@ -609,6 +607,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9339d2806f10ebf76ec720f62fcc2d31b6c47ef5/analysis/Compare_ebvaepm_ebpm.Rmd" target="_blank">9339d28</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+updae Compare_ebvaepm_ebpm.Rmd again
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/8aed3d85c2e3c1cfa5f10b1bbbce7f063815eff1/docs/Compare_ebvaepm_ebpm.html" target="_blank">8aed3d8</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -803,8 +835,8 @@ compare vae with ebpm
 </div>
 </div>
 </div>
-<p>Here I show and compare the results from <code>ebvae_pm</code> and <code>ebpm_exponential_mixture</code>. <code>ebvae_pm</code> was implemented and experimented here: <a href="https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html" class="uri">https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html</a> .</p>
-<p>After training for 10000 iterations, <code>ebvae_pm</code> beats <code>ebpm</code>.</p>
+<p>Here I show and compare the results from <code>ebvae_pm</code> and <code>ebpm_exponential_mixture</code>, <code>ebpm_point_gamma</code>. <code>ebvae_pm</code> was implemented and experimented here: <a href="https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html" class="uri">https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html</a> .</p>
+<p>After training for 10000 iterations, <code>ebvae_pm</code> beats <code>ebpm_exponential_mixture</code>, <code>ebpm_point_gamma</code>. This is of course not fair as data is generated from the assumption of the <code>ebvae_pm</code> model. But at least this result shows we can use VAE to do Empirical Bayes.</p>
 <pre class="r"><code>devtools::load_all(&quot;../ebpm&quot;)</code></pre>
 <pre><code>Loading ebpm</code></pre>
 <pre class="r"><code>library(ggplot2)
@@ -904,6 +936,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8aed3d85c2e3c1cfa5f10b1bbbce7f063815eff1/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-2.png" target="_blank">8aed3d8</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/7010ff6b850d456ff7572621d767cf428056f545/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-2.png" target="_blank">7010ff6</a>
 </td>
 <td>
@@ -972,6 +1015,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8aed3d85c2e3c1cfa5f10b1bbbce7f063815eff1/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-3-1.png" target="_blank">8aed3d8</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/4be9b78908da39d9d6d7d8e019038f95b9e6925a/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-3-1.png" target="_blank">4be9b78</a>
 </td>
 <td>
@@ -1011,6 +1065,43 @@ vae_out[[&quot;posterior_ebpm_point&quot;]] = fit_ebpm_point$posterior$mean
 ggplot(vae_out)+
   geom_point(aes(x = x, y = posterior_ebpm_point))</code></pre>
 <p><img src="figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8aed3d85c2e3c1cfa5f10b1bbbce7f063815eff1/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-5-1.png" target="_blank">8aed3d8</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## fitted_g from point_gamma
 class(fit_ebpm_point$fitted_g) = &quot;data.frame&quot;
 fit_ebpm_point$fitted_g</code></pre>
