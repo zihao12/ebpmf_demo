@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7fbc1f96ce0b27388ed75780dc16e6bca5ef7748targetblank7fbc1f9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/7fbc1f96ce0b27388ed75780dc16e6bca5ef7748" target="_blank">7fbc1f9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreedfcc1fc255ad22bbed45f2640a6be9d275bea085targetblankdfcc1fca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/dfcc1fc255ad22bbed45f2640a6be9d275bea085" target="_blank">dfcc1fc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7fbc1f96ce0b27388ed75780dc16e6bca5ef7748targetblank7fbc1f9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreedfcc1fc255ad22bbed45f2640a6be9d275bea085targetblankdfcc1fca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -567,6 +567,7 @@ Unstaged changes:
     Modified:   analysis/ebpmf_rank1_demo.Rmd
     Modified:   analysis/ebpmf_rankk_demo.Rmd
     Modified:   analysis/ebvae-poisson-normal.ipynb
+    Modified:   analysis/index.Rmd
     Modified:   analysis/softmax_experiments.Rmd
 
 </code></pre>
@@ -606,6 +607,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/604d2f7b69ac31765ddd66e810fdc0a2009aa423/docs/Compare_ebvaepm_ebpm.html" target="_blank">604d2f7</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -788,6 +806,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/604d2f7b69ac31765ddd66e810fdc0a2009aa423/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-1.png" target="_blank">604d2f7</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/4be9b78908da39d9d6d7d8e019038f95b9e6925a/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-1.png" target="_blank">4be9b78</a>
 </td>
 <td>
@@ -837,6 +866,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/604d2f7b69ac31765ddd66e810fdc0a2009aa423/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-2.png" target="_blank">604d2f7</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/4be9b78908da39d9d6d7d8e019038f95b9e6925a/docs/figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-2.png" target="_blank">4be9b78</a>
@@ -920,7 +960,7 @@ fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]</code></pre>
 <h2>Compare RMSE</h2>
 <pre class="r"><code>## rmse(fit_vae, lam)
 sqrt(mean((vae_out$posterior_vae - vae_out$lam)^2))</code></pre>
-<pre><code>[1] 5.788469</code></pre>
+<pre><code>[1] 5.783777</code></pre>
 <pre class="r"><code>## rmse(fit_ebpm, lam)
 sqrt(mean((fit_ebpm$posterior$mean - vae_out$lam)^2))</code></pre>
 <pre><code>[1] 2.962624</code></pre>
