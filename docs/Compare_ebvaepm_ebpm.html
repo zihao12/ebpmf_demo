@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree234f9afed09a3b6de483a5faa0c3b45a4942f806targetblank234f9afa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/234f9afed09a3b6de483a5faa0c3b45a4942f806" target="_blank">234f9af</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7fbc1f96ce0b27388ed75780dc16e6bca5ef7748targetblank7fbc1f9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/7fbc1f96ce0b27388ed75780dc16e6bca5ef7748" target="_blank">7fbc1f9</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree234f9afed09a3b6de483a5faa0c3b45a4942f806targetblank234f9afa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7fbc1f96ce0b27388ed75780dc16e6bca5ef7748targetblank7fbc1f9a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -566,6 +566,7 @@ Untracked files:
 Unstaged changes:
     Modified:   analysis/ebpmf_rank1_demo.Rmd
     Modified:   analysis/ebpmf_rankk_demo.Rmd
+    Modified:   analysis/ebvae-poisson-normal.ipynb
     Modified:   analysis/softmax_experiments.Rmd
 
 </code></pre>
@@ -605,6 +606,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7fbc1f96ce0b27388ed75780dc16e6bca5ef7748/analysis/Compare_ebvaepm_ebpm.Rmd" target="_blank">7fbc1f9</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+update Compare_ebvaepm_ebpm.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/66940d1b864842d0726481b457d1cba199b43639/docs/Compare_ebvaepm_ebpm.html" target="_blank">66940d1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -714,38 +749,20 @@ compare vae with ebpm
 </div>
 </div>
 </div>
+<p>Here I show and compare the results from <code>ebvae_pm</code> and <code>ebpmf</code>. <code>ebvae_pm</code> was implemented and experimented here: <a href="https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html" class="uri">https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html</a> .</p>
+<p>Now <code>ebvae_pm</code> does much worse even than the <code>mle</code>. It seems to be shrinking too much.</p>
 <pre class="r"><code>devtools::load_all(&quot;../ebpm&quot;)</code></pre>
-<pre><code>Warning: 1 components of `...` were not used.
-
-We detected these problematic arguments:
-* `action`
-
-Did you misspecify an argument?</code></pre>
 <pre><code>Loading ebpm</code></pre>
-<pre><code>Warning: package &#39;testthat&#39; was built under R version 3.5.2</code></pre>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
-<pre class="r"><code>library(reticulate)</code></pre>
-<pre><code>Warning: package &#39;reticulate&#39; was built under R version 3.5.2</code></pre>
-<pre class="r"><code>use_python(&quot;/anaconda3/bin&quot;)
-py_config()</code></pre>
-<pre><code>python:         /anaconda3/bin/python3
-libpython:      /anaconda3/lib/libpython3.6m.dylib
-pythonhome:     /anaconda3:/anaconda3
-version:        3.6.8 |Anaconda, Inc.| (default, Dec 29 2018, 19:04:46)  [GCC 4.2.1 Compatible Clang 4.0.1 (tags/RELEASE_401/final)]
-numpy:          /anaconda3/lib/python3.6/site-packages/numpy
-numpy_version:  1.14.2
-
-NOTE: Python version was forced by RETICULATE_PYTHON</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(reticulate)</code></pre>
 <div id="show-vae-results" class="section level2">
 <h2>show VAE results</h2>
 <pre class="r"><code>vae_out = py_load_object(&quot;data/poisson-normal.pkl&quot;, pickle = &quot;pickle&quot;)
 vae_out = data.frame(vae_out)
 
-
+## This is what data looks like
 ggplot(vae_out)+
-  geom_histogram(aes(x = x))</code></pre>
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+  geom_histogram(aes(x = x), bins = 100)</code></pre>
 <p><img src="figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
@@ -898,6 +915,18 @@ max(fit_ebpm$fitted_g$pi)</code></pre>
 <pre class="r"><code>## the mean  of the exponential component corresponding to the biggest weight
 fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]</code></pre>
 <pre><code>[1] 10.76347</code></pre>
+</div>
+<div id="compare-rmse" class="section level2">
+<h2>Compare RMSE</h2>
+<pre class="r"><code>## rmse(fit_vae, lam)
+sqrt(mean((vae_out$posterior_vae - vae_out$lam)^2))</code></pre>
+<pre><code>[1] 5.788469</code></pre>
+<pre class="r"><code>## rmse(fit_ebpm, lam)
+sqrt(mean((fit_ebpm$posterior$mean - vae_out$lam)^2))</code></pre>
+<pre><code>[1] 2.962624</code></pre>
+<pre class="r"><code>## rmse(mle, lam)
+sqrt(mean((vae_out$x- vae_out$lam)^2))</code></pre>
+<pre><code>[1] 3.197445</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -935,7 +964,7 @@ loaded via a namespace (and not attached):
 [25] labeling_0.3        knitr_1.25          callr_3.2.0        
 [28] ps_1.3.0            Rcpp_1.0.2          backports_1.1.5    
 [31] scales_1.0.0        desc_1.2.0          pkgload_1.0.2      
-[34] jsonlite_1.6        fs_1.3.1            digest_0.6.21      
+[34] jsonlite_1.6        fs_1.3.1            digest_0.6.22      
 [37] stringi_1.4.3       processx_3.3.1      dplyr_0.8.1        
 [40] rprojroot_1.3-2     grid_3.5.1          cli_1.1.0          
 [43] tools_3.5.1         magrittr_1.5        lazyeval_0.2.2     
