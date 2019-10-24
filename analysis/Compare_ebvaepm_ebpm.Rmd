@@ -6,14 +6,14 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
+Here I show and compare the results from `ebvae_pm` and `ebpmf`. `ebvae_pm` was implemented and experimented here: https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html . 
 
-```{r}
+Now `ebvae_pm` does much  worse even than the `mle`. It seems to be shrinking too much. 
+
+```{r warning=F}
 devtools::load_all("../ebpm")
 library(ggplot2)
 library(reticulate)
-use_python("/anaconda3/bin")
-py_config()
-
 ```
 
 ## show VAE results
@@ -21,9 +21,9 @@ py_config()
 vae_out = py_load_object("data/poisson-normal.pkl", pickle = "pickle")
 vae_out = data.frame(vae_out)
 
-
+## This is what data looks like
 ggplot(vae_out)+
-  geom_histogram(aes(x = x))
+  geom_histogram(aes(x = x), bins = 100)
 
 ggplot(vae_out)+
   geom_point(aes(x = x, y = posterior_vae))
@@ -45,4 +45,22 @@ max(fit_ebpm$fitted_g$pi)
 ## the mean  of the exponential component corresponding to the biggest weight
 fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]
 ```
+
+
+## Compare RMSE
+```{r}
+## rmse(fit_vae, lam)
+sqrt(mean((vae_out$posterior_vae - vae_out$lam)^2))
+
+## rmse(fit_ebpm, lam)
+sqrt(mean((fit_ebpm$posterior$mean - vae_out$lam)^2))
+
+## rmse(mle, lam)
+sqrt(mean((vae_out$x- vae_out$lam)^2))
+```
+
+
+
+
+
 
