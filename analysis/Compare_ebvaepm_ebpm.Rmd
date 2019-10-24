@@ -6,10 +6,9 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
-Here I show and compare the results from `ebvae_pm` and `ebpmf`. `ebvae_pm` was implemented and experimented here: https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html . 
+Here I show and compare the results from `ebvae_pm` and `ebpm_exponential_mixture`. `ebvae_pm` was implemented and experimented here: https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html . 
 
-Now `ebvae_pm` does much  worse even than the `mle`. It seems to be shrinking too much. 
-
+After training  for 10000 iterations, `ebvae_pm` beats `ebpm`.  
 ```{r warning=F}
 devtools::load_all("../ebpm")
 library(ggplot2)
@@ -29,21 +28,38 @@ ggplot(vae_out)+
   geom_point(aes(x = x, y = posterior_vae))
 ```
 
-## Compare with EBPM
+## Compare with `ebpm_exponential_mixture`
 ```{r warning=F}
 library(ebpm)
-fit_ebpm = ebpm_exponential_mixture(as.vector(vae_out$x), s = 1, m = 2^0.25)
-vae_out[["posterior_ebpm"]] = fit_ebpm$posterior$mean
+fit_ebpm_exp = ebpm_exponential_mixture(as.vector(vae_out$x), s = 1, m = 2^0.25)
+vae_out[["posterior_ebpm_exp"]] = fit_ebpm_exp$posterior$mean
 ggplot(vae_out)+
-  geom_point(aes(x = x, y = posterior_ebpm))
+  geom_point(aes(x = x, y = posterior_ebpm_exp))
 ```
 
 
 ```{r}
 ## biggest weight
-max(fit_ebpm$fitted_g$pi)
+max(fit_ebpm_exp$fitted_g$pi)
 ## the mean  of the exponential component corresponding to the biggest weight
-fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]
+fit_ebpm_exp$fitted_g$scale[which.max(fit_ebpm_exp$fitted_g$pi)]
+```
+
+
+## Compare with `ebpm_exponential_mixture`
+```{r warning=F}
+library(ebpm)
+fit_ebpm_point = ebpm_point_gamma(as.vector(vae_out$x), s = 1)
+vae_out[["posterior_ebpm_point"]] = fit_ebpm_point$posterior$mean
+ggplot(vae_out)+
+  geom_point(aes(x = x, y = posterior_ebpm_point))
+```
+
+
+```{r}
+## fitted_g from point_gamma
+class(fit_ebpm_point$fitted_g) = "data.frame"
+fit_ebpm_point$fitted_g
 ```
 
 
@@ -52,8 +68,12 @@ fit_ebpm$fitted_g$scale[which.max(fit_ebpm$fitted_g$pi)]
 ## rmse(fit_vae, lam)
 sqrt(mean((vae_out$posterior_vae - vae_out$lam)^2))
 
-## rmse(fit_ebpm, lam)
-sqrt(mean((fit_ebpm$posterior$mean - vae_out$lam)^2))
+## rmse(fit_ebpm_exp, lam)
+sqrt(mean((fit_ebpm_exp$posterior$mean - vae_out$lam)^2))
+
+## rmse(fit_ebpm_point, lam)
+sqrt(mean((fit_ebpm_point$posterior$mean - vae_out$lam)^2))
+
 
 ## rmse(mle, lam)
 sqrt(mean((vae_out$x- vae_out$lam)^2))
