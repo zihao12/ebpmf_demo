@@ -1,0 +1,91 @@
+---
+title: "Compare_ebpmf_nmf2"
+author: "zihao12"
+date: "2019-10-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Description
+I compare `ebpmf` with `nmf` algorithms on `10xgenomics` dataset `cd14_monocytes` ($\text{n-sample} = 2611, \text{n-feature} = 359$). Training set $X_{ij} = Binomial(data_{ij}, 0.5)$, and validation set is $Y_{ij} = data_{ij} - X{ij}$
+
+```{r warning=F, message=F}
+devtools::load_all("../ebpmf")
+devtools::load_all("../ebpm")
+library(ebpmf)
+library(gtools)
+library(NNLM)
+```
+
+## dataset
+10X genomics  dataset
+```{r}
+X = read.csv("data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Y.csv")
+Y = read.csv("data/10xgenomics/cd14_monocytes/filtered_matrices_mex/hg19/Yhat.csv")
+X = as.matrix(X)
+Y = as.matrix(Y)
+rownames(X)  = NULL
+colnames(X)  = NULL
+rownames(Y)  = NULL
+colnames(Y)  = NULL
+
+real = list(X = as.matrix(X), Y = as.matrix(Y))
+print(dim(real$X))
+hist(real$X, breaks = 100, main = "hist for Y_train")
+```
+
+## algorithm setup
+```{r}
+K = 3
+maxiter = 100
+method = c()
+ll_train = c()
+ll_val = c()
+out = list()
+```
+
+
+## run experiments
+```{r warning=F, message=F}
+## Run ebpmf_exponential_mixture
+method_ = "ebpmf_exponential_mixture"
+res = ebpmf::ebpmf_exponential_mixture(X, K, m = 2^0.25, maxiter.out = maxiter)
+Lam = res$qg$qls_mean %*% t(res$qg$qfs_mean)
+method = c(method, method_)
+ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
+ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
+out[[method_]] = res
+plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
+
+## Run ebpmf_point_gamma
+method_ = "ebpmf_point_gamma"
+res = ebpmf::ebpmf_point_gamma(X, K, maxiter.out = maxiter)
+Lam = res$qg$qls_mean %*% t(res$qg$qfs_mean)
+method = c(method, method_)
+ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
+ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
+out[[method_]] = res
+plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
+
+## Run nnmf
+method_ = "nnmf"
+res = NNLM::nnmf(A = X, k = K, init = list(W0 = res$qg$qls_mean, H0 = t(res$qg$qfs_mean)), loss = "mkl", method = "lee", max.iter = maxiter)
+Lam = res$W %*% res$H
+method = c(method, method_)
+ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
+ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
+out[[method_]] = res
+```
+
+## Compare loglikelihood in training and validation dataset.
+```{r}
+data.frame(method = method, ll_train = ll_train, ll_val = ll_val)
+```
+
+Save results
+```{r}
+saveRDS(out, "data/Compare_ebpmf_nmf2_out.Rds")
+```
+
+

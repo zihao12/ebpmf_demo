@@ -57,8 +57,10 @@ ebpmf_rank1_exponential <- function(X, init, m = 2, maxiter = 1){
     gl = tmp$fitted_g
     ll_l = tmp$log_likelihood
     qg = list(ql = ql, gl = gl, qf = qf, gf = gf, ll_f = ll_f, ll_l = ll_l)
-    # elbo = compute_elbo(X, qg)
-    # print(sprintf("ELBO: %f", elbo))
+    print(sprintf("############## %d", i))
+    elbo = compute_elbo(X, qg)
+    print(sprintf("ELBO: %15f", elbo))
+    
   }
   return(qg)
 }
@@ -73,10 +75,13 @@ compute_elbo <- function(X, qg){
   ll_l = qg$ll_l
   ## compute Eq(logp(X | l, f))
   term1 = sum(- outer(ql$mean, qf$mean, "*") + X*outer(ql$mean_log, qf$mean_log, "+"))
+  #print(sprintf("term1: %f", term1))
   ## compute Eq(log(gL(l)/qL(l)))
-  term2 = ll_l - sum(sum(qf$mean)*ql$mean + rowSums(X)*ql$mean_log)
+  term2 = ll_l - sum(sum(qf$mean)*ql$mean + rowSums(X)*ql$mean_log) - sum(lgamma(rowSums(X + 1)))
+  #print(sprintf("term2: %f", term2))
   ## compute Eq(log(gF(f)/qF(f)))
-  term3 = ll_f - sum(sum(ql$mean)*qf$mean + colSums(X)*qf$mean_log)
+  term3 = ll_f - sum(sum(ql$mean)*qf$mean + colSums(X)*qf$mean_log) - sum(lgamma(colSums(X + 1)))
+  #print(sprintf("term3: %f", term3))
   return(term1 + term2 + term3)
 }
 ```
@@ -137,10 +142,10 @@ compute_ll <- function(X, lam){
 ```
 
 ```{r}
-n = 5000
-p = 10000
-# n = 1000
-# p = 2000
+# n = 500
+# p = 1000
+n = 1000
+p = 2000
 dl = 3
 df = 5  
 sim = simulate_pm(n, p, dl, df)
@@ -159,7 +164,7 @@ init = list(ql = ql, qf = qf)
 
 ```{r}
 start =  proc.time()
-out_ebpmf = ebpmf_rank1_exponential(sim$X, init,maxiter = 1)
+out_ebpmf = ebpmf_rank1_exponential(sim$X, init,maxiter = 10)
 runtime = (proc.time() - start)[[3]]
 out_ebpmf[["runtime"]] = runtime
 ```

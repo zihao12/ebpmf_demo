@@ -427,7 +427,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -436,7 +436,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -445,10 +445,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-03
+<strong>Last updated:</strong> 2019-10-05
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -464,12 +464,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div id="strongRMarkdownfilestronguncommittedchanges" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of the R Markdown file created these results, you’ll want to first commit it to the Git repo. If you’re still working on the analysis, you can ignore this warning. When you’re finished, you can run <code>wflow_publish</code> to commit the R Markdown file and build the HTML.</p>
 </div>
 </div>
 </div>
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4528871912e86aeea2d9aaa82f5534c9e24207fbtargetblank4528871a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/4528871912e86aeea2d9aaa82f5534c9e24207fb" target="_blank">4528871</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef1a17d74e2b5ff6360acbe17ce67bbdfbcaa045ctargetblankf1a17d7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/f1a17d74e2b5ff6360acbe17ce67bbdfbcaa045c" target="_blank">f1a17d7</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4528871912e86aeea2d9aaa82f5534c9e24207fbtargetblank4528871a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef1a17d74e2b5ff6360acbe17ce67bbdfbcaa045ctargetblankf1a17d7a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -552,10 +552,12 @@ Ignored files:
 Untracked files:
     Untracked:  analysis/.ipynb_checkpoints/
     Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rankk_demo2.Rmd
     Untracked:  analysis/softmax_experiments.ipynb
     Untracked:  docs/figure/test.Rmd/
 
 Unstaged changes:
+    Modified:   analysis/ebpmf_rankk_demo.Rmd
     Modified:   analysis/softmax_experiments.Rmd
 
 </code></pre>
@@ -595,6 +597,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/076df3e93fb2187fc718eb4ba6ba76f29eefb102/docs/ebpmf_rankk_demo.html" target="_blank">076df3e</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -804,13 +823,19 @@ library(NNLM)</code></pre>
 ebpmf_rankk_exponential &lt;- function(X, K, m = 2, maxiter.out = 10, maxiter.int = 1, seed = 123){
   X = as(X, &quot;dgTMatrix&quot;) ## triplet representation: i,j, x
   set.seed(123)
+  start = proc.time()
   qg = initialize_qg(X, K)
+  runtime_init = (proc.time() - start)[[3]]
+  print(sprintf(&quot;init takes: %f seconds&quot;, runtime_init))
   for(iter in 1:maxiter.out){
     #print(sprintf(&quot;iter: %d&quot;, iter))
     for(k in 1:K){
       #print(sprintf(&quot;k: %d&quot;, k))
       ## get row &amp; column sum of &lt;Z_ijk&gt;
+      start = proc.time()
       Ez = get_Ez(X, qg, k) 
+      runtime_ez = (proc.time() - start)[[3]]
+      print(sprintf(&quot;compute Ez takes %f seconds&quot;, runtime_ez))
       ## update q, g
       tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,NULL,m, maxiter.int) 
       qg = update_qg(tmp, qg, k)
@@ -821,6 +846,8 @@ ebpmf_rankk_exponential &lt;- function(X, K, m = 2, maxiter.out = 10, maxiter.in
 ## ================== helper functions ==================================
 ## for each pair of l, f, give them 1/k of the row &amp; col sum
 initialize_qg &lt;- function(X, K, seed = 123){
+  n = nrow(X)
+  p = ncol(X)
   set.seed(seed)
   X_rsum = rowSums(X)
   X_csum = colSums(X)
@@ -950,10 +977,211 @@ sim = simulate_pm(n, p, dl, df, K, scale_b = scale_b)</code></pre>
 <div id="run-ebpmf_rankk_exponential" class="section level2">
 <h2>Run <code>ebpmf_rankk_exponential</code></h2>
 <pre class="r"><code>start = proc.time()
-out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)
-runtime = proc.time() -  start</code></pre>
+out_ebpmf = ebpmf_rankk_exponential(sim$X, K, maxiter.out = 100)</code></pre>
+<pre><code>[1] &quot;init takes: 0.080000 seconds&quot;
+[1] &quot;compute Ez takes 0.310000 seconds&quot;
+[1] &quot;compute Ez takes 0.243000 seconds&quot;
+[1] &quot;compute Ez takes 0.250000 seconds&quot;
+[1] &quot;compute Ez takes 0.237000 seconds&quot;
+[1] &quot;compute Ez takes 0.241000 seconds&quot;
+[1] &quot;compute Ez takes 0.240000 seconds&quot;
+[1] &quot;compute Ez takes 0.237000 seconds&quot;
+[1] &quot;compute Ez takes 0.239000 seconds&quot;
+[1] &quot;compute Ez takes 0.239000 seconds&quot;
+[1] &quot;compute Ez takes 0.240000 seconds&quot;
+[1] &quot;compute Ez takes 0.242000 seconds&quot;
+[1] &quot;compute Ez takes 0.243000 seconds&quot;
+[1] &quot;compute Ez takes 0.234000 seconds&quot;
+[1] &quot;compute Ez takes 0.240000 seconds&quot;
+[1] &quot;compute Ez takes 0.245000 seconds&quot;
+[1] &quot;compute Ez takes 0.249000 seconds&quot;
+[1] &quot;compute Ez takes 0.236000 seconds&quot;
+[1] &quot;compute Ez takes 0.294000 seconds&quot;
+[1] &quot;compute Ez takes 0.442000 seconds&quot;
+[1] &quot;compute Ez takes 0.270000 seconds&quot;
+[1] &quot;compute Ez takes 0.232000 seconds&quot;
+[1] &quot;compute Ez takes 0.239000 seconds&quot;
+[1] &quot;compute Ez takes 0.239000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.226000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.232000 seconds&quot;
+[1] &quot;compute Ez takes 0.249000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.232000 seconds&quot;
+[1] &quot;compute Ez takes 0.247000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.241000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.245000 seconds&quot;
+[1] &quot;compute Ez takes 0.226000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.226000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.234000 seconds&quot;
+[1] &quot;compute Ez takes 0.231000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.230000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.312000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.233000 seconds&quot;
+[1] &quot;compute Ez takes 0.226000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.232000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.235000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.217000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.230000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.217000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.219000 seconds&quot;
+[1] &quot;compute Ez takes 0.320000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.218000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.232000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.225000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.222000 seconds&quot;
+[1] &quot;compute Ez takes 0.231000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.233000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;
+[1] &quot;compute Ez takes 0.229000 seconds&quot;
+[1] &quot;compute Ez takes 0.233000 seconds&quot;
+[1] &quot;compute Ez takes 0.220000 seconds&quot;
+[1] &quot;compute Ez takes 0.226000 seconds&quot;
+[1] &quot;compute Ez takes 0.223000 seconds&quot;
+[1] &quot;compute Ez takes 0.227000 seconds&quot;
+[1] &quot;compute Ez takes 0.224000 seconds&quot;
+[1] &quot;compute Ez takes 0.221000 seconds&quot;
+[1] &quot;compute Ez takes 0.228000 seconds&quot;</code></pre>
+<pre class="r"><code>runtime = proc.time() -  start</code></pre>
 <p>It is very slow, and when the data gets much denser, it will be even much slower…</p>
-<pre><code>[1] &quot;runtime: 49.857000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 47.749000 seconds&quot;</code></pre>
 <pre><code>[1] &quot;ll train = -4759.116930&quot;</code></pre>
 <pre><code>[1] &quot;ll val   = -5615.310826&quot;</code></pre>
 </div>
@@ -962,7 +1190,7 @@ runtime = proc.time() -  start</code></pre>
 <pre class="r"><code>start = proc.time()
 out_nmf = nnmf(sim$X, K, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start</code></pre>
-<pre><code>[1] &quot;runtime: 0.136000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 0.167000 seconds&quot;</code></pre>
 <pre><code>[1] &quot;ll train = -4716.149696&quot;</code></pre>
 <pre><code>[1] &quot;ll val   = -Inf&quot;</code></pre>
 </div>
@@ -974,7 +1202,7 @@ H0 = t(out_ebpmf$qfs_mean)
 start = proc.time()
 out_nmf_init = nnmf(sim$X, K,init = list(W0 = W0, H0 = H0), loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 100, rel.tol = -1)
 runtime = proc.time() -  start</code></pre>
-<pre><code>[1] &quot;runtime: 0.165000 seconds&quot;</code></pre>
+<pre><code>[1] &quot;runtime: 0.179000 seconds&quot;</code></pre>
 <pre><code>[1] &quot;ll train = -4448.016719&quot;</code></pre>
 <pre><code>[1] &quot;ll val   = -6670.583905&quot;</code></pre>
 <br>

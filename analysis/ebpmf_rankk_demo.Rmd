@@ -27,13 +27,19 @@ See  detail in https://www.overleaf.com/project/5bd084d90a33772e7a7f99a2
 ebpmf_rankk_exponential <- function(X, K, m = 2, maxiter.out = 10, maxiter.int = 1, seed = 123){
   X = as(X, "dgTMatrix") ## triplet representation: i,j, x
   set.seed(123)
+  start = proc.time()
   qg = initialize_qg(X, K)
+  runtime_init = (proc.time() - start)[[3]]
+  #print(sprintf("init takes: %f seconds", runtime_init))
   for(iter in 1:maxiter.out){
     #print(sprintf("iter: %d", iter))
     for(k in 1:K){
       #print(sprintf("k: %d", k))
       ## get row & column sum of <Z_ijk>
+      start = proc.time()
       Ez = get_Ez(X, qg, k) 
+      runtime_ez = (proc.time() - start)[[3]]
+      #print(sprintf("compute Ez takes %f seconds", runtime_ez))
       ## update q, g
       tmp = ebpmf_rank1_exponential_helper(Ez$rsum,Ez$csum,NULL,m, maxiter.int) 
       qg = update_qg(tmp, qg, k)
@@ -44,6 +50,8 @@ ebpmf_rankk_exponential <- function(X, K, m = 2, maxiter.out = 10, maxiter.int =
 ## ================== helper functions ==================================
 ## for each pair of l, f, give them 1/k of the row & col sum
 initialize_qg <- function(X, K, seed = 123){
+  n = nrow(X)
+  p = ncol(X)
   set.seed(seed)
   X_rsum = rowSums(X)
   X_csum = colSums(X)
