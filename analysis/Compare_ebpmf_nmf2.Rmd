@@ -49,9 +49,12 @@ out = list()
 
 ## run experiments
 ```{r warning=F, message=F}
+out = readRDS("data/Compare_ebpmf_nmf2_out.Rds")
+
 ## Run ebpmf_exponential_mixture
 method_ = "ebpmf_exponential_mixture"
-res = ebpmf::ebpmf_exponential_mixture(X, K, m = 2^0.25, maxiter.out = maxiter)
+# res = ebpmf::ebpmf_exponential_mixture(X, K, m = 2^0.25, maxiter.out = maxiter)
+res = out$ebpmf_exponential_mixture
 Lam = res$qg$qls_mean %*% t(res$qg$qfs_mean)
 method = c(method, method_)
 ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
@@ -61,7 +64,8 @@ out[[method_]] = res
 
 ## Run ebpmf_point_gamma
 method_ = "ebpmf_point_gamma"
-res = ebpmf::ebpmf_point_gamma(X, K, maxiter.out = maxiter)
+# res = ebpmf::ebpmf_point_gamma(X, K, maxiter.out = maxiter)
+res = out$ebpmf_point_gamma
 Lam = res$qg$qls_mean %*% t(res$qg$qfs_mean)
 method = c(method, method_)
 ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
@@ -71,6 +75,17 @@ out[[method_]] = res
 
 ## Run nnmf
 method_ = "nnmf"
+#res = NNLM::nnmf(A = X, k = K, init = list(W0 = res$qg$qls_mean, H0 = t(res$qg$qfs_mean)), loss = "mkl", method = "lee", max.iter = maxiter)
+res = NNLM::nnmf(A = X, k = K, loss = "mkl", method = "lee", max.iter = maxiter)
+Lam = res$W %*% res$H
+method = c(method, method_)
+ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
+ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
+out[[method_]] = res
+
+## Run nnmf with  initialization from ebpmf_point_gamma
+method_ = "nnmf_init_from_point_gamma"
+res = out$ebpmf_point_gamma
 res = NNLM::nnmf(A = X, k = K, init = list(W0 = res$qg$qls_mean, H0 = t(res$qg$qfs_mean)), loss = "mkl", method = "lee", max.iter = maxiter)
 Lam = res$W %*% res$H
 method = c(method, method_)
@@ -100,7 +115,7 @@ ggplot(elbos)+
 
 Save results
 ```{r}
-saveRDS(out, "data/Compare_ebpmf_nmf2_out.Rds")
+saveRDS(out, "data/Compare_ebpmf_nmf2_out_ver2.Rds")
 ```
 
 
