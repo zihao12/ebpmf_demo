@@ -10,7 +10,7 @@ Here I show and compare the results from `ebvae_pm` and `ebpm_exponential_mixtur
 
 After training  for 10000 iterations, `ebvae_pm` beats `ebpm_exponential_mixture`, `ebpm_point_gamma`. This is of course not fair as data is generated from the assumption of the `ebvae_pm` model. But at least this result shows we can use VAE to do Empirical Bayes.
 
-```{r warning=F}
+```{r warning=F, message = F}
 devtools::load_all("../ebpm")
 library(ggplot2)
 library(reticulate)
