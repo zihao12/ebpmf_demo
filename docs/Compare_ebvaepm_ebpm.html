@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-23
+<strong>Last updated:</strong> 2019-10-25
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9339d2806f10ebf76ec720f62fcc2d31b6c47ef5targetblank9339d28a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/9339d2806f10ebf76ec720f62fcc2d31b6c47ef5" target="_blank">9339d28</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree13c5240ecd3f9d5d7f890526ca6fc70acfac66a3targetblank13c5240a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/13c5240ecd3f9d5d7f890526ca6fc70acfac66a3" target="_blank">13c5240</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9339d2806f10ebf76ec720f62fcc2d31b6c47ef5targetblank9339d28a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree13c5240ecd3f9d5d7f890526ca6fc70acfac66a3targetblank13c5240a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -567,8 +567,10 @@ Untracked files:
 Unstaged changes:
     Modified:   analysis/ebpmf_rank1_demo.Rmd
     Modified:   analysis/ebpmf_rankk_demo.Rmd
+    Modified:   analysis/ebvae-poisson-normal.ipynb
     Modified:   analysis/index.Rmd
     Modified:   analysis/softmax_experiments.Rmd
+    Modified:   data/poisson-normal.pkl
 
 </code></pre>
 <p>
@@ -607,6 +609,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/13c5240ecd3f9d5d7f890526ca6fc70acfac66a3/analysis/Compare_ebvaepm_ebpm.Rmd" target="_blank">13c5240</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-25
+</td>
+<td>
+compare ghat in Compare_ebvaepm_ebpm.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/c215a6a2613f9bf24276722cc0bacdfde17eb51c/docs/Compare_ebvaepm_ebpm.html" target="_blank">c215a6a</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1122,6 +1158,52 @@ sqrt(mean((fit_ebpm_point$posterior$mean - vae_out$lam)^2))</code></pre>
 <pre class="r"><code>## rmse(mle, lam)
 sqrt(mean((vae_out$x- vae_out$lam)^2))</code></pre>
 <pre><code>[1] 3.197445</code></pre>
+</div>
+<div id="look-at-hatg" class="section level2">
+<h2>look at <span class="math inline">\(\hat{g}\)</span></h2>
+<pre class="r"><code>sample_point_gamma_one &lt;- function(point_gamma_){
+  point_gamma_ = fit_ebpm_point$fitted_g
+  if(rbinom(1,1, point_gamma_$pi0) == 1){
+    return(0)
+  }else{
+    return(rgamma(1,shape = point_gamma_$shape, scale = point_gamma_$scale))
+  }
+}
+
+sample_point_gamma  &lt;- function(n, point_gamma_, seed = 123){
+  set.seed(seed)
+  out = replicate(n, sample_point_gamma_one(point_gamma_))
+  return(out)
+}
+
+## simulate a poisson mean problem from mixture of exponential
+sample_expmix  &lt;-  function(n,gammamix_, seed = 123){
+  set.seed(seed)
+  a = gammamix_$shape
+  b = 1/gammamix_$scale
+  pi = gammamix_$pi
+  lam = replicate(n, sim_mgamma(a, b, pi))
+  return(lam)
+}
+
+
+sim_mgamma &lt;- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+n = length(vae_out$lam)
+#hist(sample_point_gamma(n, fit_ebpm_point$fitted_g), breaks = 100, freq = F)
+
+truth_df = data.frame(samples = vae_out$lam, method = &quot;truth&quot;)
+vae_df = data.frame(samples = vae_out$prior_vae, method = &quot;vae&quot;)
+point_df = data.frame(samples = sample_point_gamma(n, fit_ebpm_point$fitted_g), method = &quot;point_gamma&quot;)
+exp_df   = data.frame(samples = sample_expmix(n, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
+
+samples_df = rbind(truth_df, vae_df, point_df, exp_df)
+
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
+<p><img src="figure/Compare_ebvaepm_ebpm.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
