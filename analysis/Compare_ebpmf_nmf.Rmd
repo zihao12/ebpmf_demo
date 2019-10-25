@@ -7,8 +7,9 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r}
+```{r warning=FALSE}
 rm(list = ls())
+devtools::load_all("../ebpmf")
 library(ebpmf)
 library(gtools)
 library(NNLM)
