@@ -47,7 +47,7 @@ fit_ebpm_exp$fitted_g$scale[which.max(fit_ebpm_exp$fitted_g$pi)]
 ```
 
 
-## Compare with `ebpm_exponential_mixture`
+## Compare with `ebpm_point_gamma`
 ```{r warning=F}
 library(ebpm)
 fit_ebpm_point = ebpm_point_gamma(as.vector(vae_out$x), s = 1)
