@@ -81,7 +81,52 @@ sqrt(mean((vae_out$x- vae_out$lam)^2))
 ```
 
 
+## look at $\hat{g}$
+```{r}
+sample_point_gamma_one <- function(point_gamma_){
+  point_gamma_ = fit_ebpm_point$fitted_g
+  if(rbinom(1,1, point_gamma_$pi0) == 1){
+    return(0)
+  }else{
+    return(rgamma(1,shape = point_gamma_$shape, scale = point_gamma_$scale))
+  }
+}
 
+sample_point_gamma  <- function(n, point_gamma_, seed = 123){
+  set.seed(seed)
+  out = replicate(n, sample_point_gamma_one(point_gamma_))
+  return(out)
+}
+
+## simulate a poisson mean problem from mixture of exponential
+sample_expmix  <-  function(n,gammamix_, seed = 123){
+  set.seed(seed)
+  a = gammamix_$shape
+  b = 1/gammamix_$scale
+  pi = gammamix_$pi
+  lam = replicate(n, sim_mgamma(a, b, pi))
+  return(lam)
+}
+
+
+sim_mgamma <- function(a,b,pi){
+  idx = which(rmultinom(1,1,pi) == 1)
+  return(rgamma(1, shape = a[idx], rate =  b[idx]))
+}
+
+n = length(vae_out$lam)
+#hist(sample_point_gamma(n, fit_ebpm_point$fitted_g), breaks = 100, freq = F)
+
+truth_df = data.frame(samples = vae_out$lam, method = "truth")
+vae_df = data.frame(samples = vae_out$prior_vae, method = "vae")
+point_df = data.frame(samples = sample_point_gamma(n, fit_ebpm_point$fitted_g), method = "point_gamma")
+exp_df   = data.frame(samples = sample_expmix(n, fit_ebpm_exp$fitted_g), method = "exponential_mixture")
+
+samples_df = rbind(truth_df, vae_df, point_df, exp_df)
+
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle("compare g_hat")
+
+```
 
 
 
