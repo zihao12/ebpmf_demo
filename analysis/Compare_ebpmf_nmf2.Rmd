@@ -16,6 +16,7 @@ devtools::load_all("../ebpm")
 library(ebpmf)
 library(gtools)
 library(NNLM)
+library(ggplot2)
 ```
 
 ## dataset
@@ -56,7 +57,7 @@ method = c(method, method_)
 ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
 ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
 out[[method_]] = res
-plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
+#plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
 
 ## Run ebpmf_point_gamma
 method_ = "ebpmf_point_gamma"
@@ -66,7 +67,7 @@ method = c(method, method_)
 ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
 ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
 out[[method_]] = res
-plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
+#plot(1:maxiter, res$ELBO, main = sprintf("(maximized) objective for %s", method_), xlab = "iter", ylab = "ELBO")
 
 ## Run nnmf
 method_ = "nnmf"
@@ -82,6 +83,20 @@ out[[method_]] = res
 ```{r}
 data.frame(method = method, ll_train = ll_train, ll_val = ll_val)
 ```
+
+## show objectives
+```{r}
+elbos = data.frame(iters = 1:length(out$ebpmf_exponential_mixture$ELBO),
+                   ebpm_exponential_mixture = out$ebpmf_exponential_mixture$ELBO, 
+                   ebpm_point_gamma = out$ebpmf_point_gamma$ELBO)
+ggplot(elbos)+
+  geom_line(aes(x = iters, y = ebpm_exponential_mixture, color = "ebpm_exponential_mixture"), show.legend = T)+
+  geom_line(aes(x = iters, y = ebpm_point_gamma, color = "ebpm_point_gamma"), show.legend = T)+
+  xlab("iter")+
+  ylab("ELBO")+
+  theme(legend.position="top")
+```
+
 
 Save results
 ```{r}
