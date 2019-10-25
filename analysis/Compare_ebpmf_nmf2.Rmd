@@ -39,7 +39,7 @@ hist(real$X, breaks = 100, main = "hist for Y_train")
 ## algorithm setup
 ```{r}
 K = 3
-maxiter = 100
+maxiter = 1000
 method = c()
 ll_train = c()
 ll_val = c()
