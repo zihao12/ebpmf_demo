@@ -39,7 +39,7 @@ compute_rmse <- function(lam1, lam2){
 ```{r warning=F}
 K = 2
 sim = sim_poisson_gamma(K = K)
-fit_exp  = ebpmf_exponential_mixture(sim$X, K = K, maxiter.out = 500, Lam_true = sim$Lam)
+fit_exp  = ebpmf_exponential_mixture(sim$X, K = K, maxiter.out = 500, Lam_true = sim$Lam, m = 2^0.25)
 fit_pg = ebpmf_point_gamma(sim$X, K = K, maxiter.out = 500, Lam_true = sim$Lam)
 
 df = data.frame(ELBO_pg = fit_pg$ELBO, RMSE_pg  = fit_pg$RMSE,
