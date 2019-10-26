@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef54439f07c6364c22f2048f47c6e5bd623547b5btargetblankf54439fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/f54439f07c6364c22f2048f47c6e5bd623547b5b" target="_blank">f54439f</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3de00deef14ec052d949f5f874aa52fec6b49fbbtargetblank3de00dea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/3de00deef14ec052d949f5f874aa52fec6b49fbb" target="_blank">3de00de</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef54439f07c6364c22f2048f47c6e5bd623547b5btargetblankf54439fa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3de00deef14ec052d949f5f874aa52fec6b49fbbtargetblank3de00dea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -611,6 +611,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3de00deef14ec052d949f5f874aa52fec6b49fbb/analysis/Experiment_ebpmf_rank1.Rmd" target="_blank">3de00de</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+<td>
+update Experiment_ebpmf_rank1.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/1d566e4aae1aeacd53f038593c24af61afae9d3f/docs/Experiment_ebpmf_rank1.html" target="_blank">1d566e4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/f54439f07c6364c22f2048f47c6e5bd623547b5b/analysis/Experiment_ebpmf_rank1.Rmd" target="_blank">f54439f</a>
 </td>
 <td>
@@ -633,7 +667,7 @@ Experiment_ebpmf_rank1
 <div id="goal" class="section level2">
 <h2>Goal</h2>
 <ul>
-<li><p>I fit <code>ebpmf</code> on <code>rank-1</code> dataset with <span class="math inline">\(K = 2\)</span>, and see if we are able to the true <span class="math inline">\(K\)</span> from the result.</p></li>
+<li><p>I fit <code>ebpmf_point_gamma</code> on <code>rank-1</code> dataset with <span class="math inline">\(K = 2\)</span>, and see if we are able to the true <span class="math inline">\(K\)</span> from the result.</p></li>
 <li><p>From the <a href="https://zihao12.github.io/ebpmf_demo/Compare_scd_lee.html">Comparison between <code>scd</code> and <code>lee</code></a>, I think the result would be very different if we initialize the algortihm with <code>scd</code> or <code>lee</code> (from <code>NNLM::nnmf</code>). Also, it would be helpful to see how our algorithm changes from the initialization.</p></li>
 </ul>
 </div>
@@ -654,7 +688,7 @@ We prefer the first one for our application.</p>
 <ul>
 <li><code>ebpmf</code> is influenced a lot by the initialization. It is not surprising as the initialization heavily affects how we partition <span class="math inline">\(X_{ij} = \sum_k Z_{ijk}\)</span>.<br />
 </li>
-<li><code>ebpmf</code> seems to be turning the first scenario to the second scenario gradually (compare <code>lee</code> and <code>ebpmf</code> initialized from <code>lee</code>), which is alarming.</li>
+<li><code>ebpmf</code> seems to be turning the first scenario to the second scenario gradually (compare <code>lee</code> and <code>ebpmf</code> initialized from <code>lee</code>). This is because the initialization makes <span class="math inline">\(\sum_j Z_{ijk} &gt; 0\)</span>, so <span class="math inline">\(\pi_0^{k} == 0\)</span> for all <span class="math inline">\(g_k\)</span>. So bascially we are fitting <span class="math inline">\(gamma\)</span> prior family instead of a point gamma. So we might want a sparse initialization.</li>
 </ul>
 <pre class="r"><code>rm(list = ls())
 devtools::load_all(&quot;../ebpmf&quot;)</code></pre>
@@ -721,17 +755,185 @@ fit_init_scd = ebpmf::ebpmf_point_gamma(sim$X, K = K, maxiter.out = 100,
 <pre class="r"><code>p2m_res = poisson2multinom(F  = t(init_scd$H), L = init_scd$W)
 show_loadings(p2m_res$L, title = &quot;scd&quot;)</code></pre>
 <p><img src="figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1d566e4aae1aeacd53f038593c24af61afae9d3f/docs/figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-5-1.png" target="_blank">1d566e4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p2m_res = poisson2multinom(F  = fit_init_scd$qg$qfs_mean, L = fit_init_scd$qg$qls_mean)
 show_loadings(p2m_res$L, title = &quot;ebpmf init from scd&quot;)</code></pre>
 <p><img src="figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1d566e4aae1aeacd53f038593c24af61afae9d3f/docs/figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-5-2.png" target="_blank">1d566e4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s see how the loadings change for <code>ebpmf</code> initialized with scd</p>
 <pre class="r"><code>p2m_res = poisson2multinom(F  = t(init_lee$H), L = init_lee$W)
 show_loadings(p2m_res$L, title = &quot;lee&quot;)</code></pre>
 <p><img src="figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1d566e4aae1aeacd53f038593c24af61afae9d3f/docs/figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-6-1.png" target="_blank">1d566e4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p2m_res = poisson2multinom(F  = fit_init_lee$qg$qfs_mean, L = fit_init_lee$qg$qls_mean)
 show_loadings(p2m_res$L, title = &quot;ebpmf init from lee&quot;)</code></pre>
 <p><img src="figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Note that <code>ebpmf</code> is turning the first scenario to the second!!</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1d566e4aae1aeacd53f038593c24af61afae9d3f/docs/figure/Experiment_ebpmf_rank1.Rmd/unnamed-chunk-6-2.png" target="_blank">1d566e4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Note that <code>ebpmf</code> is turning the first scenario to the second!! Why is that?</p>
+<p>gl for <code>ebpmf_init_lee</code>:</p>
+<pre class="r"><code>print(fit_init_lee$qg$gls[[1]])</code></pre>
+<pre><code>$pi
+[1] 0
+
+$a
+[1] 4342.055
+
+$b
+[1] 5.950945</code></pre>
+<pre class="r"><code>print(fit_init_lee$qg$gls[[2]])</code></pre>
+<pre><code>$pi
+[1] 0
+
+$a
+[1] 3167.436
+
+$b
+[1] 2416.518</code></pre>
+<p>So <span class="math inline">\(l^2 \approx 0\)</span> is only because it is relatively small compared to <span class="math inline">\(l^1\)</span>, not because <span class="math inline">\(\pi_0 \approx 1\)</span> ! That the <span class="math inline">\(\pi_0 = 0\)</span> is because when <span class="math inline">\(\sum_j Z_{ijk} \neq 0\)</span>, the MLE gives us <span class="math inline">\(\pi_0 = 0\)</span>. \ Note: in <code>nnmf</code> a small number is added to <span class="math inline">\(L, F\)</span> after each iteration for numerical stability, but this will make it impossible to get <span class="math inline">\(\pi^k_0 = 0\)</span> for any <span class="math inline">\(l^k\)</span>.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
