@@ -51,3 +51,6 @@ Debug ebpmf point gamma        : https://zihao12.github.io/ebpmf_demo/debug_ebpm
 Implement EBVAE:              https://zihao12.github.io/ebpmf_demo/ebvae-poisson-normal.html
 
 Compare VAE with EBPM :       https://zihao12.github.io/ebpmf_demo/Compare_ebvaepm_ebpm.html
+
+Compare scd and lee :       https://zihao12.github.io/ebpmf_demo/Compare_scd_lee.html
+
