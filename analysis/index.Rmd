@@ -54,3 +54,4 @@ Compare VAE with EBPM :       https://zihao12.github.io/ebpmf_demo/Compare_ebvae
 
 Compare scd and lee :       https://zihao12.github.io/ebpmf_demo/Compare_scd_lee.html
 
+Experiment_ebpmf_rank1 :       https://zihao12.github.io/ebpmf_demo/Experiment_ebpmf_rank1.html

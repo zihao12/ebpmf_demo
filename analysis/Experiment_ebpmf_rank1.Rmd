@@ -1,0 +1,125 @@
+---
+title: "Experiment_ebpmf_rank1"
+author: "zihao12"
+date: "2019-10-26"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+
+* I fit `ebpmf` on `rank-1` dataset with $K = 2$, and see if we are able to the true $K$ from the result.                                     
+
+* From the [Comparison between `scd` and `lee`](https://zihao12.github.io/ebpmf_demo/Compare_scd_lee.html), I think the result would be very different if we initialize the algortihm with `scd` or `lee` (from `NNLM::nnmf`). Also, it would be helpful to see how our algorithm changes from the initialization. 
+
+## Setup
+Data generating model: here the mean structure is rank-1. 
+$$
+\begin{align}
+  & \Lambda_{ij} = l f_j\\
+  & X_{ij} \sim Pois(\Lambda_{ij})
+\end{align}
+$$
+There are two scenarios:\
+
+* $l^1 \approx l, l^2 \approx 0$.\
+
+* $l^1 \approx cl, l^2 \approx (1-c)l$. \
+
+We prefer the first one for our application.
+
+## Result
+* `ebpmf` is influenced a lot by the initialization. It is not surprising as the initialization heavily affects how we partition $X_{ij} = \sum_k Z_{ijk}$. \
+
+* `ebpmf` seems to be turning the first scenario to the second scenario gradually (compare `lee` and  `ebpmf` initialized from `lee`), which is alarming. 
+
+
+```{r}
+rm(list = ls())
+devtools::load_all("../ebpmf")
+library(ebpmf)
+```
+
+
+```{r}
+sim_pois_rank1 <- function(n, p, seed = 123){
+  set.seed(seed)
+  L = matrix(replicate(n, 1), ncol = 1)
+  F = matrix(sample(seq(1,1000,length.out = p)), ncol = 1)
+  Lam = L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  ll_train = sum(dpois(X, Lam, log = T))
+  ll_val = sum(dpois(Y, Lam, log = T))
+  return(list(X = X, Y = Y, L = L, F = F, Lam = Lam, ll_train = ll_train, ll_val  = ll_val))
+}
+
+# Scale each column of A so that the entries in each column sum to 1;
+# i.e., colSums(scale.cols(A)) should return a vector of ones.
+scale.cols <- function (A)
+  apply(A,2,function (x) x/sum(x))
+
+# Convert the parameters (factors & loadings) for the Poisson model to
+# the factors and loadings for the multinomial model. The return value
+# "s" gives the Poisson rates for generating the "document" sizes.
+poisson2multinom <- function (F, L) {
+  L <- t(t(L) * colSums(F))
+  s <- rowSums(L)
+  L <- L / s
+  F <- scale.cols(F)
+  return(list(F = F,L = L,s = s))
+}
+
+show_loadings <- function(L, title = "hist for two loadings"){
+  L_df = data.frame(L)
+  colnames(L_df) = c("loading1", "loading2")
+  hist(L_df$loading1, col = "red", xlim=c(0, 1), xlab = "loading proportion", main = title)
+  hist(L_df$loading2, col = "blue", add = T)
+}
+```
+
+
+
+Simulate data
+```{r}
+n = 50
+p = 100
+sim = sim_pois_rank1(n, p)
+```
+
+## Fit with `ebpmf` initialized from `nnmf` using  `lee` and `scd`
+```{r warning=F, message=F}
+K = 2
+init_lee = NNLM::nnmf(A = sim$X, k = K, loss = "mkl", method = "lee", max.iter = 1000)
+init_scd = NNLM::nnmf(A = sim$X, k = K, loss = "mkl", method = "scd", max.iter = 1000)
+
+## ebpmf_point_gamma init with lee
+fit_init_lee = ebpmf::ebpmf_point_gamma(sim$X, K = K, maxiter.out = 100, 
+                                        qg = initialize_qg_from_LF(L0 = init_lee$W, F0 = t(init_lee$H)))
+fit_init_scd = ebpmf::ebpmf_point_gamma(sim$X, K = K, maxiter.out = 100, 
+                                        qg = initialize_qg_from_LF(L0 = init_scd$W, F0 = t(init_scd$H)))
+```
+
+Let's see how the loadings change for `ebpmf` initialized with scd
+```{r}
+p2m_res = poisson2multinom(F  = t(init_scd$H), L = init_scd$W)
+show_loadings(p2m_res$L, title = "scd")
+
+p2m_res = poisson2multinom(F  = fit_init_scd$qg$qfs_mean, L = fit_init_scd$qg$qls_mean)
+show_loadings(p2m_res$L, title = "ebpmf init from scd")
+```
+
+
+Let's see how the loadings change for `ebpmf` initialized with scd
+```{r}
+p2m_res = poisson2multinom(F  = t(init_lee$H), L = init_lee$W)
+show_loadings(p2m_res$L, title = "lee")
+
+p2m_res = poisson2multinom(F  = fit_init_lee$qg$qfs_mean, L = fit_init_lee$qg$qls_mean)
+show_loadings(p2m_res$L, title = "ebpmf init from lee")
+```
+
+Note that `ebpmf` is turning  the first scenario to the second!!
+
+
