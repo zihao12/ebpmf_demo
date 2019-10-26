@@ -9,7 +9,7 @@ editor_options:
 
 ## Goal
 
-* I fit `ebpmf` on `rank-1` dataset with $K = 2$, and see if we are able to the true $K$ from the result.                                     
+* I fit `ebpmf_point_gamma` on `rank-1` dataset with $K = 2$, and see if we are able to the true $K$ from the result.                                     
 
 * From the [Comparison between `scd` and `lee`](https://zihao12.github.io/ebpmf_demo/Compare_scd_lee.html), I think the result would be very different if we initialize the algortihm with `scd` or `lee` (from `NNLM::nnmf`). Also, it would be helpful to see how our algorithm changes from the initialization. 
 
@@ -32,7 +32,7 @@ We prefer the first one for our application.
 ## Result
 * `ebpmf` is influenced a lot by the initialization. It is not surprising as the initialization heavily affects how we partition $X_{ij} = \sum_k Z_{ijk}$. \
 
-* `ebpmf` seems to be turning the first scenario to the second scenario gradually (compare `lee` and  `ebpmf` initialized from `lee`), which is alarming. 
+* `ebpmf` seems to be turning the first scenario to the second scenario gradually (compare `lee` and  `ebpmf` initialized from `lee`). This is because the initialization makes $\sum_j Z_{ijk} > 0$, so $\pi_0^{k} == 0$ for all $g_k$. So bascially we are fitting $gamma$ prior family instead of a point gamma. So we might want a sparse initialization. 
 
 
 ```{r}
@@ -120,6 +120,26 @@ p2m_res = poisson2multinom(F  = fit_init_lee$qg$qfs_mean, L = fit_init_lee$qg$ql
 show_loadings(p2m_res$L, title = "ebpmf init from lee")
 ```
 
-Note that `ebpmf` is turning  the first scenario to the second!!
+Note that `ebpmf` is turning  the first scenario to the second!! Why is that?
+
+gl for `ebpmf_init_lee`:
+```{r}
+print(fit_init_lee$qg$gls[[1]])
+print(fit_init_lee$qg$gls[[2]])
+```
+
+So $l^2 \approx  0$ is  only because it is relatively small compared to $l^1$, not because $\pi_0 \approx 1$ ! That the $\pi_0 = 0$ is because when $\sum_j Z_{ijk} \neq 0$, the MLE gives us $\pi_0 = 0$. \\
+Note: in `nnmf` a small number is added to $L, F$ after each iteration for numerical stability, but this will make it impossible to get $\pi^k_0 = 0$ for any $l^k$.  
+
+
+
+
+
+
+
+
+
+
+
 
 
