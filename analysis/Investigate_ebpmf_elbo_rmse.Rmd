@@ -1,0 +1,63 @@
+---
+title: "Investigate_ebpmf_elbo_rmse"
+author: "zihao12"
+date: "2019-10-26"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Does higher ELBO mean smaller RMSE for `ebpmf`?
+
+```{r warning=F}
+rm(list = ls())
+devtools::load_all("../ebpmf")
+library(ebpmf)
+library(ggplot2)
+
+```
+
+
+```{r}
+sim_poisson_gamma <- function(n = 50, p=100 , K=2, seed = 123){
+  set.seed(seed)
+  L = matrix(rgamma(n = n*K, shape = 100, rate = 100), ncol = K)
+  F = matrix(rgamma(n = p*K, shape = 100, rate = 100), ncol = K)
+  Lam = L %*% t(F)
+  X = matrix(rpois(n*p, Lam), nrow = n)
+  ll_train = sum(dpois(x = X, lambda = Lam, log = T))
+  Y = matrix(rpois(n*p, Lam), nrow = n)
+  ll_val = sum(dpois(x = Y, lambda = Lam, log = T))
+  return(list(X = X, Y = Y, Lam = Lam, ll_train = ll_train, ll_val = ll_val))
+}
+
+compute_rmse <- function(lam1, lam2){
+  return(sqrt(mean((lam1 - lam2)^2)))
+}
+```
+
+```{r warning=F}
+K = 2
+sim = sim_poisson_gamma(K = K)
+fit_exp  = ebpmf_exponential_mixture(sim$X, K = K, maxiter.out = 500, Lam_true = sim$Lam)
+fit_pg = ebpmf_point_gamma(sim$X, K = K, maxiter.out = 500, Lam_true = sim$Lam)
+
+df = data.frame(ELBO_pg = fit_pg$ELBO, RMSE_pg  = fit_pg$RMSE,
+                ELBO_exp = fit_exp$ELBO, RMSE_exp  = fit_exp$RMSE, iter = 1:length(fit_pg$RMSE))
+```
+
+```{r}
+ggplot(df)+
+  geom_line(aes(x = iter, y = ELBO_pg, color = "pg"))+
+  geom_line(aes(x = iter, y = ELBO_exp, color = "exp"))+
+  ylab("ELBO")
+
+ggplot(df)+
+  geom_line(aes(x = iter, y = RMSE_pg, color = "pg"))+
+  geom_line(aes(x = iter, y = RMSE_exp, color = "exp"))+
+  ylab("RMSE")
+```
+
+
+
+
