@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-25
+<strong>Last updated:</strong> 2019-10-26
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee0b50f5fa2707297cec23abc87fc4606c5e18e04targetblanke0b50f5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e0b50f5fa2707297cec23abc87fc4606c5e18e04" target="_blank">e0b50f5</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree5a06e0f0e0c69b13f2742b95c5e09c07db9e40c2targetblank5a06e0fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/5a06e0f0e0c69b13f2742b95c5e09c07db9e40c2" target="_blank">5a06e0f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee0b50f5fa2707297cec23abc87fc4606c5e18e04targetblanke0b50f5a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree5a06e0f0e0c69b13f2742b95c5e09c07db9e40c2targetblank5a06e0fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -548,14 +548,15 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/Experiment_ebpmf.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  analysis/ebpmf_rank1_demo2.Rmd
     Untracked:  analysis/softmax_experiments.ipynb
     Untracked:  data/Compare_ebpmf_nmf2_out
+    Untracked:  data/Compare_ebpmf_nmf2_out_ver2.Rds
     Untracked:  data/trash/
     Untracked:  verbose_log_1571583163.21966.txt
     Untracked:  verbose_log_1571583324.71036.txt
@@ -563,6 +564,8 @@ Untracked files:
     Untracked:  verbose_log_1571588102.40356.txt
 
 Unstaged changes:
+    Modified:   analysis/Compare_ebpmf_nmf.Rmd
+    Modified:   analysis/Compare_ebvaepm_ebpm.Rmd
     Modified:   analysis/softmax_experiments.Rmd
     Modified:   data/Compare_ebpmf_nmf2_out.Rds
 
@@ -603,6 +606,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/5a06e0f0e0c69b13f2742b95c5e09c07db9e40c2/analysis/Compare_ebpmf_nmf2.Rmd" target="_blank">5a06e0f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+<td>
+update comparison
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/772deb6aecfc13c7ed701472ab189c705a873868/docs/Compare_ebpmf_nmf2.html" target="_blank">772deb6</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -697,7 +734,19 @@ update some analysis
 </div>
 <div id="description" class="section level2">
 <h2>Description</h2>
-<p>I compare <code>ebpmf</code> with <code>nmf</code> algorithms on <code>10xgenomics</code> dataset <code>cd14_monocytes</code> (<span class="math inline">\(\text{n-sample} = 2611, \text{n-feature} = 359\)</span>). Training set <span class="math inline">\(X_{ij} = Binomial(data_{ij}, 0.5)\)</span>, and validation set is <span class="math inline">\(Y_{ij} = data_{ij} - X{ij}\)</span></p>
+<p>I compare <code>ebpmf</code> with <code>nmf</code> algorithms on <code>10xgenomics</code> dataset <code>cd14_monocytes</code> (<span class="math inline">\(\text{n-sample} = 2611, \text{n-feature} = 359\)</span>). Training set <span class="math inline">\(X_{ij} = Binomial(data_{ij}, 0.5)\)</span>, and validation set is <span class="math inline">\(Y_{ij} = data_{ij} - X{ij}\)</span>.</p>
+</div>
+<div id="summary-of-results" class="section level2">
+<h2>Summary of results:</h2>
+<ul>
+<li>It is disconcerting that among <code>ebpmf</code> methods, the <code>ELBO</code> does not correspond to the validation loglikelihood: <code>ebpmf-point-gamma</code> has much higher <code>ELBO</code> than <code>ebpmf-exponential-mixture</code>, but the validation loglikelihood is worse. Will investigaet into that<br />
+</li>
+<li><code>ebpmf</code> does better than <code>nnmf</code> on validation set.<br />
+</li>
+<li>I accidently made a mistake that gives iteresting result in using <code>NNLM::nnmf</code>: I initialized it using <code>init = list(W0 = ..., H0 = ...)</code> and got the best training and validation loglikelihood among all algorithms. This specification means fitting <span class="math display">\[
+A \approx WH + W_0 H_1 + W_1 H_0 
+\]</span> in <a href="https://cran.r-project.org/web/packages/NNLM/vignettes/Fast-And-Versatile-NMF.pdf" class="uri">https://cran.r-project.org/web/packages/NNLM/vignettes/Fast-And-Versatile-NMF.pdf</a> section <code>Content deconvolution and designable factorization</code></li>
+</ul>
 <pre class="r"><code>devtools::load_all(&quot;../ebpmf&quot;)
 devtools::load_all(&quot;../ebpm&quot;)
 library(ebpmf)
@@ -806,7 +855,17 @@ ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
 out[[method_]] = res
 
 ## Run nnmf with  initialization from ebpmf_point_gamma
-method_ = &quot;nnmf_init_from_point_gamma&quot;
+method_ = &quot;nnmf_init_wh_from_point_gamma&quot;
+res = out$ebpmf_point_gamma
+res = NNLM::nnmf(A = X, k = K, init = list(W = res$qg$qls_mean, H = t(res$qg$qfs_mean)), loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = maxiter)
+Lam = res$W %*% res$H
+method = c(method, method_)
+ll_train = c(ll_train, sum(dpois(X, Lam, log = T)))
+ll_val   = c(ll_val, sum(dpois(Y, Lam, log = T)))
+out[[method_]] = res
+
+## Run nnmf with  initialization from ebpmf_point_gamma
+method_ = &quot;nnmf_init_w0h0_from_point_gamma&quot;
 res = out$ebpmf_point_gamma
 res = NNLM::nnmf(A = X, k = K, init = list(W0 = res$qg$qls_mean, H0 = t(res$qg$qfs_mean)), loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = maxiter)
 Lam = res$W %*% res$H
@@ -818,11 +877,12 @@ out[[method_]] = res</code></pre>
 <div id="compare-loglikelihood-in-training-and-validation-dataset." class="section level2">
 <h2>Compare loglikelihood in training and validation dataset.</h2>
 <pre class="r"><code>data.frame(method = method, ll_train = ll_train, ll_val = ll_val)</code></pre>
-<pre><code>                      method  ll_train    ll_val
-1  ebpmf_exponential_mixture -968660.9 -978453.3
-2          ebpmf_point_gamma -969986.0 -979553.7
-3                       nnmf -969532.4 -982661.4
-4 nnmf_init_from_point_gamma -954207.7 -972323.3</code></pre>
+<pre><code>                           method  ll_train    ll_val
+1       ebpmf_exponential_mixture -968660.9 -978453.3
+2               ebpmf_point_gamma -969986.0 -979553.7
+3                            nnmf -969532.4 -982661.4
+4   nnmf_init_wh_from_point_gamma -968021.5 -981134.6
+5 nnmf_init_w0h0_from_point_gamma -954207.7 -972323.3</code></pre>
 </div>
 <div id="show-objectives" class="section level2">
 <h2>show objectives</h2>
