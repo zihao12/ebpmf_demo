@@ -131,6 +131,14 @@ print(fit_init_lee$qg$gls[[2]])
 So $l^2 \approx  0$ is  only because it is relatively small compared to $l^1$, not because $\pi_0 \approx 1$ ! That the $\pi_0 = 0$ is because when $\sum_j Z_{ijk} \neq 0$, the MLE gives us $\pi_0 = 0$. \\
 Note: in `nnmf` a small number is added to $L, F$ after each iteration for numerical stability, but this will make it impossible to get $\pi^k_0 = 0$ for any $l^k$.  
 
+## ELBO
+```{r}
+## ebpmf_point_gamma init with lee
+fit_init_lee$ELBO[length(fit_init_lee$ELBO)]
+
+## ebpmf_point_gamma init with scd
+fit_init_scd$ELBO[length(fit_init_scd$ELBO)]
+```
 
 
 
