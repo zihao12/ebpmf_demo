@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-26
+<strong>Last updated:</strong> 2019-10-27
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3de00deef14ec052d949f5f874aa52fec6b49fbbtargetblank3de00dea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/3de00deef14ec052d949f5f874aa52fec6b49fbb" target="_blank">3de00de</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree21e33d362c4381bac6b5b0077d8ca6309ba4dcddtargetblank21e33d3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/21e33d362c4381bac6b5b0077d8ca6309ba4dcdd" target="_blank">21e33d3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3de00deef14ec052d949f5f874aa52fec6b49fbbtargetblank3de00dea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree21e33d362c4381bac6b5b0077d8ca6309ba4dcddtargetblank21e33d3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -606,6 +606,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/21e33d362c4381bac6b5b0077d8ca6309ba4dcdd/analysis/Experiment_ebpmf_rank1.Rmd" target="_blank">21e33d3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-27
+</td>
+<td>
+update Experiment_ebpmf_rank1.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/5f6927c50a3bf5c120f0ae34b14c0cc8c2c16136/docs/Experiment_ebpmf_rank1.html" target="_blank">5f6927c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-26
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -934,6 +968,15 @@ $a
 $b
 [1] 2416.518</code></pre>
 <p>So <span class="math inline">\(l^2 \approx 0\)</span> is only because it is relatively small compared to <span class="math inline">\(l^1\)</span>, not because <span class="math inline">\(\pi_0 \approx 1\)</span> ! That the <span class="math inline">\(\pi_0 = 0\)</span> is because when <span class="math inline">\(\sum_j Z_{ijk} \neq 0\)</span>, the MLE gives us <span class="math inline">\(\pi_0 = 0\)</span>. \ Note: in <code>nnmf</code> a small number is added to <span class="math inline">\(L, F\)</span> after each iteration for numerical stability, but this will make it impossible to get <span class="math inline">\(\pi^k_0 = 0\)</span> for any <span class="math inline">\(l^k\)</span>.</p>
+</div>
+<div id="elbo" class="section level2">
+<h2>ELBO</h2>
+<pre class="r"><code>## ebpmf_point_gamma init with lee
+fit_init_lee$ELBO[length(fit_init_lee$ELBO)]</code></pre>
+<pre><code>[1] 13543202</code></pre>
+<pre class="r"><code>## ebpmf_point_gamma init with scd
+fit_init_scd$ELBO[length(fit_init_scd$ELBO)]</code></pre>
+<pre><code>[1] 13542999</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
