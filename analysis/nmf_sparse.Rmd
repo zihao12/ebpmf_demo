@@ -8,6 +8,7 @@ editor_options:
 ---
 
 Adapted from https://stephens999.github.io/misc/nmf_sparse.html
+We hope to see if `ebpmf` can get some sparse results compared to MLE algorithms. 
 
 ```{r warning=F, message=F}
 devtools::load_all("../ebpmf.alpha/")
@@ -43,7 +44,7 @@ image(X)
 ```
 
 Now run the methods, and compute the Poisson log-likelihoods.
-```{r warning=F}
+```{r warning=F, message=F}
 fit_lee = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "lee", max.iter = 10000)
 ## scd
 fit_scd = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "scd", max.iter = 10000)
@@ -53,7 +54,6 @@ fit0 <- list(F = matrix(runif(p*k),p,k),
 fit_sqp = altsqp(X,fit0,numiter = 20)
 
 fit_ebpmf_pg = ebpmf_point_gamma(X, K = k, maxiter.out = 100)
-
 
 sum(dpois(X, fit_sqp$L %*% t(fit_sqp$F),log=TRUE))
 sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
@@ -108,7 +108,7 @@ image(X)
 
 
 Run the methods. I also run altsqp initialized from the truth to check if it affects the result.
-```{r warning=F}
+```{r warning=F, message=F}
 k = 4
 fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000)
 ## scd
@@ -163,6 +163,10 @@ for(d in 1:k){
 }
 ```
 
+Well initialization  is very important for the sparsity pattern  of `ebpmf`!!
+
+
+Let's look  at the priors for L from the two `ebpmf_pg` fits. 
 ```{r}
 fit_ebpmf_pg$qg$gls
 
