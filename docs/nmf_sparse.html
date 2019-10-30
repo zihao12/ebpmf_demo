@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree76e05367b996618845cdaff2b34182952d908bc0targetblank76e0536a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/76e05367b996618845cdaff2b34182952d908bc0" target="_blank">76e0536</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree6a726d03348f050684e84aa6f5ba4885ccb976c5targetblank6a726d0a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/6a726d03348f050684e84aa6f5ba4885ccb976c5" target="_blank">6a726d0</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree76e05367b996618845cdaff2b34182952d908bc0targetblank76e0536a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree6a726d03348f050684e84aa6f5ba4885ccb976c5targetblank6a726d0a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -613,6 +613,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/6a726d03348f050684e84aa6f5ba4885ccb976c5/analysis/nmf_sparse.Rmd" target="_blank">6a726d0</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+<td>
+nmf_sparse update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/nmf_sparse.html" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/76e05367b996618845cdaff2b34182952d908bc0/analysis/nmf_sparse.Rmd" target="_blank">76e0536</a>
 </td>
 <td>
@@ -632,7 +666,7 @@ nmf_sparse
 </div>
 </div>
 </div>
-<p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a></p>
+<p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a> We hope to see if <code>ebpmf</code> can get some sparse results compared to MLE algorithms.</p>
 <pre class="r"><code>devtools::load_all(&quot;../ebpmf.alpha/&quot;)
 devtools::load_all(&quot;../ebpm/&quot;)
 library(&quot;fastTopics&quot;)
@@ -659,6 +693,43 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-2-1.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now run the methods, and compute the Poisson log-likelihoods.</p>
 <pre class="r"><code>fit_lee = NNLM::nnmf(A = X, k = 3, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 10000)
 ## scd
@@ -721,12 +792,238 @@ length(p)), : NA/Inf replaced by maximum positive value</code></pre>
 <pre class="r"><code>for(d in 1:k){
   plot(fit_sqp$L[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-1.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-2.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-3">
+Past versions of unnamed-chunk-4-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-3.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>for(d in 1:k){
   plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-4">
+Past versions of unnamed-chunk-4-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-4.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-5">
+Past versions of unnamed-chunk-4-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-5.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-4-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-6">
+Past versions of unnamed-chunk-4-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-4-6.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="add-a-dense-fourth-factor" class="section level2">
 <h2>Add a dense fourth factor</h2>
@@ -750,6 +1047,43 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-5-1.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Run the methods. I also run altsqp initialized from the truth to check if it affects the result.</p>
 <pre class="r"><code>k = 4
 fit_lee = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 10000)
@@ -830,24 +1164,630 @@ sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))</code></pre>
 for(i in 1:k){
   plot(fit_sqp2$L[,i],main=paste0(&quot;estimated loadings &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-1.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-2.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-3.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-4">
+Past versions of unnamed-chunk-7-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-4.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## sqp initialize from truth
 for(i in 1:k){
   plot(fit_scd$W[,i],main=paste0(&quot;estimated loadings &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-5">
+Past versions of unnamed-chunk-7-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-5.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-6">
+Past versions of unnamed-chunk-7-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-6.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-7">
+Past versions of unnamed-chunk-7-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-7.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-8">
+Past versions of unnamed-chunk-7-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-8.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## ebpmf_pg 
 for(d in 1:k){
   plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-12.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-9">
+Past versions of unnamed-chunk-7-9.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-9.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-10.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-10">
+Past versions of unnamed-chunk-7-10.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-10.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-11.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-11">
+Past versions of unnamed-chunk-7-11.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-11" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-11.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-12.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-12">
+Past versions of unnamed-chunk-7-12.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-12" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-12.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## ebpmf_pg iniialize from truth
 for(d in 1:k){
   plot(fit_ebpmf_pg2$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 
 }</code></pre>
-<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-14.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-15.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-16.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-13.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-13">
+Past versions of unnamed-chunk-7-13.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-13" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-13.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-14.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-14">
+Past versions of unnamed-chunk-7-14.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-14" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-14.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-15.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-15">
+Past versions of unnamed-chunk-7-15.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-15" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-15.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse.Rmd/unnamed-chunk-7-16.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-16">
+Past versions of unnamed-chunk-7-16.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-16" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/bc06fa1a95015d9792a4bfcef1cbd48870205087/docs/figure/nmf_sparse.Rmd/unnamed-chunk-7-16.png" target="_blank">bc06fa1</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Well initialization is very important for the sparsity pattern of <code>ebpmf</code>!!</p>
+<p>Let’s look at the priors for L from the two <code>ebpmf_pg</code> fits.</p>
 <pre class="r"><code>fit_ebpmf_pg$qg$gls</code></pre>
 <pre><code>[[1]]
 $pi0
