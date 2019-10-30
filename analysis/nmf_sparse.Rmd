@@ -122,6 +122,13 @@ fit_sqp2 = altsqp(X,fit_true,numiter = 20)
 
 fit_ebpmf_pg = ebpmf::ebpmf_point_gamma(X, K = k, maxiter.out = 100)
 
+
+## fix pi0 for l, f
+pi0_l = replicate(k, 0.9)
+pi0_f = replicate(k, 0.9)
+fit_ebpmf_pg_fixpi = ebpmf::ebpmf_point_gamma(X, K = k, maxiter.out = 100, pi0_l = pi0_l, pi0_f = pi0_f)
+
+
 ## also initialize from truth
 qg_from_true = initialize_qg_from_LF(L, F)
 fit_ebpmf_pg2 = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_true,maxiter.out = 100)
@@ -156,6 +163,12 @@ for(d in 1:k){
 
 }
 
+## ebpmf_pg with fix sparsity 
+for(d in 1:k){
+  plot(fit_ebpmf_pg_fixpi$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+
+}
+
 ## ebpmf_pg iniialize from truth
 for(d in 1:k){
   plot(fit_ebpmf_pg2$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
@@ -163,12 +176,15 @@ for(d in 1:k){
 }
 ```
 
-Well initialization  is very important for the sparsity pattern  of `ebpmf`!!
+*  initialization  is very important for the sparsity pattern  of `ebpmf`!!
 
+* Even fixing $\pi_0$ for the priors on $L, F$ may not help. 
 
 Let's look  at the priors for L from the two `ebpmf_pg` fits. 
 ```{r}
 fit_ebpmf_pg$qg$gls
+
+fit_ebpmf_pg_fixpi$qg$gls
 
 fit_ebpmf_pg2$qg$gls
 ```
