@@ -1,0 +1,180 @@
+---
+title: "nmf_sparse2"
+author: "zihao12"
+date: "2019-10-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Adapted from https://stephens999.github.io/misc/nmf_sparse.html
+This time we focus on `ebpmf_exponential_mixture` (`ebpmf_exp` as shorthand). Besides the normal `ebpmf_exp`, I fix the weights of the exponential mixture to be uniform. (the grid is fixed after the first iteration, and I set the smallest grid to be 1e-20).  
+
+
+```{r warning=F, message=F}
+rm(list = ls())
+devtools::load_all("../ebpmf.alpha/")
+devtools::load_all("../ebpm/")
+library("fastTopics")
+library("NNLM") 
+library("ebpmf")
+```
+
+## Introduction
+
+The goal is to do some simple simulations where the factors are sparse
+and look at the sparsity of the solutions from regular (unpenalized) nmf.
+
+We simulate data with 3 factors with a "block-like"" structure.
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k= 3
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+  
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+Now run the methods, and compute the Poisson log-likelihoods.
+```{r warning=F, message=F,echo=FALSE}
+k=3
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000)
+## scd
+fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 10000)
+
+
+fit_ebpmf_pg = ebpmf_point_gamma(X, K = k, maxiter.out = 100)
+
+fit_ebpmf_exp = ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, low = 1e-20)
+
+fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, uniform_mixture = T, low = 1e-30)
+```
+
+
+```{r}
+sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
+sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))
+sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
+sum(dpois(X,lambda ,log=TRUE))
+```
+
+
+So all MLE algorithms find the same solution. `ebpmf_pg` also exceeds oracle.
+
+Let's look at a factor/loading: the results are highly sparse.
+```{r}
+for(d in 1:k){
+  plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+}
+
+for(d in 1:k){
+  plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+}
+```
+
+
+## Add a dense fourth factor
+
+Now I add a fourth factor that is dense.
+Note that we can make the problem much harder
+by making the 4th (dense) factor have larger PVE (increase `mfac` in the code).
+That may be useful for comparing methods on a harder problem...
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+
+
+Run the methods. I also run altsqp initialized from the truth to check if it affects the result.
+```{r warning=F, message=F, echo=FALSE}
+k = 4
+## lee
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000)
+
+## lee from truth
+fit_lee2 = NNLM::nnmf(A = X, init = list(W = L, H  = t(F)),k = k, loss = "mkl", method = "lee", max.iter = 10000)
+
+## scd
+fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 10000)
+
+fit_ebpmf_pg = ebpmf::ebpmf_point_gamma(X, K = k, maxiter.out = 100)
+fit_ebpmf_exp = ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, low = 1e-20)
+fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, uniform_mixture = T, low = 1e-30)
+```
+
+
+```{r}
+sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
+sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))
+sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
+sum(dpois(X, L %*% t(F),log=TRUE))
+```
+
+All the methods find a solution
+whose loglikelihood exceeds the oracle.
+
+Look at the loadings, we see that the sparse loadings are a bit "messy".
+```{r}
+## ebpmf_pg
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+}
+
+## ebpmf_exp
+for(d in 1:k){
+  plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+}
+
+## ebpmf_exp with uniform weight on mixture of exponentials
+for(d in 1:k){
+  plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
