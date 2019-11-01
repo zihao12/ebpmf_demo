@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-10-31
+<strong>Last updated:</strong> 2019-11-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree1104a589c6ffafc0a76f954cce43c91c2951a733targetblank1104a58a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/1104a589c6ffafc0a76f954cce43c91c2951a733" target="_blank">1104a58</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8538c72434872494b7620a59362d649954321570targetblank8538c72a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/8538c72434872494b7620a59362d649954321570" target="_blank">8538c72</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree1104a589c6ffafc0a76f954cce43c91c2951a733targetblank1104a58a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8538c72434872494b7620a59362d649954321570targetblank8538c72a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -548,6 +548,7 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
 
 Untracked files:
     Untracked:  analysis/.ipynb_checkpoints/
@@ -614,6 +615,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8538c72434872494b7620a59362d649954321570/analysis/nmf_sparse2.Rmd" target="_blank">8538c72</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+update nmf_sparse2.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/nmf_sparse2.html" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/1104a589c6ffafc0a76f954cce43c91c2951a733/analysis/nmf_sparse2.Rmd" target="_blank">1104a58</a>
 </td>
 <td>
@@ -633,7 +668,10 @@ nmf_sparse2.Rmd
 </div>
 </div>
 </div>
-<p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a> This time we focus on <code>ebpmf_exponential_mixture</code> (<code>ebpmf_exp</code> as shorthand). Besides the normal <code>ebpmf_exp</code>, I fix the weights of the exponential mixture to be uniform. (the grid is fixed after the first iteration, and I set the smallest grid to be 1e-20).</p>
+<p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a> * This time we focus on <code>ebpmf_exponential_mixture</code> (<code>ebpmf_exp</code> as shorthand).</p>
+<ul>
+<li>Besides the original <code>ebpmf_exp</code>, I fix the weights of the exponential mixture to be uniform. (In the first iteration, I choose the grids as ususual (manually set the smallest scale to small number), and fix <span class="math inline">\(\pi\)</span> to be uniform; in the following iterations, the <span class="math inline">\(\hat{g}\)</span>s are fixed). In this way, most weights will be placed on exponentials with very small scales. I call it <code>ebpmf_exp_uniform</code>.</li>
+</ul>
 <pre class="r"><code>rm(list = ls())
 devtools::load_all(&quot;../ebpmf.alpha/&quot;)
 devtools::load_all(&quot;../ebpm/&quot;)
@@ -661,21 +699,44 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-2-1.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now run the methods, and compute the Poisson log-likelihoods.</p>
-<pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
-init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
 <pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
 init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
 <pre><code>Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
@@ -684,29 +745,284 @@ columns are trivially zero
 
 Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
 columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
 columns are trivially zero</code></pre>
+<p>Let’s see the training loglikelihood</p>
 <pre class="r"><code>sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))</code></pre>
 <pre><code>[1] -21749.2</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))</code></pre>
 <pre><code>[1] -21749.2</code></pre>
-<pre class="r"><code>sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -21785.97</code></pre>
-<pre class="r"><code>sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))</code></pre>
+<pre class="r"><code>#sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))</code></pre>
 <pre><code>[1] -21751.19</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -21770.57</code></pre>
-<pre class="r"><code>sum(dpois(X,lambda ,log=TRUE))</code></pre>
+<pre><code>[1] -21829.04</code></pre>
+<pre class="r"><code>## oracle
+sum(dpois(X,lambda ,log=TRUE))</code></pre>
 <pre><code>[1] -21944.94</code></pre>
 <p>So all MLE algorithms find the same solution. <code>ebpmf_pg</code> also exceeds oracle.</p>
 <p>Let’s look at a factor/loading: the results are highly sparse.</p>
 <pre class="r"><code>for(d in 1:k){
   plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>for(d in 1:k){
   plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
+Past versions of unnamed-chunk-5-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-5">
+Past versions of unnamed-chunk-5-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-6">
+Past versions of unnamed-chunk-5-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="add-a-dense-fourth-factor" class="section level2">
 <h2>Add a dense fourth factor</h2>
@@ -730,56 +1046,411 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Run the methods. I also run altsqp initialized from the truth to check if it affects the result.</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-6-1.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Run the methods.</p>
 <pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
 init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero
+
+Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
+columns of &quot;L&quot; are all zeros; solution entries associated with these
+columns are trivially zero</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))</code></pre>
 <pre><code>[1] -64324.04</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))</code></pre>
 <pre><code>[1] -64255.48</code></pre>
-<pre class="r"><code>sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64384.65</code></pre>
-<pre class="r"><code>sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64296.58</code></pre>
+<pre class="r"><code>#sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))</code></pre>
+<pre><code>[1] -67187.68</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64339.79</code></pre>
+<pre><code>[1] -67972.16</code></pre>
 <pre class="r"><code>sum(dpois(X, L %*% t(F),log=TRUE))</code></pre>
 <pre><code>[1] -65129.25</code></pre>
-<p>All the methods find a solution whose loglikelihood exceeds the oracle.</p>
-<p>Look at the loadings, we see that the sparse loadings are a bit “messy”.</p>
-<pre class="r"><code>## ebpmf_pg
-for(d in 1:k){
-  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
-}</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>## ebpmf_exp
+<p>All the methods find a solution and loglikelihood exceeds the oracle.</p>
+<p>Let’s see if we can get a cleaner loading by fixing much weights on smaller values for <code>ebpmf_exp</code>.</p>
+<pre class="r"><code># ## ebpmf_pg
+# for(d in 1:k){
+#   plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
+# }
+
+## ebpmf_exp
 for(d in 1:k){
   plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-2">
+Past versions of unnamed-chunk-9-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-3">
+Past versions of unnamed-chunk-9-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-4">
+Past versions of unnamed-chunk-9-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## ebpmf_exp with uniform weight on mixture of exponentials
 for(d in 1:k){
   plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf(&quot;estimated loadings %d&quot;, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-5">
+Past versions of unnamed-chunk-9-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-6">
+Past versions of unnamed-chunk-9-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-7">
+Past versions of unnamed-chunk-9-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-8">
+Past versions of unnamed-chunk-9-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">2ef72e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-10-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
