@@ -6,11 +6,11 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
-
+## Goal
 Adapted from https://stephens999.github.io/misc/nmf_sparse.html
-* This time we focus on `ebpmf_exponential_mixture` (`ebpmf_exp` as shorthand). 
+* This time we focus on `ebpmf_exponential_mixture` (`ebpmf_exp` as shorthand). The result depends heavily  on the initialization of those methods. So we use two initializatin methods: `lee` and `scd` in `NNLM::nnmf` function.  I will show the loadings from both initialization as well as the final `ebpmf` results to see how `ebpmf`  
 
-* Besides the original `ebpmf_exp`, I fix the weights of the exponential mixture to be uniform. (In the first iteration, I choose the  grids as ususual (manually set the smallest scale to small number), and fix $\pi$ to be uniform; in the following iterations, the  $\hat{g}$s are fixed). In this way, most weights will be placed on exponentials with very small scales. I call it  `ebpmf_exp_uniform`. 
+* Besides the original `ebpmf_exp`, I fix the weights of the exponential mixture to be uniform. (In the first iteration, I choose the  grids as ususual (manually set the smallest scale to small number), and fix $\pi$ to be uniform; in the following iterations, the  $\hat{g}$s are fixed). In this way, most weights will be placed on exponentials with very small scales. I call it  `ebpmf_exp_uniform`. I also use two initialization methods.
 
 
 ```{r warning=F, message=F}
@@ -20,18 +20,23 @@ devtools::load_all("../ebpm/")
 library("fastTopics")
 library("NNLM") 
 library("ebpmf")
+
+n = 99
+p = 300
+
+iter_em = 10000
+iter_eb = 100
+# n = 50
+# p = 100
 ```
 
-## Introduction
-
+## Sparse Loadings and Factors
 The goal is to do some simple simulations where the factors are sparse
 and look at the sparsity of the solutions from regular (unpenalized) nmf.
 
 We simulate data with 3 factors with a "block-like"" structure.
 ```{r}
 set.seed(123)
-n = 99
-p = 300
 k= 3
 L = matrix(0, nrow=n, ncol=k)
 F = matrix(0, nrow=p, ncol=k)
@@ -50,15 +55,19 @@ image(X)
 Now run the methods, and compute the Poisson log-likelihoods.
 ```{r warning=F, message=F,echo=FALSE}
 k=3
-fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000)
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = iter_em)
 ## scd
-fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 10000)
+fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = iter_em)
+
+qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
+qg_from_scd = initialize_qg_from_LF(L = fit_scd$W, F =  t(fit_scd$H))
+
+fit_ebpmf_exp_lee = ebpmf_exponential_mixture(X, K = k, qg = qg_from_lee, maxiter.out = iter_eb)
+fit_ebpmf_exp_scd = ebpmf_exponential_mixture(X, K = k, qg = qg_from_scd, maxiter.out = iter_eb)
 
 
-#fit_ebpmf_pg = ebpmf_point_gamma(X, K = k, maxiter.out = 100, init_method = "lee")
-fit_ebpmf_exp = ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, init_method = "lee")
 
-fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture_uniform(X, K = k, m = 2^0.25,maxiter.out = 100, init_method = "lee", low = 1e-30)
+#fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture_uniform(X, K = k, m = 2^0.25,maxiter.out = 100, init_method = "lee", low = 1e-30)
 ```
 
 Let's see the training loglikelihood
@@ -66,8 +75,12 @@ Let's see the training loglikelihood
 sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
 sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))
 #sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
-sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))
-sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp_lee$qg$qls_mean %*% t(fit_ebpmf_exp_lee$qg$qfs_mean),log=TRUE))
+
+sum(dpois(X, fit_ebpmf_exp_scd$qg$qls_mean %*% t(fit_ebpmf_exp_scd$qg$qfs_mean),log=TRUE))
+
+
+#sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
 ## oracle
 sum(dpois(X,lambda ,log=TRUE))
 ```
@@ -77,12 +90,28 @@ So all MLE algorithms find the same solution. `ebpmf_pg` also exceeds oracle.
 
 Let's look at a factor/loading: the results are highly sparse.
 ```{r}
+## fit_lee
+method = "lee"
 for(d in 1:k){
-  plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+  plot(fit_lee$W[,d],main=sprintf("%s: estimated loadings %d", method, d))
 }
 
+## fit_scd
+method = "scd"
 for(d in 1:k){
-  plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+  plot(fit_scd$W[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_lee
+method = "ebpmf_exp_lee"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_lee$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_scd
+method = "ebpmf_exp_scd"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_scd$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
 }
 ```
 
@@ -95,8 +124,6 @@ by making the 4th (dense) factor have larger PVE (increase `mfac` in the code).
 That may be useful for comparing methods on a harder problem...
 ```{r}
 set.seed(123)
-n = 99
-p = 300
 k= 4
 mfac = 2 # controls PVE of dense factor
 L = matrix(0, nrow=n, ncol=k)
@@ -118,19 +145,19 @@ image(X)
 
 Run the methods. 
 ```{r warning=F, message=F, echo=FALSE}
-k = 4
-## lee
-fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000)
-
-## lee from truth
-fit_lee2 = NNLM::nnmf(A = X, init = list(W = L, H  = t(F)),k = k, loss = "mkl", method = "lee", max.iter = 10000)
-
+k=4
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = iter_em)
 ## scd
-fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 10000)
+fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = iter_em)
 
-#fit_ebpmf_pg = ebpmf::ebpmf_point_gamma(X, K = k, maxiter.out = 100, init_method = "lee")
-fit_ebpmf_exp = ebpmf_exponential_mixture(X, K = k, maxiter.out = 100, init_method = "lee")
-fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture_uniform(X, K = k, m = 2^0.25,maxiter.out = 100, init_method = "lee", low = 1e-30)
+qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
+qg_from_scd = initialize_qg_from_LF(L = fit_scd$W, F =  t(fit_scd$H))
+
+fit_ebpmf_exp_lee = ebpmf_exponential_mixture(X, K = k, qg = qg_from_lee, m = 2^0.25, maxiter.out = iter_eb)
+fit_ebpmf_exp_scd = ebpmf_exponential_mixture(X, K = k, qg = qg_from_scd, m = 2^0.25, maxiter.out = iter_eb)
+
+fit_ebpmf_exp_uniform_lee =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_lee, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-30)
+fit_ebpmf_exp_uniform_scd =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_scd, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-30)
 ```
 
 
@@ -138,33 +165,87 @@ fit_ebpmf_exp_uniform =  ebpmf_exponential_mixture_uniform(X, K = k, m = 2^0.25,
 sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
 sum(dpois(X, fit_scd$W %*% fit_scd$H,log=TRUE))
 #sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
-sum(dpois(X, fit_ebpmf_exp$qg$qls_mean %*% t(fit_ebpmf_exp$qg$qfs_mean),log=TRUE))
-sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
-sum(dpois(X, L %*% t(F),log=TRUE))
+sum(dpois(X, fit_ebpmf_exp_lee$qg$qls_mean %*% t(fit_ebpmf_exp_lee$qg$qfs_mean),log=TRUE))
+
+sum(dpois(X, fit_ebpmf_exp_scd$qg$qls_mean %*% t(fit_ebpmf_exp_scd$qg$qfs_mean),log=TRUE))
+
+sum(dpois(X, fit_ebpmf_exp_uniform_lee$qg$qls_mean %*% t(fit_ebpmf_exp_uniform_lee$qg$qfs_mean),log=TRUE))
+
+sum(dpois(X, fit_ebpmf_exp_uniform_scd$qg$qls_mean %*% t(fit_ebpmf_exp_uniform_scd$qg$qfs_mean),log=TRUE))
+
+#sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
+## oracle
+sum(dpois(X,lambda ,log=TRUE))
 ```
 
 All the methods find a solution and loglikelihood exceeds the oracle.
 
 Let's  see  if we can get a cleaner loading by fixing much weights on smaller values for `ebpmf_exp`. 
 ```{r}
-# ## ebpmf_pg
-# for(d in 1:k){
-#   plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
-# }
-
-## ebpmf_exp
+## fit_lee
+method = "lee"
 for(d in 1:k){
-  plot(fit_ebpmf_exp$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+  plot(fit_lee$W[,d],main=sprintf("%s: estimated loadings %d", method, d))
 }
 
-## ebpmf_exp with uniform weight on mixture of exponentials
+## fit_scd
+method = "scd"
 for(d in 1:k){
-  plot(fit_ebpmf_exp_uniform$qg$qls_mean[,d],main=sprintf("estimated loadings %d", d))
+  plot(fit_scd$W[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_lee
+method = "ebpmf_exp_lee"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_lee$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_scd
+method = "ebpmf_exp_scd"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_scd$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_lee
+method = "ebpmf_exp_uniform_lee"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_uniform_lee$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
+}
+
+## fit_ebpmf_exp_scd
+method = "ebpmf_exp_uniform_scd"
+for(d in 1:k){
+  plot(fit_ebpmf_exp_uniform_scd$qg$qls_mean[,d],main=sprintf("%s: estimated loadings %d", method, d))
 }
 ```
 
 
 
+
+
+Compute the KL divergence between $\lambda_{true}$ and $\lambda_{est}$. 
+```{r}
+# compute goodness of fit to true lambda
+KL = function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+get_WH_nnmf= function(fit){fit$W %*% fit$H}
+get_WH_ebpmf= function(fit){fit$qg$qls_mean %*% t(fit$qg$qfs_mean)}
+```
+
+```{r}
+KL(lambda,get_WH_nnmf(fit_lee))
+
+KL(lambda,get_WH_nnmf(fit_scd))
+
+KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_lee))
+
+KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_scd))
+
+KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_uniform_lee))
+
+KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_uniform_scd))
+```
 
 
 
