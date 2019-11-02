@@ -22,6 +22,7 @@ n = 99
 lam = replicate(n, 0)
 lam[1:(n/3)] = 50
 x = rpois(n, lambda = lam)
+hist(x, breaks = 100)
 
 fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
 
