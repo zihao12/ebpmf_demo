@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreebae2e5de8261237d7267ff2974342f0d4a2c5403targetblankbae2e5da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/bae2e5de8261237d7267ff2974342f0d4a2c5403" target="_blank">bae2e5d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreead98afac48c6a27c0b7be22a1d98ad0d46bb0f95targetblankad98afaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/ad98afac48c6a27c0b7be22a1d98ad0d46bb0f95" target="_blank">ad98afa</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreebae2e5de8261237d7267ff2974342f0d4a2c5403targetblankbae2e5da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreead98afac48c6a27c0b7be22a1d98ad0d46bb0f95targetblankad98afaa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -609,6 +609,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ad98afac48c6a27c0b7be22a1d98ad0d46bb0f95/analysis/Investigate_sparsity_ebpm.Rmd" target="_blank">ad98afa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+Investigate_sparsity_ebpm.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/55dd5ad658563c83a39efbdd68973629fedc91e8/docs/Investigate_sparsity_ebpm.html" target="_blank">55dd5ad</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -707,6 +741,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/55dd5ad658563c83a39efbdd68973629fedc91e8/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-2-1.png" target="_blank">55dd5ad</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/d6ca75d239bb1fdb63022404377708abbbaa4010/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-2-1.png" target="_blank">d6ca75d</a>
 </td>
 <td>
@@ -732,116 +777,51 @@ ggplot(df)+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;posterior mean&quot;)</code></pre>
 <p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
+Past versions of unnamed-chunk-2-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/55dd5ad658563c83a39efbdd68973629fedc91e8/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-2-2.png" target="_blank">55dd5ad</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The <span class="math inline">\(0\)</span> are fitted with:</p>
 <pre class="r"><code>min(df$exp)</code></pre>
 <pre><code>[1] 0.05719759</code></pre>
 <pre class="r"><code>min(df$pg)</code></pre>
 <pre><code>[1] 0</code></pre>
-</div>
-<div id="not-exactly-sparse" class="section level2">
-<h2>not exactly sparse</h2>
-<p>replace 0 with small values in data.</p>
-<pre class="r"><code>set.seed(123)
-mfac = 2 # controls PVE of dense factor
-n = 99
-lam = mfac*runif(n)
-lam[1:(n/3)] = 50
-x = rpois(n, lambda = lam)
-hist(x, breaks = 100)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
-Past versions of unnamed-chunk-3-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d6ca75d239bb1fdb63022404377708abbbaa4010/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-3-1.png" target="_blank">d6ca75d</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-11-01
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
-
-fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
-  
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
-ggplot(df)+
-  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
-  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
-  geom_abline(slope = 1, intercept = 0)+
-  ylab(&quot;posterior mean&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
-Past versions of unnamed-chunk-3-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d6ca75d239bb1fdb63022404377708abbbaa4010/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-3-2.png" target="_blank">d6ca75d</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-11-01
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>min(df$x)</code></pre>
-<pre><code>[1] 0</code></pre>
-<pre class="r"><code>min(df$exp)</code></pre>
-<pre><code>[1] 0.453445</code></pre>
-<pre class="r"><code>min(df$pg)</code></pre>
-<pre><code>[1] 0.2525363</code></pre>
-<p>Let’s take a closer look at those small elements</p>
-<pre class="r"><code>df_small = df[-(1:(n/3)),]
-ggplot(df_small)+
+<p>Let’s take a closer look at those large elements</p>
+<pre class="r"><code>df_large = df[1:(n/3),]
+ggplot(df_large)+
   geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
@@ -884,13 +864,17 @@ zihao12
 </table>
 </div>
 </div>
-<p>Let’s take a closer look at those large elements</p>
-<pre class="r"><code>df_large = df[1:(n/3),]
-ggplot(df_large)+
-  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
-  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
-  geom_abline(slope = 1, intercept = 0)+
-  ylab(&quot;posterior mean&quot;)</code></pre>
+</div>
+<div id="not-exactly-sparse" class="section level2">
+<h2>not exactly sparse</h2>
+<p>replace 0 with small values in data.</p>
+<pre class="r"><code>set.seed(123)
+mfac = 2 # controls PVE of dense factor
+n = 99
+lam = mfac*runif(n)
+lam[1:(n/3)] = 50
+x = rpois(n, lambda = lam)
+hist(x, breaks = 100)</code></pre>
 <p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
@@ -929,6 +913,39 @@ zihao12
 </table>
 </div>
 </div>
+<pre class="r"><code>fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
+ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>min(df$x)</code></pre>
+<pre><code>[1] 0</code></pre>
+<pre class="r"><code>min(df$exp)</code></pre>
+<pre><code>[1] 0.453445</code></pre>
+<pre class="r"><code>min(df$pg)</code></pre>
+<pre><code>[1] 0.2525363</code></pre>
+<p>Let’s take a closer look at those small elements</p>
+<pre class="r"><code>df_small = df[-(1:(n/3)),]
+ggplot(df_small)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s take a closer look at those large elements</p>
+<pre class="r"><code>df_large = df[1:(n/3),]
+ggplot(df_large)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
