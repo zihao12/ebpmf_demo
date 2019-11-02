@@ -103,13 +103,12 @@ samples_df = rbind(point_df, exp_df)
 ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle("compare g_hat")
 ```
 
+```{r}
+fit_ebpm_pg$fitted_g
+```
 
 
-
-
-
-
-
+So in this example, `ebpm_point_gamma` estimates a $\hat{g}$ that's much closer to the truth than `ebpm_exponential_mixture`, because the latter is unimodal at  0 so cannot capture the second mode at 50. `ebpm_point_gamma` can distinguish between $0$ and some larger counts centered around 50 fairly well. 
 
 
 ## not exactly sparse
@@ -199,6 +198,12 @@ ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggti
 ```
 
 
+```{r}
+fit_ebpm_pg$fitted_g
+```
+
+
+Here `ebpm_point_gamma` fails to capture the two modes. The much less sparisity makes $\pi_0$ much smaller. So the $gamma(shape, scale)$ has to compromise between large counts and very small counts. 
 
 
 
