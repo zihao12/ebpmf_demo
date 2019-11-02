@@ -13,6 +13,19 @@ editor_options:
 devtools::load_all("../ebpm")
 library(ebpm)
 library(ggplot2)
+source("code/misc.R")
+
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
 ```
 
 ## sparse  data
@@ -24,11 +37,11 @@ lam[1:(n/3)] = 50
 x = rpois(n, lambda = lam)
 hist(x, breaks = 100)
 
-fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
 
-fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
+fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
   
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
 ggplot(df)+
   geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
   geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
@@ -54,6 +67,49 @@ ggplot(df_large)+
 ```
 
 
+Compare KL, Jensen-Shannon divergence and RMSE
+```{r}
+###### KL divergence
+## MLE
+KL(lam, df$x)
+## exp
+KL(lam, df$exp)
+## pg
+KL(lam, df$pg)
+
+###### Jensen-Shannon divergence
+## MLE
+JS(lam, df$x)
+## exp
+JS(lam, df$exp)
+## pg
+JS(lam, df$pg)
+
+###### RMSE
+## MLE
+RMSE(lam, df$x)
+## exp
+RMSE(lam, df$exp)
+## pg
+RMSE(lam, df$pg)
+```
+
+## look at $\hat{g}$
+```{r}
+m = 1000
+point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = "point_gamma")
+exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = "exponential_mixture")
+samples_df = rbind(point_df, exp_df)
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle("compare g_hat")
+```
+
+
+
+
+
+
+
+
 
 
 ## not exactly sparse
@@ -67,11 +123,11 @@ lam[1:(n/3)] = 50
 x = rpois(n, lambda = lam)
 hist(x, breaks = 100)
 
-fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
 
-fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
+fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
   
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
 ggplot(df)+
   geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
   geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
@@ -104,4 +160,52 @@ ggplot(df_large)+
   geom_abline(slope = 1, intercept = 0)+
   ylab("posterior mean")
 ```
+
+
+Compare KL, Jensen-Shannon divergence and RMSE
+```{r}
+###### KL divergence
+## MLE
+KL(lam, df$x)
+## exp
+KL(lam, df$exp)
+## pg
+KL(lam, df$pg)
+
+###### Jensen-Shannon divergence
+## MLE
+JS(lam, df$x)
+## exp
+JS(lam, df$exp)
+## pg
+JS(lam, df$pg)
+
+###### RMSE
+## MLE
+RMSE(lam, df$x)
+## exp
+RMSE(lam, df$exp)
+## pg
+RMSE(lam, df$pg)
+```
+
+## look at $\hat{g}$
+```{r}
+m = 1000
+point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = "point_gamma")
+exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = "exponential_mixture")
+samples_df = rbind(point_df, exp_df)
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle("compare g_hat")
+```
+
+
+
+
+
+
+
+
+
+
+
 
