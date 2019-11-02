@@ -202,8 +202,7 @@ ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggti
 fit_ebpm_pg$fitted_g
 ```
 
-
-Here `ebpm_point_gamma` fails to capture the two modes. The much less sparisity makes $\pi_0$ much smaller. So the $gamma(shape, scale)$ has to compromise between large counts and very small counts. 
+Here `ebpm_point_gamma` fails to capture the two modes. The much less sparisity makes $\pi_0$ much smaller. So the $gamma(shape, scale)$ has to compromise between large counts and very small counts. In this scenario, the point mass assumption does not work!! 
 
 
 
