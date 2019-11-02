@@ -27,8 +27,9 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -76,7 +77,9 @@ h6 {
 </style>
 
 
+</head>
 
+<body>
 
 <style type = "text/css">
 .main-container {
@@ -101,9 +104,6 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
-summary {
-  display: list-item;
-}
 </style>
 
 
@@ -118,6 +118,7 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
+
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -137,43 +138,6 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -195,75 +159,18 @@ $(document).ready(function () {
 });
 </script>
 
+
+<div class="container-fluid main-container">
+
 <!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
-
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
 </script>
 
 <!-- code folding -->
+
 
 
 
@@ -341,6 +248,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -349,16 +258,6 @@ div.tocify {
 
 
 </style>
-
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
-
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -419,289 +318,211 @@ div.section {
 
 
 <h1 class="title toc-ignore">nmf_sparse2</h1>
-<h4 class="author">zihao12</h4>
-<h4 class="date">2019-10-30</h4>
+<h4 class="author"><em>zihao12</em></h4>
+<h4 class="date"><em>2019-10-30</em></h4>
 
 </div>
 
 
-<p>
-<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</button>
-</p>
-<div id="workflowr-report" class="collapse">
-<ul class="nav nav-tabs">
-<li class="active">
-<a data-toggle="tab" href="#summary">Summary</a>
-</li>
+<p><strong>Last updated:</strong> 2019-11-01</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
-</li>
-<li>
-<a data-toggle="tab" href="#versions">Past versions</a>
-</li>
-</ul>
-<div class="tab-content">
-<div id="summary" class="tab-pane fade in active">
-<p>
-<strong>Last updated:</strong> 2019-11-01
-</p>
-<p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
-</p>
-<p>
-<strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
-</p>
-<p>
-This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.4.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
-</p>
-<hr>
-</div>
-<div id="checks" class="tab-pane fade">
-<div id="workflowr-checks" class="panel-group">
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
-</p>
-</div>
-<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
-<div class="panel-body">
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
-</p>
-</div>
-<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
-<div class="panel-body">
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
 <p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20190923code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20190923)</code> </a>
-</p>
-</div>
-<div id="strongSeedstrongcodesetseed20190923code" class="panel-collapse collapse">
-<div class="panel-body">
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20190923)</code> </summary></p>
 <p>The command <code>set.seed(20190923)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
-</p>
-</div>
-<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
-<div class="panel-body">
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
 <p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
-</p>
-</div>
-<div id="strongCachestrongnone" class="panel-collapse collapse">
-<div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
-</p>
-</div>
-<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
-<div class="panel-body">
-<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
-</div>
-</div>
-</div>
-<div class="panel panel-default">
-<div class="panel-heading">
-<p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree10f32cc01788c10b36ef2da24be203ec47433b7dtargetblank10f32cca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/10f32cc01788c10b36ef2da24be203ec47433b7d" target="_blank">10f32cc</a> </a>
-</p>
-</div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree10f32cc01788c10b36ef2da24be203ec47433b7dtargetblank10f32cca" class="panel-collapse collapse">
-<div class="panel-body">
-<p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/47a90eccd3e7b69546468400f71742361a6d5cf1" target="_blank">47a90ec</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
-</p>
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
-
-Untracked files:
-    Untracked:  analysis/.ipynb_checkpoints/
-    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
-    Untracked:  analysis/ebpmf_demo.Rmd
-    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
-    Untracked:  analysis/softmax_experiments.ipynb
-    Untracked:  data/Compare_ebpmf_nmf2_out
-    Untracked:  data/Compare_ebpmf_nmf2_out_ver2.Rds
-    Untracked:  data/trash/
-    Untracked:  docs/figure/Experiment_ebpmf.Rmd/
-    Untracked:  verbose_log_1571583163.21966.txt
-    Untracked:  verbose_log_1571583324.71036.txt
-    Untracked:  verbose_log_1571583741.94199.txt
-    Untracked:  verbose_log_1571588102.40356.txt
-
-Unstaged changes:
-    Modified:   analysis/Compare_ebpmf_nmf.Rmd
-    Modified:   analysis/Compare_ebvaepm_ebpm.Rmd
-    Modified:   analysis/Experiment_ebpmf_rank1.Rmd
-    Modified:   analysis/nmf_sparse.Rmd
-    Modified:   analysis/softmax_experiments.Rmd
-    Modified:   data/Compare_ebpmf_nmf2_out.Rds
 
 </code></pre>
-<p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
-</p>
-</div>
-</div>
-</div>
-</div>
-<hr>
-</div>
-<div id="versions" class="tab-pane fade">
-
-<p>
-These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
-</p>
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 File
 </th>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
-<th>
+<th style="text-align:left;">
 Message
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
 Rmd
 </td>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/10f32cc01788c10b36ef2da24be203ec47433b7d/analysis/nmf_sparse2.Rmd" target="_blank">10f32cc</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/47a90eccd3e7b69546468400f71742361a6d5cf1/analysis/nmf_sparse2.Rmd" target="_blank">47a90ec</a>
 </td>
-<td>
-zihao12
+<td style="text-align:left;">
+Zihao
 </td>
-<td>
-2019-11-01
+<td style="text-align:left;">
+2019-11-02
 </td>
-<td>
-update nmf_sparse2.Rmd again
+<td style="text-align:left;">
+update nmf_sparse2.Rmd after setting smallest prior
 </td>
 </tr>
 <tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/nmf_sparse2.html" target="_blank">8ea925a</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-11-01
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
+<td style="text-align:left;">
 Rmd
 </td>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8538c72434872494b7620a59362d649954321570/analysis/nmf_sparse2.Rmd" target="_blank">8538c72</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8dfc3b5a3398f4cc09a52cfd5e9bf66da3fdd288/analysis/nmf_sparse2.Rmd" target="_blank">8dfc3b5</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
-2019-11-01
+<td style="text-align:left;">
+2019-11-02
 </td>
-<td>
+<td style="text-align:left;">
 update nmf_sparse2.Rmd
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 html
 </td>
-<td>
-<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/nmf_sparse2.html" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zihao12/ebpmf_demo/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/nmf_sparse2.html" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
-2019-10-31
+<td style="text-align:left;">
+2019-11-01
 </td>
-<td>
+<td style="text-align:left;">
 Build site.
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 Rmd
 </td>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/1104a589c6ffafc0a76f954cce43c91c2951a733/analysis/nmf_sparse2.Rmd" target="_blank">1104a58</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/10f32cc01788c10b36ef2da24be203ec47433b7d/analysis/nmf_sparse2.Rmd" target="_blank">10f32cc</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+<td style="text-align:left;">
+update nmf_sparse2.Rmd again
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zihao12/ebpmf_demo/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/nmf_sparse2.html" target="_blank">8ea925a</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8538c72434872494b7620a59362d649954321570/analysis/nmf_sparse2.Rmd" target="_blank">8538c72</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+<td style="text-align:left;">
+update nmf_sparse2.Rmd
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zihao12/ebpmf_demo/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/nmf_sparse2.html" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
-<td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1104a589c6ffafc0a76f954cce43c91c2951a733/analysis/nmf_sparse2.Rmd" target="_blank">1104a58</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-10-31
+</td>
+<td style="text-align:left;">
 nmf_sparse2.Rmd
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-<hr>
-</div>
-</div>
-</div>
+</ul>
+<p></details></p>
+<hr />
 <div id="goal" class="section level2">
 <h2>Goal</h2>
 <p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a> * This time we focus on <code>ebpmf_exponential_mixture</code> (<code>ebpmf_exp</code> as shorthand). The result depends heavily on the initialization of those methods. So we use two initializatin methods: <code>lee</code> and <code>scd</code> in <code>NNLM::nnmf</code> function. I will show the loadings from both initialization as well as the final <code>ebpmf</code> results to see how <code>ebpmf</code></p>
@@ -711,17 +532,14 @@ nmf_sparse2.Rmd
 <pre class="r"><code>rm(list = ls())
 devtools::load_all(&quot;../ebpmf.alpha/&quot;)
 devtools::load_all(&quot;../ebpm/&quot;)
-library(&quot;fastTopics&quot;)
 library(&quot;NNLM&quot;) 
 library(&quot;ebpmf&quot;)
-
 n = 99
 p = 300
-
 iter_em = 10000
 iter_eb = 100
-# n = 50
-# p = 100</code></pre>
+# iter_em = 100
+# iter_eb = 10</code></pre>
 </div>
 <div id="sparse-loadings-and-factors" class="section level2">
 <h2>Sparse Loadings and Factors</h2>
@@ -742,43 +560,36 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-2-1.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <p>Now run the methods, and compute the Poisson log-likelihoods.</p>
 <pre><code>Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
 columns of &quot;L&quot; are all zeros; solution entries associated with these
@@ -826,9 +637,9 @@ columns are trivially zero</code></pre>
 <pre><code>[1] -21749.2</code></pre>
 <pre class="r"><code>#sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
 sum(dpois(X, fit_ebpmf_exp_lee$qg$qls_mean %*% t(fit_ebpmf_exp_lee$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -21751.07</code></pre>
+<pre><code>[1] -21751.01</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_scd$qg$qls_mean %*% t(fit_ebpmf_exp_scd$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -21751.14</code></pre>
+<pre><code>[1] -21751.31</code></pre>
 <pre class="r"><code>#sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
 ## oracle
 sum(dpois(X,lambda ,log=TRUE))</code></pre>
@@ -841,316 +652,516 @@ for(d in 1:k){
   plot(fit_lee$W[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-1.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
-Past versions of unnamed-chunk-5-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-2.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
-Past versions of unnamed-chunk-5-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">8ea925a</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-3.png" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <pre class="r"><code>## fit_scd
 method = &quot;scd&quot;
 for(d in 1:k){
   plot(fit_scd$W[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
-Past versions of unnamed-chunk-5-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-4.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-5">
-Past versions of unnamed-chunk-5-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-5.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-5.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-6">
-Past versions of unnamed-chunk-5-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-5-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-6.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">8ea925a</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-6.png" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_lee
 method = &quot;ebpmf_exp_lee&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_lee$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-7.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-7.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-7.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-8.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-8.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-8.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-9.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-9.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-9.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_scd
 method = &quot;ebpmf_exp_scd&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_scd$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-12.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-10.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-10.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-10.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-11.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-11.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-11.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-5-12.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-12.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-5-12.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="add-a-dense-fourth-factor" class="section level2">
 <h2>Add a dense fourth factor</h2>
@@ -1172,43 +1183,36 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-6-1.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <p>Run the methods.</p>
 <pre><code>Warning in mixsqp(L, x0 = g_init$pi, control = control): One or more
 columns of &quot;L&quot; are all zeros; solution entries associated with these
@@ -1247,13 +1251,13 @@ length</code></pre>
 <pre><code>[1] -64255.48</code></pre>
 <pre class="r"><code>#sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
 sum(dpois(X, fit_ebpmf_exp_lee$qg$qls_mean %*% t(fit_ebpmf_exp_lee$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64343.07</code></pre>
+<pre><code>[1] -64342.99</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_scd$qg$qls_mean %*% t(fit_ebpmf_exp_scd$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64274.13</code></pre>
+<pre><code>[1] -64274.23</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_uniform_lee$qg$qls_mean %*% t(fit_ebpmf_exp_uniform_lee$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64331.75</code></pre>
+<pre><code>[1] -64331.73</code></pre>
 <pre class="r"><code>sum(dpois(X, fit_ebpmf_exp_uniform_scd$qg$qls_mean %*% t(fit_ebpmf_exp_uniform_scd$qg$qfs_mean),log=TRUE))</code></pre>
-<pre><code>[1] -64259.82</code></pre>
+<pre><code>[1] -64259.87</code></pre>
 <pre class="r"><code>#sum(dpois(X, fit_ebpmf_exp_uniform$qg$qls_mean %*% t(fit_ebpmf_exp_uniform$qg$qfs_mean),log=TRUE))
 ## oracle
 sum(dpois(X,lambda ,log=TRUE))</code></pre>
@@ -1266,577 +1270,976 @@ for(d in 1:k){
   plot(fit_lee$W[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
-Past versions of unnamed-chunk-9-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-1.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-2">
-Past versions of unnamed-chunk-9-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-2.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-3">
-Past versions of unnamed-chunk-9-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-3.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-4">
-Past versions of unnamed-chunk-9-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">8ea925a</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-4.png" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <pre class="r"><code>## fit_scd
 method = &quot;scd&quot;
 for(d in 1:k){
   plot(fit_scd$W[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-5">
-Past versions of unnamed-chunk-9-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-5.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-5.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-6">
-Past versions of unnamed-chunk-9-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-6.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-6.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-7">
-Past versions of unnamed-chunk-9-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-7.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-7.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-8">
-Past versions of unnamed-chunk-9-8.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-8.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">8ea925a</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-11-01
 </td>
 </tr>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8ea925aaf82170b160f405aeff2d3375872bb0b9/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">8ea925a</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-8.png" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_lee
 method = &quot;ebpmf_exp_lee&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_lee$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
 <p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-9.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-9">
-Past versions of unnamed-chunk-9-9.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-9" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-9.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-9.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-9.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-10.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-10">
-Past versions of unnamed-chunk-9-10.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-10" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-10.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-10.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-10.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-10.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-11.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-11">
-Past versions of unnamed-chunk-9-11.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-11" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-11.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-11.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-11.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-11.png" target="_blank">2ef72e3</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-12">
-Past versions of unnamed-chunk-9-12.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-12" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-12.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
-<th>
+<th style="text-align:left;">
 Version
 </th>
-<th>
+<th style="text-align:left;">
 Author
 </th>
-<th>
+<th style="text-align:left;">
 Date
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" target="_blank">2ef72e3</a>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" target="_blank">272ec5b</a>
 </td>
-<td>
+<td style="text-align:left;">
 zihao12
 </td>
-<td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2ef72e3e1d4490a1c018cdfe0c7cfb78f1b3537d/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-12.png" target="_blank">2ef72e3</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
 2019-10-31
 </td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_scd
 method = &quot;ebpmf_exp_scd&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_scd$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-13.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-14.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-15.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-16.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-13.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-13.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-13.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-14.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-14.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-14.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-15.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-15.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-15.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-16.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-16.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-16.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_lee
 method = &quot;ebpmf_exp_uniform_lee&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_uniform_lee$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-17.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-18.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-19.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-20.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-17.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-17.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-17.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-18.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-18.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-18.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-19.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-19.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-19.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-20.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-20.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-20.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>## fit_ebpmf_exp_scd
 method = &quot;ebpmf_exp_uniform_scd&quot;
 for(d in 1:k){
   plot(fit_ebpmf_exp_uniform_scd$qg$qls_mean[,d],main=sprintf(&quot;%s: estimated loadings %d&quot;, method, d))
 }</code></pre>
-<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-21.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-22.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-23.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-24.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-21.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-21.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-21.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-22.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-22.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-22.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-23.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-23.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-23.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/nmf_sparse2.Rmd/unnamed-chunk-9-24.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-24.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zihao12/ebpmf_demo/blob/272ec5bd01321c4f12c58bc4f545b8b05a5fe9bb/docs/figure/nmf_sparse2.Rmd/unnamed-chunk-9-24.png" target="_blank">272ec5b</a>
+</td>
+<td style="text-align:left;">
+zihao12
+</td>
+<td style="text-align:left;">
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Compute the KL divergence between <span class="math inline">\(\lambda_{true}\)</span> and <span class="math inline">\(\lambda_{est}\)</span>.</p>
 <pre class="r"><code># compute goodness of fit to true lambda
 KL = function(true,est){
@@ -1849,63 +2252,59 @@ get_WH_ebpmf= function(fit){fit$qg$qls_mean %*% t(fit$qg$qfs_mean)}</code></pre>
 <pre class="r"><code>KL(lambda,get_WH_nnmf(fit_scd))</code></pre>
 <pre><code>[1] 967.4376</code></pre>
 <pre class="r"><code>KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_lee))</code></pre>
-<pre><code>[1] 893.1976</code></pre>
+<pre><code>[1] 893.9553</code></pre>
 <pre class="r"><code>KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_scd))</code></pre>
-<pre><code>[1] 865.9696</code></pre>
+<pre><code>[1] 867.2499</code></pre>
 <pre class="r"><code>KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_uniform_lee))</code></pre>
-<pre><code>[1] 1043.433</code></pre>
+<pre><code>[1] 1043.355</code></pre>
 <pre class="r"><code>KL(lambda,get_WH_ebpmf(fit_ebpmf_exp_uniform_scd))</code></pre>
-<pre><code>[1] 1008.057</code></pre>
-<br>
-<p>
-<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
-<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
-</button>
-</p>
-<div id="workflowr-sessioninfo" class="collapse">
+<pre><code>[1] 1008.304</code></pre>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.5.1 (2018-07-02)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS  10.14
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Scientific Linux 7.4 (Nitrogen)
 
 Matrix products: default
-BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+BLAS/LAPACK: /software/openblas-0.2.19-el7-x86_64/lib/libopenblas_haswellp-r0.2.19.so
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] NNLM_0.4.2        fastTopics_0.1-74 ebpm_0.0.0.9001   ebpmf_0.1.0      
-[5] testthat_2.2.1   
+[1] NNLM_0.4.2      ebpm_0.0.0.9001 ebpmf_0.1.0     testthat_2.1.1 
 
 loaded via a namespace (and not attached):
- [1] gtools_3.8.1        tidyselect_0.2.5    xfun_0.8           
- [4] remotes_2.1.0       purrr_0.3.2         lattice_0.20-38    
- [7] colorspace_1.4-1    usethis_1.5.1       htmltools_0.3.6    
-[10] yaml_2.2.0          rlang_0.4.0         pkgbuild_1.0.3     
-[13] mixsqp_0.1-121      pillar_1.4.2        glue_1.3.1         
-[16] withr_2.1.2         sessioninfo_1.1.1   stringr_1.4.0      
-[19] munsell_0.5.0       gtable_0.3.0        workflowr_1.4.0    
-[22] devtools_2.2.1.9000 memoise_1.1.0       evaluate_0.14      
-[25] knitr_1.25          callr_3.2.0         ps_1.3.0           
-[28] parallel_3.5.1      Rcpp_1.0.2          backports_1.1.5    
-[31] scales_1.0.0        desc_1.2.0          pkgload_1.0.2      
-[34] RcppParallel_4.4.3  fs_1.3.1            ggplot2_3.2.1      
-[37] digest_0.6.22       stringi_1.4.3       processx_3.3.1     
-[40] dplyr_0.8.1         rprojroot_1.3-2     grid_3.5.1         
-[43] cli_1.1.0           tools_3.5.1         magrittr_1.5       
-[46] lazyeval_0.2.2      tibble_2.1.3        crayon_1.3.4       
-[49] whisker_0.3-2       pkgconfig_2.0.3     Matrix_1.2-17      
-[52] ellipsis_0.3.0      prettyunits_1.0.2   assertthat_0.2.1   
-[55] rmarkdown_1.13      rstudioapi_0.10     R6_2.4.0           
-[58] git2r_0.25.2        compiler_3.5.1     </code></pre>
+ [1] gtools_3.8.1      tidyselect_0.2.5  remotes_2.1.0    
+ [4] purrr_0.3.2       colorspace_1.4-1  usethis_1.5.1    
+ [7] htmltools_0.3.6   yaml_2.2.0        rlang_0.4.1      
+[10] pkgbuild_1.0.3    R.oo_1.22.0       mixsqp_0.2-2     
+[13] pillar_1.4.2      glue_1.3.1        withr_2.1.2      
+[16] R.utils_2.7.0     sessioninfo_1.1.1 stringr_1.4.0    
+[19] munsell_0.5.0     gtable_0.3.0      workflowr_1.1.1  
+[22] R.methodsS3_1.7.1 devtools_2.1.0    memoise_1.1.0    
+[25] evaluate_0.14     knitr_1.20        callr_3.3.2      
+[28] ps_1.3.0          Rcpp_1.0.2        backports_1.1.5  
+[31] scales_1.0.0      desc_1.2.0        pkgload_1.0.2    
+[34] fs_1.3.1          ggplot2_3.2.1     digest_0.6.22    
+[37] stringi_1.4.3     processx_3.4.0    dplyr_0.8.3      
+[40] rprojroot_1.3-2   grid_3.5.1        cli_1.1.0        
+[43] tools_3.5.1       magrittr_1.5      lazyeval_0.2.2   
+[46] tibble_2.1.3      crayon_1.3.4      whisker_0.4      
+[49] pkgconfig_2.0.3   prettyunits_1.0.2 assertthat_0.2.1 
+[52] rmarkdown_1.10    rstudioapi_0.10   R6_2.4.0         
+[55] git2r_0.26.1      compiler_3.5.1   </code></pre>
 </div>
-</div>
-
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -1918,6 +2317,14 @@ footer is added to webpages before the MathJax javascript. -->
     "HTML-CSS": { availableFonts: ["TeX"] }
   });
 </script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
 
 
 </div>
