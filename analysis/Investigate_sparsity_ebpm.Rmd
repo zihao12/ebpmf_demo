@@ -1,0 +1,90 @@
+---
+title: "Investigate_sparsity_ebpm"
+author: "zihao12"
+date: "2019-11-01"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r warning=F}
+devtools::load_all("../ebpm")
+library(ebpm)
+library(ggplot2)
+```
+
+## sparse  data
+```{r}
+set.seed(123)
+n = 99
+lam = replicate(n, 0)
+lam[1:(n/3)] = 50
+x = rpois(n, lambda = lam)
+
+fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
+ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+
+min(df$exp)
+min(df$pg)
+```
+
+
+## not exactly sparse
+replace 0 with small values in data. 
+```{r warning=F}
+set.seed(123)
+mfac = 2 # controls PVE of dense factor
+n = 99
+lam = mfac*runif(n)
+lam[1:(n/3)] = 50
+x = rpois(n, lambda = lam)
+hist(x, breaks = 100)
+
+fit_ebpmf_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpmf_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpmf_exp$posterior$mean, pg =  fit_ebpmf_pg$posterior$mean)
+ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+
+min(df$x)
+min(df$exp)
+min(df$pg)
+```
+
+
+Let's take a closer look at those small elements
+```{r warning=F}
+df_small = df[-(1:(n/3)),]
+ggplot(df_small)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+```
+
+
+Let's take a closer look at those large elements
+```{r warning=F}
+df_large = df[1:(n/3),]
+ggplot(df_large)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+```
+
