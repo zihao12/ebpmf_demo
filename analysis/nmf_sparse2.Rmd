@@ -26,6 +26,10 @@ p = 300
 
 iter_em = 10000
 iter_eb = 100
+
+iter_em = 100
+iter_eb = 10
+
 # n = 50
 # p = 100
 ```
@@ -156,8 +160,8 @@ qg_from_scd = initialize_qg_from_LF(L = fit_scd$W, F =  t(fit_scd$H))
 fit_ebpmf_exp_lee = ebpmf_exponential_mixture(X, K = k, qg = qg_from_lee, m = 2^0.25, maxiter.out = iter_eb)
 fit_ebpmf_exp_scd = ebpmf_exponential_mixture(X, K = k, qg = qg_from_scd, m = 2^0.25, maxiter.out = iter_eb)
 
-fit_ebpmf_exp_uniform_lee =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_lee, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-30)
-fit_ebpmf_exp_uniform_scd =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_scd, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-30)
+fit_ebpmf_exp_uniform_lee =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_lee, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-10)
+fit_ebpmf_exp_uniform_scd =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_scd, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-10)
 ```
 
 
