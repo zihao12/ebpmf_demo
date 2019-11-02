@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef1d09ca08eb255a5ae77de3ae26bb6d1889298cbtargetblankf1d09caa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/f1d09ca08eb255a5ae77de3ae26bb6d1889298cb" target="_blank">f1d09ca</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed7b9d17be2e041d01de170314ce50adcd9ed585btargetblankd7b9d17a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/d7b9d17be2e041d01de170314ce50adcd9ed585b" target="_blank">d7b9d17</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef1d09ca08eb255a5ae77de3ae26bb6d1889298cbtargetblankf1d09caa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed7b9d17be2e041d01de170314ce50adcd9ed585btargetblankd7b9d17a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -610,6 +610,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/d7b9d17be2e041d01de170314ce50adcd9ed585b/analysis/Investigate_sparsity_ebpm.Rmd" target="_blank">d7b9d17</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+Investigate_sparsity_ebpm.Rmd update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/8540930d011668b44503583b013b2c2a67d4519d/docs/Investigate_sparsity_ebpm.html" target="_blank">8540930</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -987,6 +1021,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" target="_blank">8540930</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/7f80b2574e1ee54b5aa91ffda468c020d67478a7/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" target="_blank">7f80b25</a>
 </td>
 <td>
@@ -1000,6 +1045,21 @@ zihao12
 </table>
 </div>
 </div>
+<pre class="r"><code>fit_ebpm_pg$fitted_g</code></pre>
+<pre><code>$pi0
+[1] 0.6666667
+
+$shape
+[1] 650.7587
+
+$scale
+[1] 0.0763674
+
+attr(,&quot;class&quot;)
+[1] &quot;point_gamma&quot;
+attr(,&quot;row.names&quot;)
+[1] 1</code></pre>
+<p>So in this example, <code>ebpm_point_gamma</code> estimates a <span class="math inline">\(\hat{g}\)</span> that’s much closer to the truth than <code>ebpm_exponential_mixture</code>, because the latter is unimodal at 0 so cannot capture the second mode at 50. <code>ebpm_point_gamma</code> can distinguish between <span class="math inline">\(0\)</span> and some larger counts centered around 50 fairly well.</p>
 </div>
 <div id="not-exactly-sparse" class="section level2">
 <h2>not exactly sparse</h2>
@@ -1011,13 +1071,13 @@ lam = mfac*runif(n)
 lam[1:(n/3)] = 50
 x = rpois(n, lambda = lam)
 hist(x, breaks = 100)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div id="fig-unnamed-chunk-8-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1036,7 +1096,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7f80b2574e1ee54b5aa91ffda468c020d67478a7/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" target="_blank">7f80b25</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-1.png" target="_blank">8540930</a>
 </td>
 <td>
 zihao12
@@ -1059,7 +1119,7 @@ ggplot(df)+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;posterior mean&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>min(df$x)</code></pre>
 <pre><code>[1] 0</code></pre>
 <pre class="r"><code>min(df$exp)</code></pre>
@@ -1073,7 +1133,44 @@ ggplot(df_small)+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;posterior mean&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-9-1.png" target="_blank">8540930</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s take a closer look at those large elements</p>
 <pre class="r"><code>df_large = df[1:(n/3),]
 ggplot(df_large)+
@@ -1081,7 +1178,7 @@ ggplot(df_large)+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;posterior mean&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Compare KL, Jensen-Shannon divergence and RMSE</p>
 <pre class="r"><code>###### KL divergence
 ## MLE
@@ -1121,7 +1218,22 @@ point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), met
 exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
 samples_df = rbind(point_df, exp_df)
 ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit_ebpm_pg$fitted_g</code></pre>
+<pre><code>$pi0
+[1] 8.682611e-09
+
+$shape
+[1] 0.2562715
+
+$scale
+[1] 67.61143
+
+attr(,&quot;class&quot;)
+[1] &quot;point_gamma&quot;
+attr(,&quot;row.names&quot;)
+[1] 1</code></pre>
+<p>Here <code>ebpm_point_gamma</code> fails to capture the two modes. The much less sparisity makes <span class="math inline">\(\pi_0\)</span> much smaller. So the <span class="math inline">\(gamma(shape, scale)\)</span> has to compromise between large counts and very small counts.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
