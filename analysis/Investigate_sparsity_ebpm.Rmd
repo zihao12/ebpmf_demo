@@ -34,10 +34,26 @@ ggplot(df)+
   geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
   geom_abline(slope = 1, intercept = 0)+
   ylab("posterior mean")
+```
 
+The $0$ are  fitted with:
+```{r}
 min(df$exp)
 min(df$pg)
 ```
+
+
+Let's take a closer look at those large elements
+```{r warning=F}
+df_large = df[1:(n/3),]
+ggplot(df_large)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+```
+
+
 
 
 ## not exactly sparse
