@@ -17,21 +17,14 @@ Adapted from https://stephens999.github.io/misc/nmf_sparse.html
 rm(list = ls())
 devtools::load_all("../ebpmf.alpha/")
 devtools::load_all("../ebpm/")
-library("fastTopics")
 library("NNLM") 
 library("ebpmf")
-
 n = 99
 p = 300
-
 iter_em = 10000
 iter_eb = 100
-
-iter_em = 100
-iter_eb = 10
-
-# n = 50
-# p = 100
+# iter_em = 100
+# iter_eb = 10
 ```
 
 ## Sparse Loadings and Factors
@@ -157,11 +150,11 @@ fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = iter
 qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
 qg_from_scd = initialize_qg_from_LF(L = fit_scd$W, F =  t(fit_scd$H))
 
-fit_ebpmf_exp_lee = ebpmf_exponential_mixture(X, K = k, qg = qg_from_lee, m = 2^0.25, maxiter.out = iter_eb)
-fit_ebpmf_exp_scd = ebpmf_exponential_mixture(X, K = k, qg = qg_from_scd, m = 2^0.25, maxiter.out = iter_eb)
+fit_ebpmf_exp_lee = ebpmf_exponential_mixture(X, K = k, qg = qg_from_lee, m = 2^0.5, maxiter.out = iter_eb)
+fit_ebpmf_exp_scd = ebpmf_exponential_mixture(X, K = k, qg = qg_from_scd, m = 2^0.5, maxiter.out = iter_eb)
 
-fit_ebpmf_exp_uniform_lee =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_lee, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-10)
-fit_ebpmf_exp_uniform_scd =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_scd, m = 2^0.25,maxiter.out = iter_eb, init_method = "lee", low = 1e-10)
+fit_ebpmf_exp_uniform_lee =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_lee, m = 2^0.5,maxiter.out = iter_eb, init_method = "lee", low = 1e-20)
+fit_ebpmf_exp_uniform_scd =  ebpmf_exponential_mixture_uniform(X, K = k, qg = qg_from_scd, m = 2^0.5,maxiter.out = iter_eb, init_method = "lee", low = 1e-20)
 ```
 
 
