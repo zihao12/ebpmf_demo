@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree543dceb73d781161e87baa06cd6925d69d49b63btargetblank543dceba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/543dceb73d781161e87baa06cd6925d69d49b63b" target="_blank">543dceb</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree15c89829172c1c1be25f4f245d285777ae477df2targetblank15c8982a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/15c89829172c1c1be25f4f245d285777ae477df2" target="_blank">15c8982</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree543dceb73d781161e87baa06cd6925d69d49b63btargetblank543dceba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree15c89829172c1c1be25f4f245d285777ae477df2targetblank15c8982a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -613,6 +613,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/15c89829172c1c1be25f4f245d285777ae477df2/analysis/nmf_sparse3.Rmd" target="_blank">15c8982</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+<td>
+nmf_sparse3.Rmd with thresholding on z
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/de67527ccb2d25a67ed7ace157a2da7cca5369ef/docs/nmf_sparse3.html" target="_blank">de67527</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1324,51 +1358,36 @@ for(rate in cutoff_rate){
   col_names = c(col_names, sprintf(&quot;cutoff_%.1f&quot;, rate))
 }
 
-maxiter.out = iter_eb
+# maxiter.out = iter_eb
+# 
+# summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
+# rownames(summary_m) = c(&quot;RMSE&quot;, &quot;KL&quot;, &quot;JS&quot;, &quot;ELBO&quot;, &quot;loglike&quot;)
+# colnames(summary_m) = col_names
+# 
+# ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
+# colnames(ELBO_m) = col_names
+# 
+# loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
+# 
+# for(i in 1:length(cutoff_rate)){
+#   rate = cutoff_rate[i]
+#   threshold = rate*1/k
+#   fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
+#   ELBO_m[, i] = fit_pg_threshold$ELBO
+#   lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
+#   summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
+#   summary_m[,i] = summary_
+#   loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
+# }
 
-summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
-rownames(summary_m) = c(&quot;RMSE&quot;, &quot;KL&quot;, &quot;JS&quot;, &quot;ELBO&quot;, &quot;loglike&quot;)
-colnames(summary_m) = col_names
 
-ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
-colnames(ELBO_m) = col_names
+# saveRDS(ELBO_m, &quot;data/nmf_sparse3_elbo.Rds&quot;)
+# saveRDS(loadings, &quot;data/nmf_sparse3_loadings.Rds&quot;)
+# saveRDS(summary_m, &quot;data/nmf_sparse3_summary.Rds&quot;)
 
-loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
-
-for(i in 1:length(cutoff_rate)){
-  rate = cutoff_rate[i]
-  threshold = rate*1/k
-  fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
-  ELBO_m[, i] = fit_pg_threshold$ELBO
-  lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
-  summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
-  summary_m[,i] = summary_
-  loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
-}</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value
-
-Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre class="r"><code>saveRDS(ELBO_m, &quot;data/nmf_sparse3_elbo.Rds&quot;)
-saveRDS(loadings, &quot;data/nmf_sparse3_loadings.Rds&quot;)
-saveRDS(summary_m, &quot;data/nmf_sparse3_summary.Rds&quot;)</code></pre>
+ELBO_m  = readRDS(&quot;data/nmf_sparse3_elbo.Rds&quot;)
+loadings = readRDS(&quot;data/nmf_sparse3_loadings.Rds&quot;)
+summary_m = readRDS(&quot;data/nmf_sparse3_summary.Rds&quot;)</code></pre>
 <pre class="r"><code>print(summary_m, digits = 4)</code></pre>
 <pre><code>        cutoff_0.0 cutoff_0.1 cutoff_0.3 cutoff_0.5 cutoff_0.7 cutoff_0.9
 RMSE     5.579e-01  7.003e-01  9.657e-01  9.654e-01  9.653e-01      1.014
@@ -1388,6 +1407,43 @@ ggplot(df)+
   geom_point(aes(x = iter, y = cutoff_0.9, color = &quot;cutoff_0.9&quot;))+
   ylab(&quot;elbo&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/de67527ccb2d25a67ed7ace157a2da7cca5369ef/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-12-1.png" target="_blank">de67527</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>df = data.frame(loadings)
 colnames(df) = col_names
 df[[&quot;idx&quot;]] = 1:nrow(df)
@@ -1395,12 +1451,49 @@ df[[&quot;idx&quot;]] = 1:nrow(df)
 ggplot(df)+
   geom_point(aes(x = idx, y = cutoff_0.0, color = &quot;cutoff_0.0&quot;))+
   geom_point(aes(x = idx, y = cutoff_0.1, color = &quot;cutoff_0.1&quot;))+
-  geom_point(aes(x = idx, y = cutoff_0.3, color = &quot;cutoff_0.3&quot;))+
-  geom_point(aes(x = idx, y = cutoff_0.5, color = &quot;cutoff_0.5&quot;))+
-  geom_point(aes(x = idx, y = cutoff_0.7, color = &quot;cutoff_0.7&quot;))+
-  geom_point(aes(x = idx, y = cutoff_0.9, color = &quot;cutoff_0.9&quot;))+
+  # geom_point(aes(x = idx, y = cutoff_0.3, color = &quot;cutoff_0.3&quot;))+
+  # geom_point(aes(x = idx, y = cutoff_0.5, color = &quot;cutoff_0.5&quot;))+
+  # geom_point(aes(x = idx, y = cutoff_0.7, color = &quot;cutoff_0.7&quot;))+
+  # geom_point(aes(x = idx, y = cutoff_0.9, color = &quot;cutoff_0.9&quot;))+
   ylab(&quot;loading&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/de67527ccb2d25a67ed7ace157a2da7cca5369ef/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-13-1.png" target="_blank">de67527</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
