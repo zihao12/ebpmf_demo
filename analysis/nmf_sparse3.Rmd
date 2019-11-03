@@ -24,7 +24,23 @@ library("ebpmf")
 n = 99
 p = 300
 iter_em = 1000
-iter_eb = 10
+iter_eb = 100
+
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
 # iter_em = 100
 # iter_eb = 10
 ```
@@ -153,6 +169,79 @@ g = fit_l_pg$fitted_g
 g
 ```
 
+
+## Try thresholding on  `Z`
+From the simple experiment above we can see our current `ebpm` method does  not do very well when `Z` are not sparse. As a heuristic, I try to apply thresholding when updating `Z`: that is, for $\zeta_{ijk} < \text{threshold}$, I set it to 0 and get $\hat{\zeta}$ then normalize so that $\sum_k  \hat{\zeta}_{ijk} = 1$. 
+```{r warning=F, message = F}
+cutoff_rate =  c(0, 0.1,0.3,0.5,0.7, 0.9)
+col_names = c()
+for(rate in cutoff_rate){
+  col_names = c(col_names, sprintf("cutoff_%.1f", rate))
+}
+
+maxiter.out = iter_eb
+
+summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
+rownames(summary_m) = c("RMSE", "KL", "JS", "ELBO", "loglike")
+colnames(summary_m) = col_names
+
+ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
+colnames(ELBO_m) = col_names
+
+loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
+
+for(i in 1:length(cutoff_rate)){
+  rate = cutoff_rate[i]
+  threshold = rate*1/k
+  fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
+  ELBO_m[, i] = fit_pg_threshold$ELBO
+  lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
+  summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
+  summary_m[,i] = summary_
+  loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
+}
+
+
+saveRDS(ELBO_m, "data/nmf_sparse3_elbo.Rds")
+saveRDS(loadings, "data/nmf_sparse3_loadings.Rds")
+saveRDS(summary_m, "data/nmf_sparse3_summary.Rds")
+```
+
+
+```{r}
+print(summary_m, digits = 4)
+```
+
+
+```{r}
+df = data.frame(ELBO_m)
+colnames(df) = col_names
+df[["iter"]] = 1:nrow(df)
+ggplot(df)+
+  geom_point(aes(x = iter, y = cutoff_0.0, color = "cutoff_0.0"))+
+  geom_point(aes(x = iter, y = cutoff_0.1, color = "cutoff_0.1"))+
+  geom_point(aes(x = iter, y = cutoff_0.3, color = "cutoff_0.3"))+
+  geom_point(aes(x = iter, y = cutoff_0.5, color = "cutoff_0.5"))+
+  geom_point(aes(x = iter, y = cutoff_0.7, color = "cutoff_0.7"))+
+  geom_point(aes(x = iter, y = cutoff_0.9, color = "cutoff_0.9"))+
+  ylab("elbo")
+```
+
+
+```{r}
+df = data.frame(loadings)
+colnames(df) = col_names
+df[["idx"]] = 1:nrow(df)
+
+ggplot(df)+
+  geom_point(aes(x = idx, y = cutoff_0.0, color = "cutoff_0.0"))+
+  geom_point(aes(x = idx, y = cutoff_0.1, color = "cutoff_0.1"))+
+  geom_point(aes(x = idx, y = cutoff_0.3, color = "cutoff_0.3"))+
+  geom_point(aes(x = idx, y = cutoff_0.5, color = "cutoff_0.5"))+
+  geom_point(aes(x = idx, y = cutoff_0.7, color = "cutoff_0.7"))+
+  geom_point(aes(x = idx, y = cutoff_0.9, color = "cutoff_0.9"))+
+  ylab("loading")
+```
 
 
 
