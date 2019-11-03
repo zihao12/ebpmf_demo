@@ -179,32 +179,36 @@ for(rate in cutoff_rate){
   col_names = c(col_names, sprintf("cutoff_%.1f", rate))
 }
 
-maxiter.out = iter_eb
+# maxiter.out = iter_eb
+# 
+# summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
+# rownames(summary_m) = c("RMSE", "KL", "JS", "ELBO", "loglike")
+# colnames(summary_m) = col_names
+# 
+# ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
+# colnames(ELBO_m) = col_names
+# 
+# loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
+# 
+# for(i in 1:length(cutoff_rate)){
+#   rate = cutoff_rate[i]
+#   threshold = rate*1/k
+#   fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
+#   ELBO_m[, i] = fit_pg_threshold$ELBO
+#   lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
+#   summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
+#   summary_m[,i] = summary_
+#   loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
+# }
 
-summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
-rownames(summary_m) = c("RMSE", "KL", "JS", "ELBO", "loglike")
-colnames(summary_m) = col_names
 
-ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
-colnames(ELBO_m) = col_names
+# saveRDS(ELBO_m, "data/nmf_sparse3_elbo.Rds")
+# saveRDS(loadings, "data/nmf_sparse3_loadings.Rds")
+# saveRDS(summary_m, "data/nmf_sparse3_summary.Rds")
 
-loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
-
-for(i in 1:length(cutoff_rate)){
-  rate = cutoff_rate[i]
-  threshold = rate*1/k
-  fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
-  ELBO_m[, i] = fit_pg_threshold$ELBO
-  lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
-  summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
-  summary_m[,i] = summary_
-  loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
-}
-
-
-saveRDS(ELBO_m, "data/nmf_sparse3_elbo.Rds")
-saveRDS(loadings, "data/nmf_sparse3_loadings.Rds")
-saveRDS(summary_m, "data/nmf_sparse3_summary.Rds")
+ELBO_m  = readRDS("data/nmf_sparse3_elbo.Rds")
+loadings = readRDS("data/nmf_sparse3_loadings.Rds")
+summary_m = readRDS("data/nmf_sparse3_summary.Rds")
 ```
 
 
@@ -236,10 +240,10 @@ df[["idx"]] = 1:nrow(df)
 ggplot(df)+
   geom_point(aes(x = idx, y = cutoff_0.0, color = "cutoff_0.0"))+
   geom_point(aes(x = idx, y = cutoff_0.1, color = "cutoff_0.1"))+
-  geom_point(aes(x = idx, y = cutoff_0.3, color = "cutoff_0.3"))+
-  geom_point(aes(x = idx, y = cutoff_0.5, color = "cutoff_0.5"))+
-  geom_point(aes(x = idx, y = cutoff_0.7, color = "cutoff_0.7"))+
-  geom_point(aes(x = idx, y = cutoff_0.9, color = "cutoff_0.9"))+
+  # geom_point(aes(x = idx, y = cutoff_0.3, color = "cutoff_0.3"))+
+  # geom_point(aes(x = idx, y = cutoff_0.5, color = "cutoff_0.5"))+
+  # geom_point(aes(x = idx, y = cutoff_0.7, color = "cutoff_0.7"))+
+  # geom_point(aes(x = idx, y = cutoff_0.9, color = "cutoff_0.9"))+
   ylab("loading")
 ```
 
