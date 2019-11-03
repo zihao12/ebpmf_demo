@@ -8,6 +8,11 @@ editor_options:
 ---
 
 ## Introduction
+* I first generate sparse $\lambda_0$ and $x_0$, and find  `ebpm_point_gamma` fits data  very well while `ebpm_exponential_mix` cannot model $g$ well due to its unimodal shape. Ther posterior mean for the large nonzero elements are very different between the two models. 
+
+* Then I make $\lambda$ not sparse by adding random small number (compared with original nonzero element) to $\lambda_0$. Then the  posterior mean becomes very similar between the two models and they get bad divergence between $\lambda_{est}$ and $\lambda_{true}$. This is because the point-zero of `ebpm_point_gamma` simply does not work any more. Ideally we want huge mass  at several small counts, not just 0. 
+
+* Finally, I add very  small noise to the  $x_0$ so that it is real-valued and does not exactly get  0, as is the case we encounter  in `ebpmf`. The  performance  of `ebpm_point_gamma` gets much  worse compared to with $x_0$ data. This is not surprising, as the point-mass at 0  becomes useless when the data is not exactly 0. 
 
 ```{r warning=F}
 devtools::load_all("../ebpm")
@@ -41,7 +46,12 @@ fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
 
 fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
   
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+df = data.frame(idx = 1:length(x),x = x, lam = lam, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+KLs <- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs <- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs <- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c("mle", "ebpm_exp", "ebpmf_pg"))
+
 ggplot(df)+
   geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
   geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
@@ -67,32 +77,6 @@ ggplot(df_large)+
 ```
 
 
-Compare KL, Jensen-Shannon divergence and RMSE
-```{r}
-###### KL divergence
-## MLE
-KL(lam, df$x)
-## exp
-KL(lam, df$exp)
-## pg
-KL(lam, df$pg)
-
-###### Jensen-Shannon divergence
-## MLE
-JS(lam, df$x)
-## exp
-JS(lam, df$exp)
-## pg
-JS(lam, df$pg)
-
-###### RMSE
-## MLE
-RMSE(lam, df$x)
-## exp
-RMSE(lam, df$exp)
-## pg
-RMSE(lam, df$pg)
-```
 
 ## look at $\hat{g}$
 ```{r}
@@ -114,11 +98,10 @@ So in this example, `ebpm_point_gamma` estimates a $\hat{g}$ that's much closer 
 ## not exactly sparse
 replace 0 with small values in data. 
 ```{r warning=F}
+df_org = df
 set.seed(123)
 mfac = 2 # controls PVE of dense factor
-n = 99
-lam = mfac*runif(n)
-lam[1:(n/3)] = 50
+lam[-(1:(n/3))] =  mfac*runif(n * 2/3)
 x = rpois(n, lambda = lam)
 hist(x, breaks = 100)
 
@@ -126,7 +109,13 @@ fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
 
 fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
   
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+df = data.frame(idx = 1:length(x),x = x, lam = lam, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+
+KLs <- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs <- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs <- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c("mle", "ebpm_exp", "ebpmf_pg"))
+
 ggplot(df)+
   geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
   geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
@@ -161,32 +150,6 @@ ggplot(df_large)+
 ```
 
 
-Compare KL, Jensen-Shannon divergence and RMSE
-```{r}
-###### KL divergence
-## MLE
-KL(lam, df$x)
-## exp
-KL(lam, df$exp)
-## pg
-KL(lam, df$pg)
-
-###### Jensen-Shannon divergence
-## MLE
-JS(lam, df$x)
-## exp
-JS(lam, df$exp)
-## pg
-JS(lam, df$pg)
-
-###### RMSE
-## MLE
-RMSE(lam, df$x)
-## exp
-RMSE(lam, df$exp)
-## pg
-RMSE(lam, df$pg)
-```
 
 ## look at $\hat{g}$
 ```{r}
@@ -204,7 +167,82 @@ fit_ebpm_pg$fitted_g
 
 Here `ebpm_point_gamma` fails to capture the two modes. The much less sparisity makes $\pi_0$ much smaller. So the $gamma(shape, scale)$ has to compromise between large counts and very small counts. In this scenario, the point mass assumption does not work!! 
 
+## Real-valued Data
+I add some small perturbation to the data $x$ in previous section to make it real valued. (red is original count; blue is the real-valued "count")
 
+```{r warning=F}
+set.seed(123)
+noise = 0.00000002
+x = df_org$x + noise*runif(n)
+lam = df_org$lam
+
+hist(df_org$x, col = "red", xlab = "data", breaks = 100, main = "original count and real-valued `count`")
+hist(x, col = "blue", add = T, breaks = 100)
+
+
+fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+
+KLs <- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs <- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs <- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+## Although the original true lambda is not exactly the original lambda, but since the noise is so small, I just use  original true lambda
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c("mle", "ebpm_exp", "ebpmf_pg"))
+
+ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+
+min(df$x)
+min(df$exp)
+min(df$pg)
+```
+
+
+Let's take a closer look at those small elements
+```{r warning=F}
+df_small = df[-(1:(n/3)),]
+ggplot(df_small)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+```
+
+
+Let's take a closer look at those large elements
+```{r warning=F}
+df_large = df[1:(n/3),]
+ggplot(df_large)+
+  geom_point(aes(x = x,   y = exp, color = "ebpm_exponential_mixture"))+
+  geom_point(aes(x = x,   y = pg, color = "ebpm_point_gamma"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("posterior mean")
+```
+
+
+
+
+## look at $\hat{g}$
+```{r}
+m = 1000
+point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = "point_gamma")
+exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = "exponential_mixture")
+samples_df = rbind(point_df, exp_df)
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle("compare g_hat")
+```
+
+
+```{r}
+fit_ebpm_pg$fitted_g
+```
+
+The very small noise gets very different result for `ebpm_point_gamma`. Not surprising as the point-mass at 0 is not useful when data does not  have exact 0s. 
 
 
 
