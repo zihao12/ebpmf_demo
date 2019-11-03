@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-11-01
+<strong>Last updated:</strong> 2019-11-03
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9ea12a51f7e4817f007b7659e9e49e1bb823a38atargetblank9ea12a5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/9ea12a51f7e4817f007b7659e9e49e1bb823a38a" target="_blank">9ea12a5</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree38c76ccac59e04f89ffe8578c7d32697fceb8f46targetblank38c76cca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/38c76ccac59e04f89ffe8578c7d32697fceb8f46" target="_blank">38c76cc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9ea12a51f7e4817f007b7659e9e49e1bb823a38atargetblank9ea12a5a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree38c76ccac59e04f89ffe8578c7d32697fceb8f46targetblank38c76cca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -610,6 +610,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/38c76ccac59e04f89ffe8578c7d32697fceb8f46/analysis/Investigate_sparsity_ebpm.Rmd" target="_blank">38c76cc</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+<td>
+update Investigate_sparsity_ebpm.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/909490a7c7d3e35b7c36fbfb98bbeeb4645bd48d/docs/Investigate_sparsity_ebpm.html" target="_blank">909490a</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -806,6 +840,11 @@ Investigate_sparsity_ebpm.Rmd
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
+<ul>
+<li><p>I first generate sparse <span class="math inline">\(\lambda_0\)</span> and <span class="math inline">\(x_0\)</span>, and find <code>ebpm_point_gamma</code> fits data very well while <code>ebpm_exponential_mix</code> cannot model <span class="math inline">\(g\)</span> well due to its unimodal shape. Ther posterior mean for the large nonzero elements are very different between the two models.</p></li>
+<li><p>Then I make <span class="math inline">\(\lambda\)</span> not sparse by adding random small number (compared with original nonzero element) to <span class="math inline">\(\lambda_0\)</span>. Then the posterior mean becomes very similar between the two models and they get bad divergence between <span class="math inline">\(\lambda_{est}\)</span> and <span class="math inline">\(\lambda_{true}\)</span>. This is because the point-zero of <code>ebpm_point_gamma</code> simply does not work any more. Ideally we want huge mass at several small counts, not just 0.</p></li>
+<li><p>Finally, I add very small noise to the <span class="math inline">\(x_0\)</span> so that it is real-valued and does not exactly get 0, as is the case we encounter in <code>ebpmf</code>. The performance of <code>ebpm_point_gamma</code> gets much worse compared to with <span class="math inline">\(x_0\)</span> data. This is not surprising, as the point-mass at 0 becomes useless when the data is not exactly 0.</p></li>
+</ul>
 <pre class="r"><code>devtools::load_all(&quot;../ebpm&quot;)</code></pre>
 <pre><code>Loading ebpm</code></pre>
 <pre class="r"><code>library(ebpm)
@@ -886,8 +925,16 @@ zihao12
 fit_ebpm_pg = ebpm::ebpm_point_gamma(x)</code></pre>
 <pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
 length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre class="r"><code>df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
-ggplot(df)+
+<pre class="r"><code>df = data.frame(idx = 1:length(x),x = x, lam = lam, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+KLs &lt;- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs &lt;- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs &lt;- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c(&quot;mle&quot;, &quot;ebpm_exp&quot;, &quot;ebpmf_pg&quot;))</code></pre>
+<pre><code>                 KL         JS      RMSE
+mle      16.7619669 16.7880009 4.1487494
+ebpm_exp 19.8776316        Inf 4.0690013
+ebpmf_pg  0.1167793  0.1165746 0.3422549</code></pre>
+<pre class="r"><code>ggplot(df)+
   geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
@@ -991,37 +1038,6 @@ zihao12
 </table>
 </div>
 </div>
-<p>Compare KL, Jensen-Shannon divergence and RMSE</p>
-<pre class="r"><code>###### KL divergence
-## MLE
-KL(lam, df$x)</code></pre>
-<pre><code>[1] 16.76197</code></pre>
-<pre class="r"><code>## exp
-KL(lam, df$exp)</code></pre>
-<pre><code>[1] 19.87763</code></pre>
-<pre class="r"><code>## pg
-KL(lam, df$pg)</code></pre>
-<pre><code>[1] 0.1167793</code></pre>
-<pre class="r"><code>###### Jensen-Shannon divergence
-## MLE
-JS(lam, df$x)</code></pre>
-<pre><code>[1] 16.788</code></pre>
-<pre class="r"><code>## exp
-JS(lam, df$exp)</code></pre>
-<pre><code>[1] Inf</code></pre>
-<pre class="r"><code>## pg
-JS(lam, df$pg)</code></pre>
-<pre><code>[1] 0.1165746</code></pre>
-<pre class="r"><code>###### RMSE
-## MLE
-RMSE(lam, df$x)</code></pre>
-<pre><code>[1] 4.148749</code></pre>
-<pre class="r"><code>## exp
-RMSE(lam, df$exp)</code></pre>
-<pre><code>[1] 4.069001</code></pre>
-<pre class="r"><code>## pg
-RMSE(lam, df$pg)</code></pre>
-<pre><code>[1] 0.3422549</code></pre>
 </div>
 <div id="look-at-hatg" class="section level2">
 <h2>look at <span class="math inline">\(\hat{g}\)</span></h2>
@@ -1030,13 +1046,13 @@ point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), met
 exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
 samples_df = rbind(point_df, exp_df)
 ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div id="fig-unnamed-chunk-5-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1055,7 +1071,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" target="_blank">8540930</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7f80b2574e1ee54b5aa91ffda468c020d67478a7/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-5-1.png" target="_blank">7f80b25</a>
 </td>
 <td>
 zihao12
@@ -1066,7 +1082,7 @@ zihao12
 </tr>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7f80b2574e1ee54b5aa91ffda468c020d67478a7/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-6-1.png" target="_blank">7f80b25</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/d6ca75d239bb1fdb63022404377708abbbaa4010/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-5-1.png" target="_blank">d6ca75d</a>
 </td>
 <td>
 zihao12
@@ -1098,13 +1114,131 @@ attr(,&quot;row.names&quot;)
 <div id="not-exactly-sparse" class="section level2">
 <h2>not exactly sparse</h2>
 <p>replace 0 with small values in data.</p>
-<pre class="r"><code>set.seed(123)
+<pre class="r"><code>df_org = df
+set.seed(123)
 mfac = 2 # controls PVE of dense factor
-n = 99
-lam = mfac*runif(n)
-lam[1:(n/3)] = 50
+lam[-(1:(n/3))] =  mfac*runif(n * 2/3)
 x = rpois(n, lambda = lam)
 hist(x, breaks = 100)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" target="_blank">8540930</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7f80b2574e1ee54b5aa91ffda468c020d67478a7/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-1.png" target="_blank">7f80b25</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, lam = lam, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+
+KLs &lt;- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs &lt;- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs &lt;- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c(&quot;mle&quot;, &quot;ebpm_exp&quot;, &quot;ebpmf_pg&quot;))</code></pre>
+<pre><code>               KL       JS     RMSE
+mle           Inf      Inf 3.842117
+ebpm_exp 23.48976 23.92649 3.724782
+ebpmf_pg 30.85361 31.18642 3.788555</code></pre>
+<pre class="r"><code>ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/8540930d011668b44503583b013b2c2a67d4519d/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-7-2.png" target="_blank">8540930</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>min(df$x)</code></pre>
+<pre><code>[1] 0</code></pre>
+<pre class="r"><code>min(df$exp)</code></pre>
+<pre><code>[1] 0.4694629</code></pre>
+<pre class="r"><code>min(df$pg)</code></pre>
+<pre><code>[1] 0.2702189</code></pre>
+<p>Let’s take a closer look at those small elements</p>
+<pre class="r"><code>df_small = df[-(1:(n/3)),]
+ggplot(df_small)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
 <p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1154,63 +1288,9 @@ zihao12
 </table>
 </div>
 </div>
-<pre class="r"><code>fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
-
-fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
-  
-df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
-ggplot(df)+
-  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
-  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
-  geom_abline(slope = 1, intercept = 0)+
-  ylab(&quot;posterior mean&quot;)</code></pre>
-<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
-Past versions of unnamed-chunk-8-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/261be04d48b69bcbb9ffafcb3dde9a02583ff4d4/docs/figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-8-2.png" target="_blank">261be04</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2019-11-01
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>min(df$x)</code></pre>
-<pre><code>[1] 0</code></pre>
-<pre class="r"><code>min(df$exp)</code></pre>
-<pre><code>[1] 0.453445</code></pre>
-<pre class="r"><code>min(df$pg)</code></pre>
-<pre><code>[1] 0.2525363</code></pre>
-<p>Let’s take a closer look at those small elements</p>
-<pre class="r"><code>df_small = df[-(1:(n/3)),]
-ggplot(df_small)+
+<p>Let’s take a closer look at those large elements</p>
+<pre class="r"><code>df_large = df[1:(n/3),]
+ggplot(df_large)+
   geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
   geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_abline(slope = 1, intercept = 0)+
@@ -1264,13 +1344,14 @@ zihao12
 </table>
 </div>
 </div>
-<p>Let’s take a closer look at those large elements</p>
-<pre class="r"><code>df_large = df[1:(n/3),]
-ggplot(df_large)+
-  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
-  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
-  geom_abline(slope = 1, intercept = 0)+
-  ylab(&quot;posterior mean&quot;)</code></pre>
+</div>
+<div id="look-at-hatg-1" class="section level2">
+<h2>look at <span class="math inline">\(\hat{g}\)</span></h2>
+<pre class="r"><code>m = 1000
+point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = &quot;point_gamma&quot;)
+exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
+samples_df = rbind(point_df, exp_df)
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
 <p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -1309,45 +1390,32 @@ zihao12
 </table>
 </div>
 </div>
-<p>Compare KL, Jensen-Shannon divergence and RMSE</p>
-<pre class="r"><code>###### KL divergence
-## MLE
-KL(lam, df$x)</code></pre>
-<pre><code>[1] Inf</code></pre>
-<pre class="r"><code>## exp
-KL(lam, df$exp)</code></pre>
-<pre><code>[1] 23.06467</code></pre>
-<pre class="r"><code>## pg
-KL(lam, df$pg)</code></pre>
-<pre><code>[1] 32.64859</code></pre>
-<pre class="r"><code>###### Jensen-Shannon divergence
-## MLE
-JS(lam, df$x)</code></pre>
-<pre><code>[1] Inf</code></pre>
-<pre class="r"><code>## exp
-JS(lam, df$exp)</code></pre>
-<pre><code>[1] 24.14444</code></pre>
-<pre class="r"><code>## pg
-JS(lam, df$pg)</code></pre>
-<pre><code>[1] 33.02191</code></pre>
-<pre class="r"><code>###### RMSE
-## MLE
-RMSE(lam, df$x)</code></pre>
-<pre><code>[1] 3.604502</code></pre>
-<pre class="r"><code>## exp
-RMSE(lam, df$exp)</code></pre>
-<pre><code>[1] 3.486417</code></pre>
-<pre class="r"><code>## pg
-RMSE(lam, df$pg)</code></pre>
-<pre><code>[1] 3.555731</code></pre>
+<pre class="r"><code>fit_ebpm_pg$fitted_g</code></pre>
+<pre><code>$pi0
+[1] 1.705507e-07
+
+$shape
+[1] 0.2744924
+
+$scale
+[1] 63.23373
+
+attr(,&quot;class&quot;)
+[1] &quot;point_gamma&quot;
+attr(,&quot;row.names&quot;)
+[1] 1</code></pre>
+<p>Here <code>ebpm_point_gamma</code> fails to capture the two modes. The much less sparisity makes <span class="math inline">\(\pi_0\)</span> much smaller. So the <span class="math inline">\(gamma(shape, scale)\)</span> has to compromise between large counts and very small counts. In this scenario, the point mass assumption does not work!!</p>
 </div>
-<div id="look-at-hatg-1" class="section level2">
-<h2>look at <span class="math inline">\(\hat{g}\)</span></h2>
-<pre class="r"><code>m = 1000
-point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = &quot;point_gamma&quot;)
-exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
-samples_df = rbind(point_df, exp_df)
-ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
+<div id="real-valued-data" class="section level2">
+<h2>Real-valued Data</h2>
+<p>I add some small perturbation to the data <span class="math inline">\(x\)</span> in previous section to make it real valued. (red is original count; blue is the real-valued “count”)</p>
+<pre class="r"><code>set.seed(123)
+noise = 0.00000002
+x = df_org$x + noise*runif(n)
+lam = df_org$lam
+
+hist(df_org$x, col = &quot;red&quot;, xlab = &quot;data&quot;, breaks = 100, main = &quot;original count and real-valued `count`&quot;)
+hist(x, col = &quot;blue&quot;, add = T, breaks = 100)</code></pre>
 <p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
@@ -1386,21 +1454,73 @@ zihao12
 </table>
 </div>
 </div>
+<pre class="r"><code>fit_ebpm_exp = ebpm::ebpm_exponential_mixture(x, m = 2^0.25)
+
+fit_ebpm_pg = ebpm::ebpm_point_gamma(x)
+  
+df = data.frame(idx = 1:length(x),x = x, exp = fit_ebpm_exp$posterior$mean, pg =  fit_ebpm_pg$posterior$mean)
+
+KLs &lt;- c(KL(lam, df$x), KL(lam, df$exp), KL(lam, df$pg))
+JSs &lt;- c(JS(lam, df$x),JS(lam, df$exp), JS(lam, df$pg))
+RMSEs &lt;- c(RMSE(lam, df$x), RMSE(lam, df$exp), RMSE(lam, df$pg))
+## Although the original true lambda is not exactly the original lambda, but since the noise is so small, I just use  original true lambda
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, row.names = c(&quot;mle&quot;, &quot;ebpm_exp&quot;, &quot;ebpmf_pg&quot;))</code></pre>
+<pre><code>               KL  JS     RMSE
+mle      16.76197 Inf 4.148749
+ebpm_exp 16.71846 Inf 4.069926
+ebpmf_pg 22.50063 Inf 4.133063</code></pre>
+<pre class="r"><code>ggplot(df)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>min(df$x)</code></pre>
+<pre><code>[1] 1.249547e-11</code></pre>
+<pre class="r"><code>min(df$exp)</code></pre>
+<pre><code>[1] 0.00938388</code></pre>
+<pre class="r"><code>min(df$pg)</code></pre>
+<pre><code>[1] 0.08715604</code></pre>
+<p>Let’s take a closer look at those small elements</p>
+<pre class="r"><code>df_small = df[-(1:(n/3)),]
+ggplot(df_small)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Let’s take a closer look at those large elements</p>
+<pre class="r"><code>df_large = df[1:(n/3),]
+ggplot(df_large)+
+  geom_point(aes(x = x,   y = exp, color = &quot;ebpm_exponential_mixture&quot;))+
+  geom_point(aes(x = x,   y = pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab(&quot;posterior mean&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="look-at-hatg-2" class="section level2">
+<h2>look at <span class="math inline">\(\hat{g}\)</span></h2>
+<pre class="r"><code>m = 1000
+point_df = data.frame(samples = sample_point_gamma(m, fit_ebpm_pg$fitted_g), method = &quot;point_gamma&quot;)
+exp_df   = data.frame(samples = sample_expmix(m, fit_ebpm_exp$fitted_g), method = &quot;exponential_mixture&quot;)
+samples_df = rbind(point_df, exp_df)
+ggplot(samples_df, aes(samples, fill = method)) + geom_density(alpha = 0.2)+ggtitle(&quot;compare g_hat&quot;)</code></pre>
+<p><img src="figure/Investigate_sparsity_ebpm.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>fit_ebpm_pg$fitted_g</code></pre>
 <pre><code>$pi0
-[1] 8.682611e-09
+[1] 0
 
 $shape
-[1] 0.2562715
+[1] 0.087617
 
 $scale
-[1] 67.61143
+[1] 189.0729
 
 attr(,&quot;class&quot;)
 [1] &quot;point_gamma&quot;
 attr(,&quot;row.names&quot;)
 [1] 1</code></pre>
-<p>Here <code>ebpm_point_gamma</code> fails to capture the two modes. The much less sparisity makes <span class="math inline">\(\pi_0\)</span> much smaller. So the <span class="math inline">\(gamma(shape, scale)\)</span> has to compromise between large counts and very small counts. In this scenario, the point mass assumption does not work!!</p>
+<p>The very small noise gets very different result for <code>ebpm_point_gamma</code>. Not surprising as the point-mass at 0 is not useful when data does not have exact 0s.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
