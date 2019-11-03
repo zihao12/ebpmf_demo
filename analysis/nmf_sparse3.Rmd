@@ -1,0 +1,161 @@
+---
+title: "nmf_sparse3"
+author: "zihao12"
+date: "2019-11-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I continue to investigate the sparisty of solution  to the data in https://zihao12.github.io/ebpmf_demo/nmf_sparse.html, https://zihao12.github.io/ebpmf_demo/nmf_sparse2.html.  I have tried `ebpmf_point_gamma`, `ebpmf_exponential_mixture` and `ebpmf_exponential_mixture` with uniform weight on  each prior components. None of them works and ther resulting posterior mean are quite similar  to MLE result. \\
+
+I look at the $Z$ from the initialization, and solves `ebpm` problem for $L$. The result is that all my methods get a result similar to MLE. By looking  at the $\hat{g}$ I find out why each method is similar to MLE result.  
+
+
+
+```{r warning=F, message=F}
+rm(list = ls())
+devtools::load_all("../ebpmf.alpha/")
+devtools::load_all("../ebpm/")
+library("ggplot2")
+library("NNLM") 
+library("ebpmf")
+n = 99
+p = 300
+iter_em = 1000
+iter_eb = 10
+# iter_em = 100
+# iter_eb = 10
+```
+
+```{r}
+set.seed(123)
+k= 4
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+```{r}
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = iter_em)
+fit_scd = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = iter_em)
+qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
+qg_from_scd = initialize_qg_from_LF(L = fit_scd$W, F =  t(fit_scd$H))
+
+Ez_from_lee  = get_Ez(X, qg_from_lee, k)
+Ez_from_scd  = get_Ez(X, qg_from_scd, k)
+
+for(i in 1:k){
+ image(Ez_from_lee$Ez[,,i], main = sprintf("Ez[,,%d]", i)) 
+}
+```
+
+let's take a look at Ez[,,1] and compute its row/column sum. First, it is not sparse at all. Second, there is a  jump of values in rumsum. 
+```{r}
+idx = 1
+min(colSums(Ez_from_lee$Ez[,,idx]))
+min(rowSums(Ez_from_lee$Ez[,,idx]))
+plot(sort(colSums(Ez_from_lee$Ez[,,idx])))
+plot(sort(rowSums(Ez_from_lee$Ez[,,idx])))
+```
+
+Let's apply `ebpm` to row/col sum and see what happens.\
+
+First look  at the fit using `ebpm_exp` with and without uniform weight, `ebpm_pg`. It  is clear the effect of shrinkage is very  small in all methods. 
+```{r}
+x = rowSums(Ez_from_lee$Ez[,,idx])
+s = replicate(length(x),sum(qg_from_lee$qfs_mean[,idx]))
+g_init = get_uniform_mixture(x = x, s= s, m = 2^0.25, low = 1e-20)
+fit_l_exp_uniform = ebpm::ebpm_exponential_mixture(x = x, s = s, g_init = g_init, fix_g = T)
+fit_l_exp = ebpm::ebpm_exponential_mixture(x = x, s = s)
+fit_l_pg = ebpm::ebpm_point_gamma(x = x, s =  s)
+
+ix = sort(x/s, index.return = TRUE, decreasing = FALSE)$ix
+
+df = data.frame(idx = 1:length(ix), mle = (x/s)[ix], exp_uniform = fit_l_exp_uniform$posterior$mean[ix],
+                exp = fit_l_exp$posterior$mean[ix], pg = fit_l_pg$posterior$mean[ix])
+
+ggplot(df)+
+  geom_point(aes(x = idx, y = mle, color = "mle"))+
+  geom_point(aes(x = idx, y = pg, color = "pg"))+
+  geom_point(aes(x = idx, y = exp, color = "exp"))+
+  geom_point(aes(x = idx, y = exp_uniform, color = "exp_uniform"))+
+  ylab("lambda")
+
+ggplot(df)+
+  geom_point(aes(x = mle, y = pg, color = "pg"))+
+  geom_point(aes(x = mle, y = exp, color = "exp"))+
+  geom_point(aes(x = mle, y = exp_uniform, color = "exp_uniform"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("fitted")
+```
+
+Take a closer look at smaller values
+```{r}
+df_small = df[df$mle < 200, ]
+ggplot(df_small)+
+  geom_point(aes(x = mle, y = pg, color = "pg"))+
+  geom_point(aes(x = mle, y = exp, color = "exp"))+
+  geom_point(aes(x = mle, y = exp_uniform, color = "exp_uniform"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("fitted")
+
+df_big = df[df$mle > 300, ]
+ggplot(df_big)+
+  geom_point(aes(x = mle, y = pg, color = "pg"))+
+  geom_point(aes(x = mle, y = exp, color = "exp"))+
+  geom_point(aes(x = mle, y = exp_uniform, color = "exp_uniform"))+
+  geom_abline(slope = 1, intercept = 0)+
+  ylab("fitted")
+```
+
+
+## Why our empirical bayes gets similar result to  MLE?
+`ebpm_exp_uniform` does not achieve sparsity because the $L$ matrix is 0 for all those columns where the prior components are small (this makes sense as given the data it is unlikely to have a prior  near 0). As a result, $\tilde{\Pi}$ also has similar patterns. I show its image  (column  from left  to right should correspond scales from small to big)
+```{r}
+g = fit_l_exp_uniform$fitted_g
+L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
+Pi_tilde = t(t(L) * g$pi)
+Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
+dim(Pi_tilde)
+which.max(colSums(Pi_tilde))
+image(t(Pi_tilde))
+```
+
+
+`ebpm_exp` does not achieve sparsity because the weights are  all concentrated on the  component with big scale. The posterior mean becomes very close to $\frac{x_i + 1}{s_i + 1/\mu_k}$ where $\mu_k$ is the scale for that component. Thus very close to MLE result.  
+```{r}
+g = fit_l_exp$fitted_g
+L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
+Pi_tilde = t(t(L) * g$pi)
+Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
+dim(Pi_tilde)
+which.max(colSums(Pi_tilde))
+image(t(Pi_tilde))
+```
+
+
+`ebpm_point_gamma` does not achieve sparsity because the rowsums of $Z$ is not sparse, thus $\pi_0 = 0$. The posterior mean is just $\frac{x_i + \text{shape}_k}{s_i + 1/\mu_k}$. Again,  it is very close to MLE. 
+```{r}
+g = fit_l_pg$fitted_g
+g
+```
+
+
+
+
+
+
+
