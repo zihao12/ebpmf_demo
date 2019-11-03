@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec59074e98889a91d17b70eebccedccff9b50430dtargetblankc59074ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c59074e98889a91d17b70eebccedccff9b50430d" target="_blank">c59074e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree543dceb73d781161e87baa06cd6925d69d49b63btargetblank543dceba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/543dceb73d781161e87baa06cd6925d69d49b63b" target="_blank">543dceb</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec59074e98889a91d17b70eebccedccff9b50430dtargetblankc59074ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree543dceb73d781161e87baa06cd6925d69d49b63btargetblank543dceba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -558,6 +558,9 @@ Untracked files:
     Untracked:  code/misc.R
     Untracked:  data/Compare_ebpmf_nmf2_out
     Untracked:  data/Compare_ebpmf_nmf2_out_ver2.Rds
+    Untracked:  data/nmf_sparse3_elbo.Rds
+    Untracked:  data/nmf_sparse3_loadings.Rds
+    Untracked:  data/nmf_sparse3_summary.Rds
     Untracked:  data/trash/
     Untracked:  docs/figure/Experiment_ebpmf.Rmd/
     Untracked:  verbose_log_1571583163.21966.txt
@@ -615,6 +618,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/543dceb73d781161e87baa06cd6925d69d49b63b/analysis/nmf_sparse3.Rmd" target="_blank">543dceb</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+<td>
+nmf_sparse3.Rmd with thresholding on z
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/nmf_sparse3.html" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/c59074e98889a91d17b70eebccedccff9b50430d/analysis/nmf_sparse3.Rmd" target="_blank">c59074e</a>
 </td>
 <td>
@@ -647,7 +684,23 @@ library(&quot;ebpmf&quot;)
 n = 99
 p = 300
 iter_em = 1000
-iter_eb = 10
+iter_eb = 100
+
+KL &lt;- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  &lt;- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE &lt;- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+log_lik &lt;- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
 # iter_em = 100
 # iter_eb = 10</code></pre>
 <pre class="r"><code>set.seed(123)
@@ -667,6 +720,43 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-2-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>fit_lee = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = iter_em)</code></pre>
 <pre><code>Warning in system.time(out &lt;- .Call(&quot;NNLM_nnmf&quot;, A, as.integer(k),
 init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre>
@@ -680,7 +770,158 @@ Ez_from_scd  = get_Ez(X, qg_from_scd, k)
 for(i in 1:k){
  image(Ez_from_lee$Ez[,,i], main = sprintf(&quot;Ez[,,%d]&quot;, i)) 
 }</code></pre>
-<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-3-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-3-2.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-3">
+Past versions of unnamed-chunk-3-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-3-3.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-4">
+Past versions of unnamed-chunk-3-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-3-4.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>let’s take a look at Ez[,,1] and compute its row/column sum. First, it is not sparse at all. Second, there is a jump of values in rumsum.</p>
 <pre class="r"><code>idx = 1
 min(colSums(Ez_from_lee$Ez[,,idx]))</code></pre>
@@ -689,8 +930,82 @@ min(colSums(Ez_from_lee$Ez[,,idx]))</code></pre>
 <pre><code>[1] 0.4174963</code></pre>
 <pre class="r"><code>plot(sort(colSums(Ez_from_lee$Ez[,,idx])))</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-4-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(sort(rowSums(Ez_from_lee$Ez[,,idx])))</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-4-2.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s apply <code>ebpm</code> to row/col sum and see what happens.<br />
 First look at the fit using <code>ebpm_exp</code> with and without uniform weight, <code>ebpm_pg</code>. It is clear the effect of shrinkage is very small in all methods.</p>
 <pre class="r"><code>x = rowSums(Ez_from_lee$Ez[,,idx])
@@ -712,6 +1027,43 @@ ggplot(df)+
   geom_point(aes(x = idx, y = exp_uniform, color = &quot;exp_uniform&quot;))+
   ylab(&quot;lambda&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-5-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggplot(df)+
   geom_point(aes(x = mle, y = pg, color = &quot;pg&quot;))+
   geom_point(aes(x = mle, y = exp, color = &quot;exp&quot;))+
@@ -719,6 +1071,43 @@ ggplot(df)+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;fitted&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-5-2.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Take a closer look at smaller values</p>
 <pre class="r"><code>df_small = df[df$mle &lt; 200, ]
 ggplot(df_small)+
@@ -728,6 +1117,43 @@ ggplot(df_small)+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;fitted&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-6-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>df_big = df[df$mle &gt; 300, ]
 ggplot(df_big)+
   geom_point(aes(x = mle, y = pg, color = &quot;pg&quot;))+
@@ -736,6 +1162,43 @@ ggplot(df_big)+
   geom_abline(slope = 1, intercept = 0)+
   ylab(&quot;fitted&quot;)</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-6-2.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="why-our-empirical-bayes-gets-similar-result-to-mle" class="section level2">
 <h2>Why our empirical bayes gets similar result to MLE?</h2>
@@ -750,6 +1213,43 @@ dim(Pi_tilde)</code></pre>
 <pre><code>[1] 299</code></pre>
 <pre class="r"><code>image(t(Pi_tilde))</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-7-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><code>ebpm_exp</code> does not achieve sparsity because the weights are all concentrated on the component with big scale. The posterior mean becomes very close to <span class="math inline">\(\frac{x_i + 1}{s_i + 1/\mu_k}\)</span> where <span class="math inline">\(\mu_k\)</span> is the scale for that component. Thus very close to MLE result.</p>
 <pre class="r"><code>g = fit_l_exp$fitted_g
 L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
@@ -761,6 +1261,43 @@ dim(Pi_tilde)</code></pre>
 <pre><code>[1] 16</code></pre>
 <pre class="r"><code>image(t(Pi_tilde))</code></pre>
 <p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ddbda23db5f251614ef591043bc065bf7ad99f0b/docs/figure/nmf_sparse3.Rmd/unnamed-chunk-8-1.png" target="_blank">ddbda23</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p><code>ebpm_point_gamma</code> does not achieve sparsity because the rowsums of <span class="math inline">\(Z\)</span> is not sparse, thus <span class="math inline">\(\pi_0 = 0\)</span>. The posterior mean is just <span class="math inline">\(\frac{x_i + \text{shape}_k}{s_i + 1/\mu_k}\)</span>. Again, it is very close to MLE.</p>
 <pre class="r"><code>g = fit_l_pg$fitted_g
 g</code></pre>
@@ -777,6 +1314,93 @@ attr(,&quot;class&quot;)
 [1] &quot;point_gamma&quot;
 attr(,&quot;row.names&quot;)
 [1] 1</code></pre>
+</div>
+<div id="try-thresholding-on-z" class="section level2">
+<h2>Try thresholding on <code>Z</code></h2>
+<p>From the simple experiment above we can see our current <code>ebpm</code> method does not do very well when <code>Z</code> are not sparse. As a heuristic, I try to apply thresholding when updating <code>Z</code>: that is, for <span class="math inline">\(\zeta_{ijk} &lt; \text{threshold}\)</span>, I set it to 0 and get <span class="math inline">\(\hat{\zeta}\)</span> then normalize so that <span class="math inline">\(\sum_k \hat{\zeta}_{ijk} = 1\)</span>.</p>
+<pre class="r"><code>cutoff_rate =  c(0, 0.1,0.3,0.5,0.7, 0.9)
+col_names = c()
+for(rate in cutoff_rate){
+  col_names = c(col_names, sprintf(&quot;cutoff_%.1f&quot;, rate))
+}
+
+maxiter.out = iter_eb
+
+summary_m = matrix(NA,nrow = 5, ncol = length(cutoff_rate))
+rownames(summary_m) = c(&quot;RMSE&quot;, &quot;KL&quot;, &quot;JS&quot;, &quot;ELBO&quot;, &quot;loglike&quot;)
+colnames(summary_m) = col_names
+
+ELBO_m = matrix(NA,nrow = maxiter.out, ncol = length(cutoff_rate))
+colnames(ELBO_m) = col_names
+
+loadings = matrix(NA,nrow = nrow(X), ncol = length(cutoff_rate))
+
+for(i in 1:length(cutoff_rate)){
+  rate = cutoff_rate[i]
+  threshold = rate*1/k
+  fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = maxiter.out, threshold = threshold)
+  ELBO_m[, i] = fit_pg_threshold$ELBO
+  lam_est = fit_pg_threshold$qg$qls_mean %*% t(fit_pg_threshold$qg$qfs_mean)
+  summary_ = c(RMSE(lambda, lam_est), KL(lambda, lam_est), JS(lambda, lam_est), fit_pg_threshold$ELBO[maxiter.out], log_lik(X, lam_est))
+  summary_m[,i] = summary_
+  loadings[,i] = fit_pg_threshold$qg$qls_mean[,2]
+}</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value
+
+Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre class="r"><code>saveRDS(ELBO_m, &quot;data/nmf_sparse3_elbo.Rds&quot;)
+saveRDS(loadings, &quot;data/nmf_sparse3_loadings.Rds&quot;)
+saveRDS(summary_m, &quot;data/nmf_sparse3_summary.Rds&quot;)</code></pre>
+<pre class="r"><code>print(summary_m, digits = 4)</code></pre>
+<pre><code>        cutoff_0.0 cutoff_0.1 cutoff_0.3 cutoff_0.5 cutoff_0.7 cutoff_0.9
+RMSE     5.579e-01  7.003e-01  9.657e-01  9.654e-01  9.653e-01      1.014
+KL       7.453e+02  1.311e+03  4.512e+03  4.603e+03  4.606e+03   4979.950
+JS       7.448e+02  1.273e+03  3.660e+03  3.715e+03  3.712e+03   4042.057
+ELBO     1.659e+05  1.658e+05  1.633e+05  1.631e+05  1.631e+05 162751.314
+loglike -6.471e+04 -6.487e+04 -6.775e+04 -6.799e+04 -6.804e+04 -68389.679</code></pre>
+<pre class="r"><code>df = data.frame(ELBO_m)
+colnames(df) = col_names
+df[[&quot;iter&quot;]] = 1:nrow(df)
+ggplot(df)+
+  geom_point(aes(x = iter, y = cutoff_0.0, color = &quot;cutoff_0.0&quot;))+
+  geom_point(aes(x = iter, y = cutoff_0.1, color = &quot;cutoff_0.1&quot;))+
+  geom_point(aes(x = iter, y = cutoff_0.3, color = &quot;cutoff_0.3&quot;))+
+  geom_point(aes(x = iter, y = cutoff_0.5, color = &quot;cutoff_0.5&quot;))+
+  geom_point(aes(x = iter, y = cutoff_0.7, color = &quot;cutoff_0.7&quot;))+
+  geom_point(aes(x = iter, y = cutoff_0.9, color = &quot;cutoff_0.9&quot;))+
+  ylab(&quot;elbo&quot;)</code></pre>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>df = data.frame(loadings)
+colnames(df) = col_names
+df[[&quot;idx&quot;]] = 1:nrow(df)
+
+ggplot(df)+
+  geom_point(aes(x = idx, y = cutoff_0.0, color = &quot;cutoff_0.0&quot;))+
+  geom_point(aes(x = idx, y = cutoff_0.1, color = &quot;cutoff_0.1&quot;))+
+  geom_point(aes(x = idx, y = cutoff_0.3, color = &quot;cutoff_0.3&quot;))+
+  geom_point(aes(x = idx, y = cutoff_0.5, color = &quot;cutoff_0.5&quot;))+
+  geom_point(aes(x = idx, y = cutoff_0.7, color = &quot;cutoff_0.7&quot;))+
+  geom_point(aes(x = idx, y = cutoff_0.9, color = &quot;cutoff_0.9&quot;))+
+  ylab(&quot;loading&quot;)</code></pre>
+<p><img src="figure/nmf_sparse3.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
