@@ -1,0 +1,131 @@
+---
+title: "nmf_sparse4"
+author: "zihao12"
+date: "2019-11-03"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+
+```{r warning=F, message=F}
+rm(list = ls())
+devtools::load_all("../ebpmf.alpha/")
+devtools::load_all("../ebpm/")
+library("ggplot2")
+library("NNLM") 
+library("ebpmf")
+source("code/misc.R")
+
+n = 99
+p = 300
+iter_em = 1000
+iter_eb = 100
+
+plot_lf <- function(fit){
+  if("W" %in% names(fit)){
+    L = fit$W
+    F = t(fit$H)
+  }
+  if("F" %in% names(fit)){
+    L = fit$L
+    F = fit$F
+  }
+  if("qg" %in% names(fit)){
+    L = fit$qg$qls_mean
+    F = fit$qg$qfs_mean
+  }
+  par(mfrow=c(2,2))
+  plot(L[,1], ylab = "L", main = sprintf("L[,%d]", 1))
+  plot(L[,2], ylab = "L", main = sprintf("L[,%d]", 2))
+  plot(F[,1], ylab = "F", main = sprintf("F[,%d]", 1))
+  plot(F[,2], ylab = "F", main = sprintf("F[,%d]", 2))
+}
+
+```
+
+```{r}
+set.seed(123)
+k= 2
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[,2] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[,2]= 1+mfac*runif(p)
+#F[((2*p/3)+1):p,1] = 1+10*runif(p/3)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+
+lf_oracle = list(L = L, F = F)
+lf_oracle_multinom = poisson2multinom(F  = lf_oracle$F, L = lf_oracle$L)
+
+plot_lf(fit = lf_oracle)
+plot_lf(fit = lf_oracle_multinom)
+
+
+
+image(X)
+```
+
+
+```{r warning=F}
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = iter_em)
+plot_lf(fit = fit_lee)
+fit_lee_multinom = poisson2multinom(F = t(fit_lee$H), L = fit_lee$W)
+plot_lf(fit = fit_lee_multinom)
+
+```
+
+```{r warning=F}
+qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
+fit_pg = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100)
+
+plot_lf(fit = fit_pg)
+fit_qg_multinom = poisson2multinom(F = fit_pg$qg$qfs_mean, L = fit_pg$qg$qls_mean)
+plot_lf(fit = fit_qg_multinom)
+```
+
+
+
+
+```{r warning=F}
+fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100, threshold = 0.1/k)
+plot_lf(fit = fit_pg_threshold)
+fit_pg_threshold_multinom = poisson2multinom(F = fit_pg_threshold$qg$qfs_mean, L = fit_pg_threshold$qg$qls_mean)
+plot_lf(fit = fit_pg_threshold_multinom)
+```
+
+```{r warning=F}
+fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100, threshold = 0.2/k)
+plot_lf(fit = fit_pg_threshold)
+fit_pg_threshold_multinom = poisson2multinom(F = fit_pg_threshold$qg$qfs_mean, L = fit_pg_threshold$qg$qls_mean)
+plot_lf(fit = fit_pg_threshold_multinom)
+```
+
+
+
+```{r warning=F}
+fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100, threshold = 1/k)
+plot_lf(fit = fit_pg_threshold)
+fit_pg_threshold_multinom = poisson2multinom(F = fit_pg_threshold$qg$qfs_mean, L = fit_pg_threshold$qg$qls_mean)
+plot_lf(fit = fit_pg_threshold_multinom)
+```
+
+
+
+```{r warning=F}
+fit_pg_threshold = ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100, threshold = 0.99)
+plot_lf(fit = fit_pg_threshold)
+fit_pg_threshold_multinom = poisson2multinom(F = fit_pg_threshold$qg$qfs_mean, L = fit_pg_threshold$qg$qls_mean)
+plot_lf(fit = fit_pg_threshold_multinom)
+```
+
+
+
+
+
+
