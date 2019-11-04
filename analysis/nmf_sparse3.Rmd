@@ -80,34 +80,42 @@ for(i in 1:k){
 
 let's take a look at Ez[,,1] and compute its row/column sum. First, it is not sparse at all. Second, there is a  jump of values in rumsum. 
 ```{r}
-idx = 1
+idx = 2
 min(colSums(Ez_from_lee$Ez[,,idx]))
 min(rowSums(Ez_from_lee$Ez[,,idx]))
-plot(sort(colSums(Ez_from_lee$Ez[,,idx])))
-plot(sort(rowSums(Ez_from_lee$Ez[,,idx])))
+hist(colSums(Ez_from_lee$Ez[,,idx]), breaks = 100)
+hist(rowSums(Ez_from_lee$Ez[,,idx]), breaks = 100)
+
+s= sum(qg_from_lee$qfs_mean[,idx])
+print(s)
 ```
 
 Let's apply `ebpm` to row/col sum and see what happens.\
 
-First look  at the fit using `ebpm_exp` with and without uniform weight, `ebpm_pg`. It  is clear the effect of shrinkage is very  small in all methods. 
+First look  at the fit using `ebpm_exp` with and without uniform weight, and `ebpm_pg`. It  is clear the effect of shrinkage is very  small in all methods. 
 ```{r}
 x = rowSums(Ez_from_lee$Ez[,,idx])
 s = replicate(length(x),sum(qg_from_lee$qfs_mean[,idx]))
+
+## there are some x that we hope to shrink towards 0
+sort(x/s)[1:10]
+hist(x/s, breaks = 100)
+
 g_init = get_uniform_mixture(x = x, s= s, m = 2^0.25, low = 1e-20)
 fit_l_exp_uniform = ebpm::ebpm_exponential_mixture(x = x, s = s, g_init = g_init, fix_g = T)
 fit_l_exp = ebpm::ebpm_exponential_mixture(x = x, s = s)
 fit_l_pg = ebpm::ebpm_point_gamma(x = x, s =  s)
 
-ix = sort(x/s, index.return = TRUE, decreasing = FALSE)$ix
+#ix = sort(x/s, index.return = TRUE, decreasing = FALSE)$ix
 
-df = data.frame(idx = 1:length(ix), mle = (x/s)[ix], exp_uniform = fit_l_exp_uniform$posterior$mean[ix],
-                exp = fit_l_exp$posterior$mean[ix], pg = fit_l_pg$posterior$mean[ix])
+df = data.frame(idx = 1:length(x), mle = x/s, exp_uniform = fit_l_exp_uniform$posterior$mean,
+                exp = fit_l_exp$posterior$mean, pg = fit_l_pg$posterior$mean)
 
 ggplot(df)+
   geom_point(aes(x = idx, y = mle, color = "mle"))+
-  geom_point(aes(x = idx, y = pg, color = "pg"))+
-  geom_point(aes(x = idx, y = exp, color = "exp"))+
-  geom_point(aes(x = idx, y = exp_uniform, color = "exp_uniform"))+
+  geom_line(aes(x = idx, y = pg, color = "pg"))+
+  geom_line(aes(x = idx, y = exp, color = "exp"))+
+  geom_line(aes(x = idx, y = exp_uniform, color = "exp_uniform"))+
   ylab("lambda")
 
 ggplot(df)+
@@ -120,7 +128,7 @@ ggplot(df)+
 
 Take a closer look at smaller values
 ```{r}
-df_small = df[df$mle < 200, ]
+df_small = df[df$mle < 2, ]
 ggplot(df_small)+
   geom_point(aes(x = mle, y = pg, color = "pg"))+
   geom_point(aes(x = mle, y = exp, color = "exp"))+
@@ -128,17 +136,24 @@ ggplot(df_small)+
   geom_abline(slope = 1, intercept = 0)+
   ylab("fitted")
 
-df_big = df[df$mle > 300, ]
+df_big = df[df$mle > 3, ]
 ggplot(df_big)+
   geom_point(aes(x = mle, y = pg, color = "pg"))+
   geom_point(aes(x = mle, y = exp, color = "exp"))+
   geom_point(aes(x = mle, y = exp_uniform, color = "exp_uniform"))+
   geom_abline(slope = 1, intercept = 0)+
   ylab("fitted")
+
+
+## take a look at those small x/s
+sort(df$mle)[1:10]
+sort(df$exp_uniform)[1:10]
+sort(df$exp)[1:10]
+sort(df$pg)[1:10]
 ```
+clearly `ebpm` fails to shrinkage them towards 0!
 
-
-## Why our empirical bayes gets similar result to  MLE?
+## Why our empirical bayes fails to  achieve sparisity. 
 `ebpm_exp_uniform` does not achieve sparsity because the $L$ matrix is 0 for all those columns where the prior components are small (this makes sense as given the data it is unlikely to have a prior  near 0). As a result, $\tilde{\Pi}$ also has similar patterns. I show its image  (column  from left  to right should correspond scales from small to big)
 ```{r}
 g = fit_l_exp_uniform$fitted_g
@@ -146,12 +161,14 @@ L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
 Pi_tilde = t(t(L) * g$pi)
 Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
 dim(Pi_tilde)
-which.max(colSums(Pi_tilde))
 image(t(Pi_tilde))
+which.max(colSums(Pi_tilde))
+fit_l_exp_uniform$fitted_g$scale[which.max(colSums(Pi_tilde))]
 ```
 
+The posterior is a mixture of gamma of the form $Gamma(.;x + 1, s + b})$, with the posterior mean being $\frac{1}{1+b/s} (x/s) + (1- \frac{1}{1+b/s}) (a/b)$. Its most weights (posterior) are concentrated at the  prior component with big `scale` even if we fix $\pi$ to be uniform.  In this case, $s$ is large and `scale` is not too small, the result is very close to $x/s$. When $x/s$ is close to 0, posterior mean  is greater than $\frac{1}{s + 1/\text{scale}}$. The big value of `scale` prohibits it to be too small.  
 
-`ebpm_exp` does not achieve sparsity because the weights are  all concentrated on the  component with big scale. The posterior mean becomes very close to $\frac{x_i + 1}{s_i + 1/\mu_k}$ where $\mu_k$ is the scale for that component. Thus very close to MLE result.  
+`ebpm_exp` does not achieve sparsity for the same reason.   
 ```{r}
 g = fit_l_exp$fitted_g
 L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
@@ -159,11 +176,39 @@ Pi_tilde = t(t(L) * g$pi)
 Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
 dim(Pi_tilde)
 which.max(colSums(Pi_tilde))
+fit_l_exp$fitted_g$scale[which.max(colSums(Pi_tilde))]
 image(t(Pi_tilde))
+
+```
+
+Let's try manually fixing very small prior components. Indeed this can drive all numbers down (except for very small  numbers). 
+```{r}
+g_init_manual = gammamix(pi = c(1,1,1)/3, shape = c(1,1, 1), scale = c(0.001,0.01, 12))
+fit_l_exp_manual = ebpm::ebpm_exponential_mixture(x = x, s = s, g_init = g_init_manual, fix_g = T)
+g = fit_l_exp_manual$fitted_g
+L = ebpm::compute_L(x, s, a = g$shape, b = 1/g$scale)$L
+Pi_tilde = t(t(L) * g$pi)
+Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
+dim(Pi_tilde)
+image(t(Pi_tilde))
+## take a look at those small x/s
+sort(x/s)[1:10]
+sort(fit_l_exp_manual$posterior$mean)[1:10]
+
+plot(x/s)
+lines(fit_l_exp_manual$posterior$mean)
+```
+
+Try `ash_pois`
+```{r}
+library(ashr)
+fit_ash = ashr::ash_pois(y =  x, scale = s)
+plot(x/s)
+lines(fit_ash$result$PosteriorMean)
 ```
 
 
-`ebpm_point_gamma` does not achieve sparsity because the rowsums of $Z$ is not sparse, thus $\pi_0 = 0$. The posterior mean is just $\frac{x_i + \text{shape}_k}{s_i + 1/\mu_k}$. Again,  it is very close to MLE. 
+`ebpm_point_gamma` does not achieve sparsity because the rowsums of $Z$ is not sparse, thus $\pi_0 = 0$. The posterior mean is just $\frac{x_i + \text{shape}}{s_i + 1/\text{scale}}$. Again,  it is very close to MLE. 
 ```{r}
 g = fit_l_pg$fitted_g
 g
@@ -244,7 +289,7 @@ ggplot(df)+
   # geom_point(aes(x = idx, y = cutoff_0.5, color = "cutoff_0.5"))+
   # geom_point(aes(x = idx, y = cutoff_0.7, color = "cutoff_0.7"))+
   # geom_point(aes(x = idx, y = cutoff_0.9, color = "cutoff_0.9"))+
-  ylab("loading")
+  ylab("loading 2")
 ```
 
 
