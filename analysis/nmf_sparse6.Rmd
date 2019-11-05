@@ -1,0 +1,184 @@
+---
+title: "nmf_sparse6"
+author: "zihao12"
+date: "2019-11-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+From https://dongyuexie.github.io/SMF/nmfsparse.html
+
+## Summary
+
+1. L1 penalty in NNLM::nnmf either put no/littlle thresholding or thresholds all entries to zero.
+
+2. nsNMF and snmf in NMF package give sparse estimate of loadings and factors.
+
+## Data
+
+```{r}
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+```
+
+
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+
+log_lik(X, lam = lambda)
+
+image(X)
+
+```
+
+## NNLM-nnmf
+
+```{r,warning=FALSE}
+library(NNLM)
+
+fit_scd = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000)
+
+log_lik(X, lam = fit_scd$W %*% fit_scd$H)
+
+
+
+fit_scd_L1.1 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,1))
+log_lik(X, lam = fit_scd_L1.1$W %*% fit_scd_L1.1$H)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_scd_L1.1$W[,i],main=paste0("L1 penalty = 1: estimated loadings ",i))
+}
+
+
+fit_scd_L1.10 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,10))
+log_lik(X, lam = fit_scd_L1.10$W %*% fit_scd_L1.10$H)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_scd_L1.10$W[,i],main=paste0("L1 penalty = 10: estimated loadings ",i))
+}
+
+fit_scd_L1.11 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,11))
+log_lik(X, lam = fit_scd_L1.11$W %*% fit_scd_L1.11$H)
+
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_scd_L1.11$W[,i],main=paste0("L1 penalty = 11: estimated loadings ",i))
+}
+
+fit_scd_L1.100 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,100))
+log_lik(X, lam = fit_scd_L1.100$W %*% fit_scd_L1.100$H)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_scd_L1.100$W[,i],main=paste0("L1 penalty = 100: estimated loadings ",i))
+}
+```
+
+## NMF-nmf
+
+### Non-smooth NMF
+
+Non-smooth NMF. Uses a modified version of Lee and Seung’s multiplicative updates for Kullback-Leibler divergence to fit a extension of the standard NMF model. It is meant to give sparser results.
+
+Reference: [Pascual-Montano2006](https://ieeexplore.ieee.org/document/1580485)
+
+```{r}
+
+library(NMF)
+
+fit_nsNMF = nmf(X,4,method = 'nsNMF')
+log_lik(X, lam = fit_nsNMF@fit@W %*% fit_nsNMF@fit@H)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_nsNMF@fit@W[,i],main=paste0("nsNMF: estimated loadings ",i))
+}
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_nsNMF@fit@H[i,],main=paste0("nsNMF: estimated factors ",i))
+}
+
+
+```
+
+## Sparse NMF
+
+Alternating Least Square (ALS) approach. It is meant to be very fast com- pared to other approaches.
+
+Reference: [KimH2007](https://www.ncbi.nlm.nih.gov/pubmed/17483501)
+
+Sparse Loading:
+
+```{r}
+
+fit_snmfl = nmf(X,4,method = 'snmf/l',beta=1)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_snmfl@fit@W[,i],main=paste0("snmfl: estimated loadings ",i))
+}
+
+log_lik(X, lam = fit_snmfl@fit@W %*% fit_snmfl@fit@H)
+
+```
+
+
+Sparse Factors:
+
+```{r}
+fit_snmfr = nmf(X,4,method = 'snmf/r',beta=1)
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_snmfr@fit@H[i,],main=paste0("snmfr: estimated factors ",i))
+}
+
+
+
+
+log_lik(X, lam = fit_snmfr@fit@W %*% fit_snmfr@fit@H)
+
+```
+
+
+
+## `ebpmf` (from truth)
+```{r warning=F, echo =  F}
+devtools::load_all("../ebpmf.alpha")
+devtools::load_all("../ebpm")
+library(ebpmf)
+qg_from_truth = initialize_qg_from_LF(L = L, F = F)
+fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)
+log_lik(X, lam = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean))
+```
+
+
+
+
+
+
+
