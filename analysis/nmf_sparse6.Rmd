@@ -6,13 +6,14 @@ output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
-From https://dongyuexie.github.io/SMF/nmfsparse.html
+Dongyue did an investigation into some penalty-based methods in https://dongyuexie.github.io/SMF/nmfsparse.html. I copy them here and look at their loglikelihood and see how well they fit the data. 
 
 ## Summary
+* Those methods induce sparsity but have very low loglikelihood (compared to truth). The  reason is that there are too many fits with $x >> \hat{\lambda}$ (not many exact 0s though). Also, when making penalty parameter large, the algorithm gives warning  that "beta is too large", probably because of the bad behavior of Poisson loglikelihood when  $\lambda$ is near 0 . \
 
-1. L1 penalty in NNLM::nnmf either put no/littlle thresholding or thresholds all entries to zero.
+* With this observation, it makes sense  to introduce random effect to  this model: $X_{ij} = Pois(\sum_k l_{ik} f_{jk} + \mu_{ij})$, and we hope the model  can set some $L, F$ to 0, and let $\mu_{ij}$ take care of the nonzero-small fit.\
 
-2. nsNMF and snmf in NMF package give sparse estimate of loadings and factors.
+* We initialize `ebpmf_random_effect` with the results from `nsNMF`, with $\mu$ initialized to those underfits part $(X_{ij} - (LF^t)_{ij})_{+}$(not sure if it makes sense). In the experiment in the end we get shrinkage effect as point gamma works as expected. 
 
 ## Data
 
@@ -46,58 +47,10 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 
 log_lik(X, lam = lambda)
-
 image(X)
 
 ```
 
-## NNLM-nnmf
-
-```{r,warning=FALSE}
-library(NNLM)
-
-fit_scd = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000)
-
-log_lik(X, lam = fit_scd$W %*% fit_scd$H)
-
-
-
-fit_scd_L1.1 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,1))
-log_lik(X, lam = fit_scd_L1.1$W %*% fit_scd_L1.1$H)
-
-par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.1$W[,i],main=paste0("L1 penalty = 1: estimated loadings ",i))
-}
-
-
-fit_scd_L1.10 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,10))
-log_lik(X, lam = fit_scd_L1.10$W %*% fit_scd_L1.10$H)
-
-par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.10$W[,i],main=paste0("L1 penalty = 10: estimated loadings ",i))
-}
-
-fit_scd_L1.11 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,11))
-log_lik(X, lam = fit_scd_L1.11$W %*% fit_scd_L1.11$H)
-
-
-par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.11$W[,i],main=paste0("L1 penalty = 11: estimated loadings ",i))
-}
-
-fit_scd_L1.100 = NNLM::nnmf(A = X, k = 4, loss = "mse", method = "scd", max.iter = 10000, alpha=c(0,0,100))
-log_lik(X, lam = fit_scd_L1.100$W %*% fit_scd_L1.100$H)
-
-par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.100$W[,i],main=paste0("L1 penalty = 100: estimated loadings ",i))
-}
-```
-
-## NMF-nmf
 
 ### Non-smooth NMF
 
@@ -105,7 +58,9 @@ Non-smooth NMF. Uses a modified version of Lee and Seung’s multiplicative upda
 
 Reference: [Pascual-Montano2006](https://ieeexplore.ieee.org/document/1580485)
 
-```{r}
+(Note the column sum of `W` are all 1s. Think we prefer the column sum of `F` to be constant?)
+
+```{r warning=F, message=F}
 
 library(NMF)
 
@@ -135,12 +90,18 @@ Sparse Loading:
 
 ```{r}
 
-fit_snmfl = nmf(X,4,method = 'snmf/l',beta=1)
+fit_snmfl = nmf(X,4,method = 'snmf/l',beta=20)
 
 par(mfrow=c(2,2))
 for(i in 1:k){
     plot(fit_snmfl@fit@W[,i],main=paste0("snmfl: estimated loadings ",i))
 }
+
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_snmfl@fit@H[i,],main=paste0("snmfl: estimated factors ",i))
+}
+
 
 log_lik(X, lam = fit_snmfl@fit@W %*% fit_snmfl@fit@H)
 
@@ -154,31 +115,125 @@ fit_snmfr = nmf(X,4,method = 'snmf/r',beta=1)
 
 par(mfrow=c(2,2))
 for(i in 1:k){
-    plot(fit_snmfr@fit@H[i,],main=paste0("snmfr: estimated factors ",i))
+    plot(fit_snmfr@fit@W[,i],main=paste0("snmfr: estimated loadings ",i))
 }
 
-
-
+par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_snmfr@fit@H[i,],main=paste0("snmfr: estimated factors ",i))
+}
 
 log_lik(X, lam = fit_snmfr@fit@W %*% fit_snmfr@fit@H)
 
 ```
 
+The loglikelihood from those models are often very bad. 
 
-
-## `ebpmf` (from truth)
+## `ebpmf` (initialized from truth)
+I think  it is a good fit, with sparsity as well as good loglikelihood and divergence from true lambda. We would believe a good sparse model should get a simialr likelihood.
 ```{r warning=F, echo =  F}
 devtools::load_all("../ebpmf.alpha")
 devtools::load_all("../ebpm")
 library(ebpmf)
 qg_from_truth = initialize_qg_from_LF(L = L, F = F)
-fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)
+# fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)
+# saveRDS(fit_pg_from_truth, "data/nmf_sparse6_fit_pg_from_truth.Rds")
+fit_pg_from_truth = readRDS("data/nmf_sparse6_fit_pg_from_truth.Rds")
 log_lik(X, lam = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean))
 ```
 
 
+## See why those sparse-NMF methods have low loglikelihood
+```{r}
+lam_nsnmf = fit_nsNMF@fit@W %*% fit_nsNMF@fit@H
+lam_ebpm = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean)
+
+par(mfrow=c(2,2))
+plot(X, lam_nsnmf)
+plot(X, lambda)
+plot(lambda, lam_nsnmf)
+```
+
+Clearly, there are many counts with $x >> \hat{\lambda}$. This may help us  initialize `ebpmf_random_effect`
 
 
+## Fit with  `ebpmf_random_effect`
+* The model is $X_{ij} = Pois(\sum_k l_{ik} f_{jk} + \mu_{ij})$, with prior on each column of $L, F$, and on entire $\mu_{ij}$. It is fitted very similarly to `ebpmf`, except that we introduce $Z^0$ with $Z^0_{ij} \sim Pois(\mu_{ij})$. Now I use point gamma for the posterior family for all of them. \
 
+* Initialization: I need to initialize $q$ for $L, F, \mu$. I first fit the model with `nsNMF`, then with  the  `L`, `F` (after thresholding some small ones to be 0, as otherwise $\pi_0$ will be all 0 again) I set $\mu_{ij} =  (X_{ij} - (LF^t)_{ij})_{+}$. Then I use the  point  estimate as  posterior mean, and log  of it to be  posterior log-mean as initialization. 
+
+```{r}
+initialize_qg_from_LF_random_effect <- function(L0,F0, mu){
+  K = ncol(L0)
+  qls_mean = L0
+  qfs_mean = F0
+  qls_mean_log = log(L0)
+  qfs_mean_log = log(F0)
+  qmu_mean = mu
+  qmu_mean_log = log(mu)
+  qg = list(qls_mean = qls_mean, qls_mean_log =qls_mean_log,
+            qfs_mean = qfs_mean, qfs_mean_log =qfs_mean_log,
+            qmu_mean = qmu_mean, qmu_mean_log = qmu_mean_log,
+            gls = replicate(K, list(NULL)),gfs = replicate(K, list(NULL)))
+  return(qg)
+}
+ 
+L0 = fit_nsNMF@fit@W
+F0 = t(fit_nsNMF@fit@H)
+
+thres <- function(x, cut = 0.1){
+  x[x < cut*mean(x)] = 0
+  return(x)
+}
+
+L0_thres = L0
+L0_thres = apply(L0_thres, 2, FUN = thres)
+
+F0_thres = F0
+F0_thres = apply(F0_thres, 2, FUN = thres)
+
+par(mfrow=c(1,2))
+plot(L0, L0_thres)
+plot(F0, F0_thres)
+
+mu = X - L0_thres %*%  t(F0_thres)
+mu[mu < 0] = 0
+
+print(sum(mu ==  0)/(n*p))
+
+qg_from_nsNMF = initialize_qg_from_LF_random_effect(L0_thres, F0_thres, mu)
+```
+
+
+```{r}
+# fit_ebpmf_re_nsnmf = ebpmf_random_effect(X = X, K = k, maxiter.out = 100, qg = qg_from_nsNMF)
+# saveRDS(fit_ebpmf_re_nsnmf, "data/nmf_sparse6_fit_ebpmf_re_nsnmf.Rds")
+fit_ebpmf_re_nsnmf = readRDS("data/nmf_sparse6_fit_ebpmf_re_nsnmf.Rds")
+```
+
+
+```{r}
+lam_ebpmf_re = fit_ebpmf_re_nsnmf$qg$qls_mean %*% t(fit_ebpmf_re_nsnmf$qg$qfs_mean) + fit_ebpmf_re_nsnmf$qg$qmu_mean
+log_lik(X, lam_ebpmf_re)
+
+for(idx in 1:k){
+  par(mfrow=c(1,2))
+  plot(L0_thres[,idx],fit_ebpmf_re_nsnmf$qg$qls_mean[,idx], 
+       xlab = sprintf("L0_thres: loading %d", idx), ylab = sprintf("L_ebpmf:loading %d", idx), col  = "red")
+  abline(a = 0, b = 1)
+  plot(F0_thres[,idx],fit_ebpmf_re_nsnmf$qg$qfs_mean[,idx], 
+       xlab = sprintf("F0_thres: factor %d", idx), ylab = sprintf("F_ebpmf:factor %d", idx), col  = "blue")
+  abline(a = 0, b = 1)
+}
+```
+Finally we have some shrinkage effects!\
+
+Take a look at the corresponding $Z$. ($EZ[,,5]$ corresponds to $\mu$).  
+```{r}
+Ez_ebpmf_random_effect = get_Ez_random_effect(X = X, qg = fit_ebpmf_re_nsnmf$qg, K = k)$Ez
+for(i in 1:(k+1)){
+ image(Ez_ebpmf_random_effect[,,i], main = sprintf("Ez[,,%d]", i)) 
+}
+```
 
 
