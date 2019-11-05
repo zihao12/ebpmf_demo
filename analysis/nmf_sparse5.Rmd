@@ -1,0 +1,162 @@
+---
+title: "nmf_sparse5"
+author: "zihao12"
+date: "2019-11-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+I want to see how good is  the fit for thresholded `ebpmf_pg`
+
+```{r warning=F, message=F}
+rm(list = ls())
+devtools::load_all("../ebpmf.alpha/")
+devtools::load_all("../ebpm/")
+library("ggplot2")
+library("NNLM") 
+library("ebpmf")
+n = 99
+p = 300
+iter_em = 1000
+iter_eb = 100
+
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+
+get_lambda_ebpmf <- function(fit){
+  return(fit$qg$qls_mean %*% t(fit$qg$qfs_mean))
+}
+# iter_em = 100
+# iter_eb = 10
+```
+
+```{r}
+set.seed(123)
+k= 4
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+```{r warning=F, echo = F}
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = iter_em)
+qg_from_lee = initialize_qg_from_LF(L = fit_lee$W, F =  t(fit_lee$H))
+fit_pg_threshold = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_lee, maxiter.out = 100, threshold = 0.1/k)
+
+qg_from_truth = initialize_qg_from_LF(L = L, F = F)
+fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)
+
+plot(L[,2])
+plot(fit_pg_from_truth$qg$qls_mean[,2])
+plot(fit_pg_threshold$qg$qls_mean[,2])
+
+
+```
+
+
+```{r}
+library(ggplot2)
+df = data.frame(iter = 1:100, from_truth = fit_pg_from_truth$ELBO, threshold = fit_pg_threshold$ELBO)
+ggplot(df)+
+  geom_line(aes(x = iter, y = from_truth, color = "from_truth"))+
+  geom_line(aes(x = iter, y = threshold, color = "threshold"))
+```
+
+```{r}
+log_lik(X, get_lambda_ebpmf(fit_pg_threshold))
+log_lik(X, get_lambda_ebpmf(fit_pg_from_truth))
+
+image(get_lambda_ebpmf(fit_pg_threshold))
+
+image(get_lambda_ebpmf(fit_pg_from_truth))
+
+image(lambda)
+```
+
+```{r}
+source("code/misc.R")
+lf_thres =  poisson2multinom(F = fit_pg_threshold$qg$qfs_mean, L = fit_pg_threshold$qg$qls_mean)
+lf_from_truth =  poisson2multinom(F = fit_pg_from_truth$qg$qfs_mean, L = fit_pg_from_truth$qg$qls_mean)
+lf_truth = poisson2multinom(F = F, L = L)
+
+
+lf = lf_truth
+par(mfrow=c(2,2))
+plot(lf$L[,1], ylab = "L", main = sprintf("L[,%d]", 1))
+plot(lf$L[,2], ylab = "L", main = sprintf("L[,%d]", 2))
+plot(lf$F[,1], ylab = "F", main = sprintf("F[,%d]", 1))
+plot(lf$F[,2], ylab = "F", main = sprintf("F[,%d]", 2))
+
+lf = lf_from_truth
+par(mfrow=c(2,2))
+plot(lf$L[,1], ylab = "L", main = sprintf("L[,%d]", 1))
+plot(lf$L[,2], ylab = "L", main = sprintf("L[,%d]", 2))
+plot(lf$F[,1], ylab = "F", main = sprintf("F[,%d]", 1))
+plot(lf$F[,2], ylab = "F", main = sprintf("F[,%d]", 2))
+
+lf = lf_thres
+par(mfrow=c(2,2))
+plot(lf$L[,1], ylab = "L", main = sprintf("L[,%d]", 1))
+plot(lf$L[,2], ylab = "L", main = sprintf("L[,%d]", 2))
+plot(lf$F[,1], ylab = "F", main = sprintf("F[,%d]", 1))
+plot(lf$F[,2], ylab = "F", main = sprintf("F[,%d]", 2))
+```
+
+
+```{r}
+JSs = c(JS(lambda, lambda),
+        JS(lambda, get_lambda_ebpmf(fit_pg_from_truth)),
+        JS(lambda, get_lambda_ebpmf(fit_pg_threshold)))
+
+KLs = c(KL(lambda, lambda),
+        KL(lambda, get_lambda_ebpmf(fit_pg_from_truth)),
+        KL(lambda, get_lambda_ebpmf(fit_pg_threshold)))
+
+RMSEs = c(RMSE(lambda, lambda),
+        RMSE(lambda, get_lambda_ebpmf(fit_pg_from_truth)),
+        RMSE(lambda, get_lambda_ebpmf(fit_pg_threshold)))
+
+lls = c(log_lik(X, lambda),
+        log_lik(X, get_lambda_ebpmf(fit_pg_from_truth)),
+        log_lik(X, get_lambda_ebpmf(fit_pg_threshold)))
+
+
+data.frame(JS = JSs, KL = KLs, RMSE = RMSEs, ll = lls, row.names = c("truth", "from truth", "threshold"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
