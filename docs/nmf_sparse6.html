@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4fbf8d9c249a2a18c7b0f2e412e48b959f381b77targetblank4fbf8d9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/4fbf8d9c249a2a18c7b0f2e412e48b959f381b77" target="_blank">4fbf8d9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree39ba9187421bfa3427c82a818dd4dc8defab1c6ctargetblank39ba918a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/39ba9187421bfa3427c82a818dd4dc8defab1c6c" target="_blank">39ba918</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4fbf8d9c249a2a18c7b0f2e412e48b959f381b77targetblank4fbf8d9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree39ba9187421bfa3427c82a818dd4dc8defab1c6ctargetblank39ba918a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -554,6 +554,7 @@ Untracked files:
     Untracked:  analysis/Experiment_ebpmf_simple.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/plot_g.Rmd
     Untracked:  analysis/softmax_experiments.ipynb
     Untracked:  code/misc.R
     Untracked:  data/Compare_ebpmf_nmf2_out
@@ -561,6 +562,8 @@ Untracked files:
     Untracked:  data/nmf_sparse3_elbo.Rds
     Untracked:  data/nmf_sparse3_loadings.Rds
     Untracked:  data/nmf_sparse3_summary.Rds
+    Untracked:  data/nmf_sparse6_fit_ebpmf_re_nsnmf.Rds
+    Untracked:  data/nmf_sparse6_fit_pg_from_truth.Rds
     Untracked:  data/trash/
     Untracked:  verbose_log_1571583163.21966.txt
     Untracked:  verbose_log_1571583324.71036.txt
@@ -619,6 +622,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/39ba9187421bfa3427c82a818dd4dc8defab1c6c/analysis/nmf_sparse6.Rmd" target="_blank">39ba918</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+<td>
+nmf_sparse6.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/0382175ee8134544833e8cbe70160a0450b96086/docs/nmf_sparse6.html" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/4fbf8d9c249a2a18c7b0f2e412e48b959f381b77/analysis/nmf_sparse6.Rmd" target="_blank">4fbf8d9</a>
 </td>
 <td>
@@ -638,13 +675,16 @@ nmf_sparse6.Rmd
 </div>
 </div>
 </div>
-<p>From <a href="https://dongyuexie.github.io/SMF/nmfsparse.html" class="uri">https://dongyuexie.github.io/SMF/nmfsparse.html</a></p>
+<p>Dongyue did an investigation into some penalty-based methods in <a href="https://dongyuexie.github.io/SMF/nmfsparse.html" class="uri">https://dongyuexie.github.io/SMF/nmfsparse.html</a>. I copy them here and look at their loglikelihood and see how well they fit the data.</p>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
-<ol style="list-style-type: decimal">
-<li><p>L1 penalty in NNLM::nnmf either put no/littlle thresholding or thresholds all entries to zero.</p></li>
-<li><p>nsNMF and snmf in NMF package give sparse estimate of loadings and factors.</p></li>
-</ol>
+<ul>
+<li>Those methods induce sparsity but have very low loglikelihood (compared to truth). The reason is that there are too many fits with <span class="math inline">\(x &gt;&gt; \hat{\lambda}\)</span> (not many exact 0s though). Also, when making penalty parameter large, the algorithm gives warning that “beta is too large”, probably because of the bad behavior of Poisson loglikelihood when <span class="math inline">\(\lambda\)</span> is near 0 .<br />
+</li>
+<li>With this observation, it makes sense to introduce random effect to this model: <span class="math inline">\(X_{ij} = Pois(\sum_k l_{ik} f_{jk} + \mu_{ij})\)</span>, and we hope the model can set some <span class="math inline">\(L, F\)</span> to 0, and let <span class="math inline">\(\mu_{ij}\)</span> take care of the nonzero-small fit.<br />
+</li>
+<li>We initialize <code>ebpmf_random_effect</code> with the results from <code>nsNMF</code>, with <span class="math inline">\(\mu\)</span> initialized to those underfits part <span class="math inline">\((X_{ij} - (LF^t)_{ij})_{+}\)</span>(not sure if it makes sense). In the experiment in the end we get shrinkage effect as point gamma works as expected.</li>
+</ul>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -676,54 +716,48 @@ log_lik(X, lam = lambda)</code></pre>
 <pre><code>[1] -65129.25</code></pre>
 <pre class="r"><code>image(X)</code></pre>
 <p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-2-1.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="nnlm-nnmf" class="section level2">
-<h2>NNLM-nnmf</h2>
-<pre class="r"><code>library(NNLM)
-
-fit_scd = NNLM::nnmf(A = X, k = 4, loss = &quot;mse&quot;, method = &quot;scd&quot;, max.iter = 10000)
-
-log_lik(X, lam = fit_scd$W %*% fit_scd$H)</code></pre>
-<pre><code>[1] -64417.8</code></pre>
-<pre class="r"><code>fit_scd_L1.1 = NNLM::nnmf(A = X, k = 4, loss = &quot;mse&quot;, method = &quot;scd&quot;, max.iter = 10000, alpha=c(0,0,1))
-log_lik(X, lam = fit_scd_L1.1$W %*% fit_scd_L1.1$H)</code></pre>
-<pre><code>[1] -64427.39</code></pre>
-<pre class="r"><code>par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.1$W[,i],main=paste0(&quot;L1 penalty = 1: estimated loadings &quot;,i))
-}</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>fit_scd_L1.10 = NNLM::nnmf(A = X, k = 4, loss = &quot;mse&quot;, method = &quot;scd&quot;, max.iter = 10000, alpha=c(0,0,10))
-log_lik(X, lam = fit_scd_L1.10$W %*% fit_scd_L1.10$H)</code></pre>
-<pre><code>[1] -64427.4</code></pre>
-<pre class="r"><code>par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.10$W[,i],main=paste0(&quot;L1 penalty = 10: estimated loadings &quot;,i))
-}</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>fit_scd_L1.11 = NNLM::nnmf(A = X, k = 4, loss = &quot;mse&quot;, method = &quot;scd&quot;, max.iter = 10000, alpha=c(0,0,11))
-log_lik(X, lam = fit_scd_L1.11$W %*% fit_scd_L1.11$H)</code></pre>
-<pre><code>[1] -64427.56</code></pre>
-<pre class="r"><code>par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.11$W[,i],main=paste0(&quot;L1 penalty = 11: estimated loadings &quot;,i))
-}</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>fit_scd_L1.100 = NNLM::nnmf(A = X, k = 4, loss = &quot;mse&quot;, method = &quot;scd&quot;, max.iter = 10000, alpha=c(0,0,100))
-log_lik(X, lam = fit_scd_L1.100$W %*% fit_scd_L1.100$H)</code></pre>
-<pre><code>[1] -Inf</code></pre>
-<pre class="r"><code>par(mfrow=c(2,2))
-for(i in 1:k){
-    plot(fit_scd_L1.100$W[,i],main=paste0(&quot;L1 penalty = 100: estimated loadings &quot;,i))
-}</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="nmf-nmf" class="section level2">
-<h2>NMF-nmf</h2>
 <div id="non-smooth-nmf" class="section level3">
 <h3>Non-smooth NMF</h3>
 <p>Non-smooth NMF. Uses a modified version of Lee and Seung’s multiplicative updates for Kullback-Leibler divergence to fit a extension of the standard NMF model. It is meant to give sparser results.</p>
 <p>Reference: <a href="https://ieeexplore.ieee.org/document/1580485">Pascual-Montano2006</a></p>
+<p>(Note the column sum of <code>W</code> are all 1s. Think we prefer the column sum of <code>F</code> to be constant?)</p>
 <pre class="r"><code>library(NMF)</code></pre>
 <pre><code>Loading required package: pkgmaker</code></pre>
 <pre><code>Loading required package: registry</code></pre>
@@ -742,17 +776,91 @@ NMF
 &#39;)</code></pre>
 <pre class="r"><code>fit_nsNMF = nmf(X,4,method = &#39;nsNMF&#39;)
 log_lik(X, lam = fit_nsNMF@fit@W %*% fit_nsNMF@fit@H)</code></pre>
-<pre><code>[1] -309635.2</code></pre>
+<pre><code>[1] -232566.6</code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(i in 1:k){
     plot(fit_nsNMF@fit@W[,i],main=paste0(&quot;nsNMF: estimated loadings &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-3-1.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(i in 1:k){
     plot(fit_nsNMF@fit@H[i,],main=paste0(&quot;nsNMF: estimated factors &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-3-2.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="sparse-nmf" class="section level2">
@@ -760,17 +868,96 @@ for(i in 1:k){
 <p>Alternating Least Square (ALS) approach. It is meant to be very fast com- pared to other approaches.</p>
 <p>Reference: <a href="https://www.ncbi.nlm.nih.gov/pubmed/17483501">KimH2007</a></p>
 <p>Sparse Loading:</p>
-<pre class="r"><code>fit_snmfl = nmf(X,4,method = &#39;snmf/l&#39;,beta=1)</code></pre>
-<pre><code>Warning in nmf_snmf(beta = 1, A = y, x = x, version = &quot;L&quot;, verbose
+<pre class="r"><code>fit_snmfl = nmf(X,4,method = &#39;snmf/l&#39;,beta=20)</code></pre>
+<pre><code>Warning in nmf_snmf(beta = 20, A = y, x = x, version = &quot;L&quot;, verbose
 = FALSE): NMF::snmf - Too many restarts due to too big &#39;beta&#39; value
 [Computation stopped after the 9th restart]</code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(i in 1:k){
     plot(fit_snmfl@fit@W[,i],main=paste0(&quot;snmfl: estimated loadings &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-4-1.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>par(mfrow=c(2,2))
+for(i in 1:k){
+    plot(fit_snmfl@fit@H[i,],main=paste0(&quot;snmfl: estimated factors &quot;,i))
+}</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-4-2.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>log_lik(X, lam = fit_snmfl@fit@W %*% fit_snmfl@fit@H)</code></pre>
-<pre><code>[1] -Inf</code></pre>
+<pre><code>[1] -68332.79</code></pre>
 <p>Sparse Factors:</p>
 <pre class="r"><code>fit_snmfr = nmf(X,4,method = &#39;snmf/r&#39;,beta=1)</code></pre>
 <pre><code>Warning in nmf_snmf(beta = 1, A = y, x = x, version = &quot;R&quot;, verbose
@@ -778,14 +965,58 @@ for(i in 1:k){
 [Computation stopped after the 9th restart]</code></pre>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(i in 1:k){
+    plot(fit_snmfr@fit@W[,i],main=paste0(&quot;snmfr: estimated loadings &quot;,i))
+}</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0382175ee8134544833e8cbe70160a0450b96086/docs/figure/nmf_sparse6.Rmd/unnamed-chunk-5-1.png" target="_blank">0382175</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>par(mfrow=c(2,2))
+for(i in 1:k){
     plot(fit_snmfr@fit@H[i,],main=paste0(&quot;snmfr: estimated factors &quot;,i))
 }</code></pre>
-<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>log_lik(X, lam = fit_snmfr@fit@W %*% fit_snmfr@fit@H)</code></pre>
-<pre><code>[1] -65661.73</code></pre>
+<pre><code>[1] -67168.31</code></pre>
+<p>The loglikelihood from those models are often very bad.</p>
 </div>
-<div id="ebpmf-from-truth" class="section level2">
-<h2><code>ebpmf</code> (from truth)</h2>
+<div id="ebpmf-initialized-from-truth" class="section level2">
+<h2><code>ebpmf</code> (initialized from truth)</h2>
+<p>I think it is a good fit, with sparsity as well as good loglikelihood and divergence from true lambda. We would believe a good sparse model should get a simialr likelihood.</p>
 <pre class="r"><code>devtools::load_all(&quot;../ebpmf.alpha&quot;)</code></pre>
 <pre><code>Warning: 1 components of `...` were not used.
 
@@ -811,23 +1042,92 @@ Did you misspecify an argument?</code></pre>
 <pre><code>unloadNamespace(&quot;ebpm&quot;) not successful, probably because another loaded package depends on it. Forcing unload. If you encounter problems, please restart R.</code></pre>
 <pre class="r"><code>library(ebpmf)
 qg_from_truth = initialize_qg_from_LF(L = L, F = F)
-fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
-length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre class="r"><code>log_lik(X, lam = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean))</code></pre>
+# fit_pg_from_truth = ebpmf::ebpmf_point_gamma(X = X, K = k, qg = qg_from_truth, maxiter.out = 100)
+# saveRDS(fit_pg_from_truth, &quot;data/nmf_sparse6_fit_pg_from_truth.Rds&quot;)
+fit_pg_from_truth = readRDS(&quot;data/nmf_sparse6_fit_pg_from_truth.Rds&quot;)
+log_lik(X, lam = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean))</code></pre>
 <pre><code>[1] -64792.42</code></pre>
+</div>
+<div id="see-why-those-sparse-nmf-methods-have-low-loglikelihood" class="section level2">
+<h2>See why those sparse-NMF methods have low loglikelihood</h2>
+<pre class="r"><code>lam_nsnmf = fit_nsNMF@fit@W %*% fit_nsNMF@fit@H
+lam_ebpm = fit_pg_from_truth$qg$qls_mean %*% t(fit_pg_from_truth$qg$qfs_mean)
+
+par(mfrow=c(2,2))
+plot(X, lam_nsnmf)
+plot(X, lambda)
+plot(lambda, lam_nsnmf)</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Clearly, there are many counts with <span class="math inline">\(x &gt;&gt; \hat{\lambda}\)</span>. This may help us initialize <code>ebpmf_random_effect</code></p>
+</div>
+<div id="fit-with-ebpmf_random_effect" class="section level2">
+<h2>Fit with <code>ebpmf_random_effect</code></h2>
+<ul>
+<li>The model is <span class="math inline">\(X_{ij} = Pois(\sum_k l_{ik} f_{jk} + \mu_{ij})\)</span>, with prior on each column of <span class="math inline">\(L, F\)</span>, and on entire <span class="math inline">\(\mu_{ij}\)</span>. It is fitted very similarly to <code>ebpmf</code>, except that we introduce <span class="math inline">\(Z^0\)</span> with <span class="math inline">\(Z^0_{ij} \sim Pois(\mu_{ij})\)</span>. Now I use point gamma for the posterior family for all of them.<br />
+</li>
+<li>Initialization: I need to initialize <span class="math inline">\(q\)</span> for <span class="math inline">\(L, F, \mu\)</span>. I first fit the model with <code>nsNMF</code>, then with the <code>L</code>, <code>F</code> (after thresholding some small ones to be 0, as otherwise <span class="math inline">\(\pi_0\)</span> will be all 0 again) I set <span class="math inline">\(\mu_{ij} = (X_{ij} - (LF^t)_{ij})_{+}\)</span>. Then I use the point estimate as posterior mean, and log of it to be posterior log-mean as initialization.</li>
+</ul>
+<pre class="r"><code>initialize_qg_from_LF_random_effect &lt;- function(L0,F0, mu){
+  K = ncol(L0)
+  qls_mean = L0
+  qfs_mean = F0
+  qls_mean_log = log(L0)
+  qfs_mean_log = log(F0)
+  qmu_mean = mu
+  qmu_mean_log = log(mu)
+  qg = list(qls_mean = qls_mean, qls_mean_log =qls_mean_log,
+            qfs_mean = qfs_mean, qfs_mean_log =qfs_mean_log,
+            qmu_mean = qmu_mean, qmu_mean_log = qmu_mean_log,
+            gls = replicate(K, list(NULL)),gfs = replicate(K, list(NULL)))
+  return(qg)
+}
+ 
+L0 = fit_nsNMF@fit@W
+F0 = t(fit_nsNMF@fit@H)
+
+thres &lt;- function(x, cut = 0.1){
+  x[x &lt; cut*mean(x)] = 0
+  return(x)
+}
+
+L0_thres = L0
+L0_thres = apply(L0_thres, 2, FUN = thres)
+
+F0_thres = F0
+F0_thres = apply(F0_thres, 2, FUN = thres)
+
+par(mfrow=c(1,2))
+plot(L0, L0_thres)
+plot(F0, F0_thres)</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>mu = X - L0_thres %*%  t(F0_thres)
+mu[mu &lt; 0] = 0
+
+print(sum(mu ==  0)/(n*p))</code></pre>
+<pre><code>[1] 0.4139057</code></pre>
+<pre class="r"><code>qg_from_nsNMF = initialize_qg_from_LF_random_effect(L0_thres, F0_thres, mu)</code></pre>
+<pre class="r"><code># fit_ebpmf_re_nsnmf = ebpmf_random_effect(X = X, K = k, maxiter.out = 100, qg = qg_from_nsNMF)
+# saveRDS(fit_ebpmf_re_nsnmf, &quot;data/nmf_sparse6_fit_ebpmf_re_nsnmf.Rds&quot;)
+fit_ebpmf_re_nsnmf = readRDS(&quot;data/nmf_sparse6_fit_ebpmf_re_nsnmf.Rds&quot;)</code></pre>
+<pre class="r"><code>lam_ebpmf_re = fit_ebpmf_re_nsnmf$qg$qls_mean %*% t(fit_ebpmf_re_nsnmf$qg$qfs_mean) + fit_ebpmf_re_nsnmf$qg$qmu_mean
+log_lik(X, lam_ebpmf_re)</code></pre>
+<pre><code>[1] -63464.13</code></pre>
+<pre class="r"><code>for(idx in 1:k){
+  par(mfrow=c(1,2))
+  plot(L0_thres[,idx],fit_ebpmf_re_nsnmf$qg$qls_mean[,idx], 
+       xlab = sprintf(&quot;L0_thres: loading %d&quot;, idx), ylab = sprintf(&quot;L_ebpmf:loading %d&quot;, idx), col  = &quot;red&quot;)
+  abline(a = 0, b = 1)
+  plot(F0_thres[,idx],fit_ebpmf_re_nsnmf$qg$qfs_mean[,idx], 
+       xlab = sprintf(&quot;F0_thres: factor %d&quot;, idx), ylab = sprintf(&quot;F_ebpmf:factor %d&quot;, idx), col  = &quot;blue&quot;)
+  abline(a = 0, b = 1)
+}</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /> Finally we have some shrinkage effects!<br />
+Take a look at the corresponding <span class="math inline">\(Z\)</span>. (<span class="math inline">\(EZ[,,5]\)</span> corresponds to <span class="math inline">\(\mu\)</span>).</p>
+<pre class="r"><code>Ez_ebpmf_random_effect = get_Ez_random_effect(X = X, qg = fit_ebpmf_re_nsnmf$qg, K = k)$Ez
+for(i in 1:(k+1)){
+ image(Ez_ebpmf_random_effect[,,i], main = sprintf(&quot;Ez[,,%d]&quot;, i)) 
+}</code></pre>
+<p><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-11-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-11-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/nmf_sparse6.Rmd/unnamed-chunk-11-5.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -855,32 +1155,32 @@ other attached packages:
  [1] ebpm_0.0.0.9001     ebpmf_0.1.0         testthat_2.2.1     
  [4] NMF_0.21.0          Biobase_2.42.0      BiocGenerics_0.28.0
  [7] cluster_2.1.0       rngtools_1.3.1      pkgmaker_0.27      
-[10] registry_0.5-1      NNLM_0.4.2         
+[10] registry_0.5-1     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.2          gtools_3.8.1        prettyunits_1.0.2  
- [4] ps_1.3.0            assertthat_0.2.1    rprojroot_1.3-2    
- [7] digest_0.6.22       foreach_1.4.7       gridBase_0.4-7     
-[10] R6_2.4.0            plyr_1.8.4          backports_1.1.5    
-[13] evaluate_0.14       ggplot2_3.2.1       pillar_1.4.2       
-[16] rlang_0.4.0         lazyeval_0.2.2      rstudioapi_0.10    
-[19] whisker_0.3-2       callr_3.2.0         rmarkdown_1.13     
-[22] desc_1.2.0          devtools_2.2.1.9000 stringr_1.4.0      
-[25] mixsqp_0.1-121      munsell_0.5.0       compiler_3.5.1     
-[28] httpuv_1.5.1        xfun_0.8            pkgconfig_2.0.3    
-[31] pkgbuild_1.0.3      htmltools_0.3.6     tidyselect_0.2.5   
-[34] tibble_2.1.3        workflowr_1.5.0     codetools_0.2-16   
-[37] crayon_1.3.4        dplyr_0.8.1         withr_2.1.2        
-[40] later_0.8.0         grid_3.5.1          xtable_1.8-4       
-[43] gtable_0.3.0        git2r_0.26.1        magrittr_1.5       
-[46] scales_1.0.0        bibtex_0.4.2        cli_1.1.0          
-[49] stringi_1.4.3       reshape2_1.4.3      fs_1.3.1           
-[52] promises_1.0.1      remotes_2.1.0       doParallel_1.0.15  
-[55] ellipsis_0.3.0      RColorBrewer_1.1-2  iterators_1.0.12   
-[58] tools_3.5.1         glue_1.3.1          purrr_0.3.2        
-[61] processx_3.3.1      pkgload_1.0.2       yaml_2.2.0         
-[64] colorspace_1.4-1    sessioninfo_1.1.1   memoise_1.1.0      
-[67] knitr_1.25          usethis_1.5.1      </code></pre>
+ [1] Rcpp_1.0.2          NNLM_0.4.2          gtools_3.8.1       
+ [4] prettyunits_1.0.2   ps_1.3.0            assertthat_0.2.1   
+ [7] rprojroot_1.3-2     digest_0.6.22       foreach_1.4.7      
+[10] gridBase_0.4-7      R6_2.4.0            plyr_1.8.4         
+[13] backports_1.1.5     evaluate_0.14       ggplot2_3.2.1      
+[16] pillar_1.4.2        rlang_0.4.0         lazyeval_0.2.2     
+[19] rstudioapi_0.10     whisker_0.3-2       callr_3.2.0        
+[22] rmarkdown_1.13      desc_1.2.0          devtools_2.2.1.9000
+[25] stringr_1.4.0       mixsqp_0.1-121      munsell_0.5.0      
+[28] compiler_3.5.1      httpuv_1.5.1        xfun_0.8           
+[31] pkgconfig_2.0.3     pkgbuild_1.0.3      htmltools_0.3.6    
+[34] tidyselect_0.2.5    tibble_2.1.3        workflowr_1.5.0    
+[37] codetools_0.2-16    crayon_1.3.4        dplyr_0.8.1        
+[40] withr_2.1.2         later_0.8.0         grid_3.5.1         
+[43] xtable_1.8-4        gtable_0.3.0        git2r_0.26.1       
+[46] magrittr_1.5        scales_1.0.0        bibtex_0.4.2       
+[49] cli_1.1.0           stringi_1.4.3       reshape2_1.4.3     
+[52] fs_1.3.1            promises_1.0.1      remotes_2.1.0      
+[55] doParallel_1.0.15   ellipsis_0.3.0      RColorBrewer_1.1-2 
+[58] iterators_1.0.12    tools_3.5.1         glue_1.3.1         
+[61] purrr_0.3.2         processx_3.3.1      pkgload_1.0.2      
+[64] yaml_2.2.0          colorspace_1.4-1    sessioninfo_1.1.1  
+[67] memoise_1.1.0       knitr_1.25          usethis_1.5.1      </code></pre>
 </div>
 </div>
 
