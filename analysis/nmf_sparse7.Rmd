@@ -1,0 +1,216 @@
+---
+title: "nmf_sparse7"
+author: "zihao12"
+date: "2019-11-07"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Summary
+I try `ebpmf_gamma_mixture` with `scale = 1` and `shape` chosen adaptively (range of prior means should cover $x/s$) as well as fix `shape` and  use uniform weight (fix $g$ after 1st iteration). \
+
+* Compared with MLE result, the shrinkage effect is not very obvious,and that `ebpmf` chooses to shrink noise (look at factors/loadings 4).  
+
+## Data
+```{r}
+rm(list = ls())
+set.seed(123)
+library(ebpm)
+library(ebpmf)
+source("code/misc.R")
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+
+show_lf <- function(lf){
+  k = ncol(lf$L)
+  par(mfrow=c(2,k))
+  for(i in 1:k){
+    plot(lf$L[,i], ylab = sprintf("loadings %d", i))
+  }
+  for(i in 1:k){
+    plot(lf$F[,i], ylab = sprintf("factors %d", i))
+  }
+}
+
+plot_prior_gamma_mix <-  function(g, title = "main"){
+  ## choose range of g
+  d =  length(g$pi)
+  sub_mask = g$pi > 0.2/d
+  x_max = 5*max(g$shape[sub_mask]*g$scale[sub_mask])
+  x = seq(0,x_max,0.01)
+  y = lapply(x, FUN = pdf_gamma_mix, g = g)
+  plot(x, y, type = "l", xlab  = "x", ylab = "pdf", main = title)
+}
+
+pdf_gamma_mix <- function(x, g){
+  return(sum(g$pi * dgamma(x, shape = g$shape, scale = g$scale)))
+}
+```
+
+
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+
+saveRDS(list(X = X, lambda = lambda, L = L  , F = F), "data/nmf_sparse7_data.rds")
+data = readRDS("data/nmf_sparse7_data.rds")
+X = data$X; lambda = data$lambda; L = data$L; F = data$F
+
+
+log_lik(X, lam = lambda)
+image(X)
+```
+
+Transform L, F into multinomial model, then plot 
+```{r}
+lf_truth = poisson2multinom(F = F, L = L)
+show_lf(lf_truth)
+```
+
+## Model fitting
+* I initialize using `lee`'s multiplicative update for 100 iterations. 
+
+* Then I run `ebpmf_gamma_mixture` with `scale = 1`, `shape` chosen adaptively (so that prior mean cover $x/s$). I run  it  only a few iterations. (The range of $x/s$ is huge, so there are too many grids and the algorithm is  slow). 
+```{r}
+set.seed(123)
+## random initialization
+L_random = matrix(runif(n*k), ncol = k)
+F_random = matrix(runif(p*k), ncol = k)
+qg_random = initialize_qg_from_LF(L0 = L_random, F0 = F_random)
+
+
+## fix with mu update
+fit_em_random = NNLM::nnmf(A = X, k = k, init = list(W = L_random, H = t(F_random)),loss = "mkl", method = "lee", max.iter = 100)
+lf_em_random =  poisson2multinom(F = t(fit_em_random$H), L = fit_em_random$W)
+
+show_lf(lf_em_random)
+
+
+## fit with gamma mixture
+# fit_gamma_mix_random = ebpmf_gamma_mixture(X = X, K = k, qg = qg_random, maxiter.out = 100, m = 2^0.25, verbose = T)
+# saveRDS(fit_gamma_mix_random, "data/nmf_sparse7_fit_gamma_mix_random.Rds")
+fit_gamma_mix_random = readRDS("data/nmf_sparse7_fit_gamma_mix_random.Rds")
+lf_gamma_mix_random =  poisson2multinom(F = fit_gamma_mix_random$qg$qfs_mean, L = fit_gamma_mix_random$qg$qls_mean)
+
+show_lf(lf_gamma_mix_random)
+
+
+
+
+```
+
+Compare $L,F$ (after transforming into multinomial model): initialization vs fitted
+```{r}
+par(mfrow=c(2,k))
+for(idx in 1:k){
+  plot(lf_em_random$L[,idx], lf_gamma_mix_random$L[,idx], pch  = 16, col = "blue",
+       xlab = sprintf("L_em %d", idx), ylab = sprintf("L_gamma_mix %d", idx))
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+for(idx in 1:k){
+  plot(lf_em_random$F[,idx], lf_gamma_mix_random$F[,idx], pch  = 16, col = "blue",
+       xlab = sprintf("F_em %d", idx), ylab = sprintf("F_gamma_mix %d", idx))
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+```
+
+
+Compare $\zeta$: initialization vs fitted
+```{r}
+zeta_em = ebpmf::get_Ez(X = X, qg = initialize_qg_from_LF(L0 = fit_em_random$W, F0 = t(fit_em_random$H)), K = k)$zeta
+zeta_gamma_mix = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_random$qg, K = k)$zeta
+
+par(mfrow=c(2,2))
+for(idx in 1:k){
+  plot(zeta_em[,,idx], zeta_gamma_mix[,,idx], xlab = "zeta_em", ylab = "zeta_gamma_mix",
+       main = sprintf("zeta[,,%d]", idx), pch = 16, col = "blue")
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+```
+
+
+Take a look at the $\hat{g}$ for L, F. 
+```{r}
+par(mfrow=c(2,2))
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_gamma_mix_random$qg$gls[[idx]], title = sprintf("loading %d", idx))
+}
+
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_gamma_mix_random$qg$gfs[[idx]], title = sprintf("factor %d", idx))
+}
+```
+
+## fix $\hat{g}$
+```{r}
+# fit_gamma_mix_uniform_weight = ebpmf_gamma_mixture(X = X, K = k, qg = qg_random, maxiter.out = 100, 
+#                                                    m = 2^0.25,fix_grid = T, uniform_mixture = T)
+# saveRDS(fit_gamma_mix_uniform_weight, "data/nmf_sparse7_fit_gamma_mix_uniform_weight.Rds")
+fit_gamma_mix_uniform_weight = readRDS("data/nmf_sparse7_fit_gamma_mix_uniform_weight.Rds")
+
+lf_gamma_mix_uniform_weight =  poisson2multinom(F = fit_gamma_mix_uniform_weight$qg$qfs_mean, L = fit_gamma_mix_uniform_weight$qg$qls_mean)
+
+show_lf(lf_gamma_mix_uniform_weight)
+```
+
+```{r}
+par(mfrow=c(2,2))
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_gamma_mix_uniform_weight$qg$gls[[idx]], title = sprintf("loading %d", idx))
+}
+
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_gamma_mix_uniform_weight$qg$gfs[[idx]], title = sprintf("factor %d", idx))
+}
+```
+
+
+
+```{r}
+par(mfrow=c(2,k))
+for(idx in 1:k){
+  plot(lf_em_random$L[,idx], lf_gamma_mix_uniform_weight$L[,idx], pch  = 16, col = "blue",
+       xlab = sprintf("L_em %d", idx), ylab = sprintf("L_gamma_mix_uniform_weight %d", idx))
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+for(idx in 1:k){
+  plot(lf_em_random$F[,idx], lf_gamma_mix_uniform_weight$F[,idx], pch  = 16, col = "blue",
+       xlab = sprintf("F_em %d", idx), ylab = sprintf("F_gamma_mix_uniform_weight %d", idx))
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+```
+
+
+```{r}
+zeta_gamma_mix_uniform = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_uniform_weight$qg, K = k)$zeta
+
+par(mfrow=c(2,2))
+for(idx in 1:k){
+  plot(zeta_em[,,idx], zeta_gamma_mix_uniform[,,idx], xlab = "zeta_em", ylab = "zeta_gamma_mix_uniform",
+       main = sprintf("zeta[,,%d]", idx), pch = 16, col = "blue")
+  abline(a = 0, b =  1, col = "black", pch = 16)
+}
+```
+
+
+
