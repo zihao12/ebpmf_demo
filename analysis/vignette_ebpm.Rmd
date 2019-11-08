@@ -20,7 +20,7 @@ Our goal is to estimate $\hat{g}$ (MLE), then  compute posterior $p(\lambda_i | 
 See model details and derivations in https://github.com/stephenslab/ebpm/blob/master/derivations/ebpm.pdf
 
 ```{r warning=F}
-devtools::load_all("../ebpm")
+library(ebpm)
 set.seed(123)
 library(ebpm)
 library(ggplot2)
@@ -32,9 +32,12 @@ require(gridExtra)
 ## experiment setup
 I simulate data from the mixture of exponential, and compare fitting  the poisson mean problem with MLE  ($\hat{\lambda}^{mle}_i = \frac{x_i}{s_i}$), and  `ebpm_exponential_mixture` with  different options. \
 
-For `ebpm`, the options are: 
+For `ebpm`, the options are: \
+
 * `fit_true_g`: use the true $g$ \
-* `fit_true_scale`: use the true mixture components to estimate $\hat{g}$ 
+
+* `fit_true_scale`: use the true mixture components to estimate $\hat{g}$\
+
 * `fit_est_scale`: estimate mixture components from data, then  estimate $\hat{g}$ 
 
 
@@ -42,7 +45,7 @@ For `ebpm`, the options are:
 ## simulate data
 n = 2000
 sim = ebpm::simulate_pois_expmix(n, seed = 123)
-hist(log(sim$x+1), breaks = 100, xlab = "log(x + 1)", main = "hist for log(x + 1)")
+hist(sim$x, breaks = 100, xlab = "x", main = "hist for data x")
 ```
 
 
@@ -112,25 +115,6 @@ ggplot(df)+
   guides(fill = "color")+
   ggtitle("lam_hat_mle vs lam_hat_ebpm")
 ```
-
-## With outliers
-What if there are outliers in our data?
-I add a few very numbers to the original data. Let's see  what will `ebpm` and MLE give us:
-```{r}
-n_outlier = 10
-sim2 = sim
-sim2$x = c(sim2$x, runif(n_outlier, 1e+4, 1e+5))
-sim2$s = c(sim$s, replicate(n_outlier, 1))
-
-fit2 = ebpm::ebpm_exponential_mixture(x = sim$x, s = sim$s, scale = "estimate")
-
-## MLE estimate
-tail(sim2$x/sim2$s, n_outlier)
-
-## `ebpm` estimate
-tail(fit2$posterior$mean, n_outlier)
-```
-So `ebpm` shrinks those abnormally big data towards smaller values. 
 
 
 
