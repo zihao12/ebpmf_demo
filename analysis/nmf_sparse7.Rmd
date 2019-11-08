@@ -16,7 +16,7 @@ I try `ebpmf_gamma_mixture` with `scale = 1` and `shape` chosen adaptively (rang
 
 * According to  our  discussion, this method doesn't directly shrink $L, F$ very well, but shrink $\zeta$. However, it is hard to tell the algorithm which $\zeta$ do we need to shrink towards 0. That factor 3,4 are shrunk towards 0  may be because of the ordering of the update. The $Z$s  are competing with each other, making it hard to control the bahavior of the algorithm. I think it is better to have an `ebpm`  method that directly shrinks small $L,F$ towards 0. \
 
-* Other technical issue: the computation can be very slow in some initialization (for example, from the truth, which  is  very  sparse), whereas it is fast if both L,F are initialized from uniform from 0 to 1. This is because sometimes we choose too many grids: for example the `ebpm` problem  has `x` from `1e-40` to `1e+10` and we choose `m = 2^0.25`, then we end up choosing almost 300 grids. 
+* Other technical issue: the computation can be very slow in some initialization (for example, from the truth, which  is  very  sparse), whereas it is fast if both L,F are initialized from uniform from 0 to 1. This is because sometimes we choose too many grids: for example the `ebpm` problem  has `x` from `1e-40` to `1e+10` and we choose `m = 2^0.25`, then we end up choosing over 600 grids. 
 
 ## Data
 ```{r}
