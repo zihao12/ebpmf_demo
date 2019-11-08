@@ -21,7 +21,7 @@ I try `ebpmf_gamma_mixture` with `scale = 1` and `shape` chosen adaptively (rang
 rm(list = ls())
 set.seed(123)
 library(ebpm)
-library(ebpmf)
+library(ebpmf.alpha)
 source("code/misc.R")
 log_lik <- function(X, lam){
   return(sum(dpois(x = X, lambda = lam , log = T)))
@@ -140,8 +140,8 @@ The shrinkage effect on loadings 2, 4 are quite  obvious. The small factors actu
 
 Compare $\zeta$: EM vs `ebpmf_gamma_mixture`
 ```{r}
-zeta_em = ebpmf::get_Ez(X = X, qg = initialize_qg_from_LF(L0 = fit_em_random$W, F0 = t(fit_em_random$H)), K = k)$zeta
-zeta_gamma_mix = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_random$qg, K = k)$zeta
+zeta_em = ebpmf.alpha::get_Ez(X = X, qg = initialize_qg_from_LF(L0 = fit_em_random$W, F0 = t(fit_em_random$H)), K = k)$zeta
+zeta_gamma_mix = ebpmf.alpha::get_Ez(X = X, qg = fit_gamma_mix_random$qg, K = k)$zeta
 
 par(mfrow=c(2,2))
 for(idx in 1:k){
@@ -209,7 +209,7 @@ for(idx in 1:k){
 
 
 ```{r}
-zeta_gamma_mix_uniform = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_uniform_weight$qg, K = k)$zeta
+zeta_gamma_mix_uniform = ebpmf.alpha::get_Ez(X = X, qg = fit_gamma_mix_uniform_weight$qg, K = k)$zeta
 
 par(mfrow=c(2,2))
 for(idx in 1:k){
