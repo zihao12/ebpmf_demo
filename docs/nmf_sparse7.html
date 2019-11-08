@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8d5abc4d7e89ba6814aea84c8c55c7e7841d5cb5targetblank8d5abc4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/8d5abc4d7e89ba6814aea84c8c55c7e7841d5cb5" target="_blank">8d5abc4</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree33db64be76736d1569c975d0917b31257494b1cbtargetblank33db64ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/33db64be76736d1569c975d0917b31257494b1cb" target="_blank">33db64b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8d5abc4d7e89ba6814aea84c8c55c7e7841d5cb5targetblank8d5abc4a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree33db64be76736d1569c975d0917b31257494b1cbtargetblank33db64ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -634,6 +634,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/33db64be76736d1569c975d0917b31257494b1cb/analysis/nmf_sparse7.Rmd" target="_blank">33db64b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-08
+</td>
+<td>
+add more text to nmf_sparse7.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/9f4530271d1481bc05c5afb283f6bee268d04842/docs/nmf_sparse7.html" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8d5abc4d7e89ba6814aea84c8c55c7e7841d5cb5/analysis/nmf_sparse7.Rmd" target="_blank">8d5abc4</a>
 </td>
 <td>
@@ -656,7 +690,9 @@ nmf_sparse7.Rmd
 <div id="summary" class="section level2">
 <h2>Summary</h2>
 <p>I try <code>ebpmf_gamma_mixture</code> with <code>scale = 1</code> and <code>shape</code> chosen adaptively (range of prior means should cover <span class="math inline">\(x/s\)</span>) as well as fix <code>shape</code> and use uniform weight (fix <span class="math inline">\(g\)</span> after 1st iteration).<br />
-* Compared with MLE result, the shrinkage effect is not very obvious,and that <code>ebpmf</code> chooses to shrink noise (look at factors/loadings 4).</p>
+* Compare <code>ebpmf_gamma_mixture</code> with MLE result, we can see shrinkage effect in two loadings (3 and 4). It is good that shrinks loading 3, but loading 4 is noise in truth …; Another observation is that loadings learn priors with much weight at 0 whereas factors learn priors with much weight on some nonzero value.<br />
+* Compare <code>ebpmf_gamma_mixture_uniform_weight</code> with MLE result, we can clearly see it shrinks factor/loading 4 (which is noise!) towards 0, whereas makes other loading/factors even larger. Why? Because with <code>shape &lt; 1</code>, the gamma prior puts lots of mass on 0. The result is <span class="math inline">\(E(log (\lambda)) &lt;&lt; \lambda\)</span> when <span class="math inline">\(\lambda\)</span> is small (though it shrinks for all <span class="math inline">\(\lambda\)</span>, but the relative shrinkage matters). The resulting <span class="math inline">\(\zeta_{ijk}\)</span> (<span class="math inline">\(Z_{ijk} = X_{ij} \zeta_{ijk}\)</span>) puts very littel weight on the <span class="math inline">\(k\)</span>th component where <span class="math inline">\(L_{ik}\)</span>, <span class="math inline">\(F_{jk}\)</span> are close to 0, and more weight on other components. This time our model happens to choose the wrong component to shrink.<br />
+* According to our discussion, this method doesn’t directly shrink <span class="math inline">\(L, F\)</span> very well, but shrink <span class="math inline">\(\zeta\)</span>. However, it is hard to tell the algorithm which <span class="math inline">\(\zeta\)</span> do we need to shrink towards 0. That factor 3,4 are shrunk towards 0 may be because of the ordering of the update. The <span class="math inline">\(Z\)</span>s are competing with each other, making it hard to control the bahavior of the algorithm. I think it is better to have an <code>ebpm</code> method that directly shrinks small <span class="math inline">\(L,F\)</span> towards 0.</p>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -723,16 +759,93 @@ log_lik(X, lam = lambda)</code></pre>
 <pre><code>[1] -65129.25</code></pre>
 <pre class="r"><code>image(X)</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-2-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Transform L, F into multinomial model, then plot</p>
 <pre class="r"><code>lf_truth = poisson2multinom(F = F, L = L)
 show_lf(lf_truth)</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-3-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="model-fitting" class="section level2">
 <h2>Model fitting</h2>
 <ul>
-<li><p>I initialize using <code>lee</code>’s multiplicative update for 100 iterations.</p></li>
-<li><p>Then I run <code>ebpmf_gamma_mixture</code> with <code>scale = 1</code>, <code>shape</code> chosen adaptively (so that prior mean cover <span class="math inline">\(x/s\)</span>). I run it only a few iterations. (The range of <span class="math inline">\(x/s\)</span> is huge, so there are too many grids and the algorithm is slow).</p></li>
+<li>I use random matrices <span class="math inline">\(L, F\)</span> as initialization.<br />
+</li>
+<li>Run <code>mu</code> update for 100 iterations<br />
+</li>
+<li>Run <code>ebpmf_gamma_mixture</code> with <code>scale = 1</code>, <code>shape</code> chosen adaptively (so that prior mean cover <span class="math inline">\(x/s\)</span>) for 100 iterations.</li>
 </ul>
 <pre class="r"><code>set.seed(123)
 ## random initialization
@@ -749,6 +862,43 @@ init.mask$Wi, : Target tolerance not reached. Try a larger max.iter.</code></pre
 
 show_lf(lf_em_random)</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-4-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>## fit with gamma mixture
 # fit_gamma_mix_random = ebpmf_gamma_mixture(X = X, K = k, qg = qg_random, maxiter.out = 100, m = 2^0.25, verbose = T)
 # saveRDS(fit_gamma_mix_random, &quot;data/nmf_sparse7_fit_gamma_mix_random.Rds&quot;)
@@ -757,7 +907,44 @@ lf_gamma_mix_random =  poisson2multinom(F = fit_gamma_mix_random$qg$qfs_mean, L 
 
 show_lf(lf_gamma_mix_random)</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Compare <span class="math inline">\(L,F\)</span> (after transforming into multinomial model): initialization vs fitted</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-4-2.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Compare <span class="math inline">\(L,F\)</span> (after transforming into multinomial model): EM vs <code>ebpmf_gamma_mixture</code></p>
 <pre class="r"><code>par(mfrow=c(2,k))
 for(idx in 1:k){
   plot(lf_em_random$L[,idx], lf_gamma_mix_random$L[,idx], pch  = 16, col = &quot;blue&quot;,
@@ -770,7 +957,45 @@ for(idx in 1:k){
   abline(a = 0, b =  1, col = &quot;black&quot;, pch = 16)
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Compare <span class="math inline">\(\zeta\)</span>: initialization vs fitted</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-5-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The shrinkage effect on loadings 2, 4 are quite obvious. The small factors actually get larger.</p>
+<p>Compare <span class="math inline">\(\zeta\)</span>: EM vs <code>ebpmf_gamma_mixture</code></p>
 <pre class="r"><code>zeta_em = ebpmf::get_Ez(X = X, qg = initialize_qg_from_LF(L0 = fit_em_random$W, F0 = t(fit_em_random$H)), K = k)$zeta
 zeta_gamma_mix = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_random$qg, K = k)$zeta
 
@@ -781,16 +1006,128 @@ for(idx in 1:k){
   abline(a = 0, b =  1, col = &quot;black&quot;, pch = 16)
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Take a look at the <span class="math inline">\(\hat{g}\)</span> for L, F.</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-6-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Take a look at the <span class="math inline">\(\hat{g}\)</span> for L, F in <code>ebpmf_gamma_mixture</code>.</p>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(idx in 1:k){
   plot_prior_gamma_mix(g = fit_gamma_mix_random$qg$gls[[idx]], title = sprintf(&quot;loading %d&quot;, idx))
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-7-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>for(idx in 1:k){
   plot_prior_gamma_mix(g = fit_gamma_mix_random$qg$gfs[[idx]], title = sprintf(&quot;factor %d&quot;, idx))
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-7-2.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We can see priors for loadings put most weight near 0 (though seem not spiky enough) whereas factors put more weight on some non-zero number then of course it won’t shrink towards 0.</p>
 </div>
 <div id="fix-hatg" class="section level2">
 <h2>fix <span class="math inline">\(\hat{g}\)</span></h2>
@@ -803,15 +1140,126 @@ lf_gamma_mix_uniform_weight =  poisson2multinom(F = fit_gamma_mix_uniform_weight
 
 show_lf(lf_gamma_mix_uniform_weight)</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-8-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(idx in 1:k){
   plot_prior_gamma_mix(g = fit_gamma_mix_uniform_weight$qg$gls[[idx]], title = sprintf(&quot;loading %d&quot;, idx))
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-9-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>for(idx in 1:k){
   plot_prior_gamma_mix(g = fit_gamma_mix_uniform_weight$qg$gfs[[idx]], title = sprintf(&quot;factor %d&quot;, idx))
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-2">
+Past versions of unnamed-chunk-9-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-9-2.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow=c(2,k))
 for(idx in 1:k){
   plot(lf_em_random$L[,idx], lf_gamma_mix_uniform_weight$L[,idx], pch  = 16, col = &quot;blue&quot;,
@@ -824,6 +1272,43 @@ for(idx in 1:k){
   abline(a = 0, b =  1, col = &quot;black&quot;, pch = 16)
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-10-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>zeta_gamma_mix_uniform = ebpmf::get_Ez(X = X, qg = fit_gamma_mix_uniform_weight$qg, K = k)$zeta
 
 par(mfrow=c(2,2))
@@ -833,6 +1318,43 @@ for(idx in 1:k){
   abline(a = 0, b =  1, col = &quot;black&quot;, pch = 16)
 }</code></pre>
 <p><img src="figure/nmf_sparse7.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9f4530271d1481bc05c5afb283f6bee268d04842/docs/figure/nmf_sparse7.Rmd/unnamed-chunk-11-1.png" target="_blank">9f45302</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
