@@ -10,6 +10,8 @@ editor_options:
 ## Introduction
 Try `ebpmf_gamma_mixture` (fix `scale` at 1 and set grids for `shape`) on a simplr rank-2 dataset.
 ```{r}
+rm(list = ls())
+devtools::load_all("../ebpm")
 library(NNLM)
 library(ebpmf.alpha)
 source("code/misc.R")
@@ -47,32 +49,36 @@ pdf_gamma_mix <- function(x, g){
 Simulate data and visualize its structure. 
 ```{r}
 set.seed(123)
-n = 99
-p = 300
+n = 100
+p = 200
 k = 2
-noise_level = 1
-signal_level = 10
 
 L = matrix(0, nrow = n, ncol = k)
 F = matrix(0, nrow = p, ncol = k)
 
-L[1:n/3,1] = signal_level
-F[1:p/3,1] = signal_level
-L[,2] = signal_level + noise_level*runif(n)
-F[,2] = signal_level + noise_level*runif(p)
-Z1 = outer(L[,1], F[,1])
-Z2 = outer(L[,2], F[,2])
-image(t(Z1))
-image(t(Z2))
-lambda = Z1 + Z2
-X = matrix(rpois(n = n*p, lambda = lambda), nrow = n)
+## generate F in the simplex space
+## first topic is has key words in 1:p/2
+F[1:(p/2),1] = 10*runif(p/2)
+F[(1+p/2):p,1] = 1*runif(p/2) 
+F[,1] = F[,1]/sum(F[,1])
+## second topic is noise
+F[,2] = runif(p)
+F[,2] = F[,2]/sum(F[,2])
+
+## first loading is mainly loaded onb the first topic
+L[1:(n/2),1] = 10 + runif(n/2)
+
+## second topic is noise
+L[,2] = 10*runif(n)
+
+L = diag(replicate(n, 100)) %*% L
+
+lambda = L  %*% t(F)
+X  = matrix(rpois(n*p, lambda = lambda), nrow = n)
 image(t(X))
 
-mean(X[1:33,1:100])
-mean(X[-(1:33),-(1:100)])
-
 lf_truth = poisson2multinom(F = F, L = L)
-show_lf(lf = lf_truth)
+show_lf(lf_truth)
 ```
 
 
@@ -84,8 +90,9 @@ I initialize `L, F` randomly with uniform 0,1.
 ```{r}
 L0 = matrix(runif(n*k), ncol = k)
 F0 = matrix(runif(p*k), ncol = k)
-fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 1000, 
+fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 1000,
                     init = list(W = L0, H = t(F0)))
+#fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 1000)
 
 lf_em = poisson2multinom(L = fit_em$W, F = t(fit_em$H))
 show_lf(lf =  lf_em)
@@ -94,8 +101,8 @@ show_lf(lf =  lf_em)
 ### `ebpmf_gamma_mixture`
 ```{r warning=F}
 qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
-# fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE)
-# saveRDS(fit_ebpmf_gm, "data/nmf_sparse8_fit_ebpmf_gm.Rds")
+fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE)
+saveRDS(fit_ebpmf_gm, "data/nmf_sparse8_fit_ebpmf_gm.Rds")
 fit_ebpmf_gm = readRDS("data/nmf_sparse8_fit_ebpmf_gm.Rds")
 lf_ebpmf_gm = poisson2multinom(L = fit_ebpmf_gm$qg$qls_mean, F = fit_ebpmf_gm$qg$qfs_mean)
 show_lf(lf =  lf_ebpmf_gm)
@@ -103,6 +110,10 @@ show_lf(lf =  lf_ebpmf_gm)
 Compared with MLE,it clearly shrinks small values of second pair of loading/factor towards 0. Let's look at the result closer:
 
 ```{r}
+plot(lf_em$L[,1], lf_ebpmf_gm$L[,1], pch = 16)
+plot(lf_em$F[,1], lf_ebpmf_gm$F[,1], pch = 16)
+
+
 plot(lf_em$L[,2], lf_ebpmf_gm$L[,2], pch = 16)
 plot(lf_em$F[,2], lf_ebpmf_gm$F[,2], pch = 16)
 ```
