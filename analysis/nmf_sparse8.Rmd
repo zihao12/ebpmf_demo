@@ -1,0 +1,148 @@
+---
+title: "nmf_sparse8"
+author: "zihao12"
+date: "2019-11-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Try `ebpmf_gamma_mixture` (fix `scale` at 1 and set grids for `shape`) on a simplr rank-2 dataset.
+```{r}
+library(NNLM)
+library(ebpmf.alpha)
+source("code/misc.R")
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+
+show_lf <- function(lf){
+  k = ncol(lf$L)
+  par(mfrow=c(2,k))
+  for(i in 1:k){
+    plot(lf$L[,i], ylab = sprintf("loadings %d", i))
+  }
+  for(i in 1:k){
+    plot(lf$F[,i], ylab = sprintf("factors %d", i))
+  }
+}
+
+plot_prior_gamma_mix <-  function(g, title = "main"){
+  ## choose range of g
+  d =  length(g$pi)
+  sub_mask = g$pi > 0.2/d
+  x_max = 5*max(g$shape[sub_mask]*g$scale[sub_mask])
+  x = seq(0,x_max,0.01)
+  y = lapply(x, FUN = pdf_gamma_mix, g = g)
+  plot(x, y, type = "l", xlab  = "x", ylab = "pdf", main = title)
+}
+
+pdf_gamma_mix <- function(x, g){
+  return(sum(g$pi * dgamma(x, shape = g$shape, scale = g$scale)))
+}
+```
+
+## Data
+Simulate data and visualize its structure. 
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k = 2
+noise_level = 1
+signal_level = 10
+
+L = matrix(0, nrow = n, ncol = k)
+F = matrix(0, nrow = p, ncol = k)
+
+L[1:n/3,1] = signal_level
+F[1:p/3,1] = signal_level
+L[,2] = signal_level + noise_level*runif(n)
+F[,2] = signal_level + noise_level*runif(p)
+Z1 = outer(L[,1], F[,1])
+Z2 = outer(L[,2], F[,2])
+image(t(Z1))
+image(t(Z2))
+lambda = Z1 + Z2
+X = matrix(rpois(n = n*p, lambda = lambda), nrow = n)
+image(t(X))
+
+mean(X[1:33,1:100])
+mean(X[-(1:33),-(1:100)])
+
+lf_truth = poisson2multinom(F = F, L = L)
+show_lf(lf = lf_truth)
+```
+
+
+
+## Fitting
+I initialize `L, F` randomly with uniform 0,1. 
+
+### MLE (EM)
+```{r}
+L0 = matrix(runif(n*k), ncol = k)
+F0 = matrix(runif(p*k), ncol = k)
+fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 1000, 
+                    init = list(W = L0, H = t(F0)))
+
+lf_em = poisson2multinom(L = fit_em$W, F = t(fit_em$H))
+show_lf(lf =  lf_em)
+```
+
+### `ebpmf_gamma_mixture`
+```{r warning=F}
+qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
+# fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE)
+# saveRDS(fit_ebpmf_gm, "data/nmf_sparse8_fit_ebpmf_gm.Rds")
+fit_ebpmf_gm = readRDS("data/nmf_sparse8_fit_ebpmf_gm.Rds")
+lf_ebpmf_gm = poisson2multinom(L = fit_ebpmf_gm$qg$qls_mean, F = fit_ebpmf_gm$qg$qfs_mean)
+show_lf(lf =  lf_ebpmf_gm)
+```
+Compared with MLE,it clearly shrinks small values of second pair of loading/factor towards 0. Let's look at the result closer:
+
+```{r}
+plot(lf_em$L[,2], lf_ebpmf_gm$L[,2], pch = 16)
+plot(lf_em$F[,2], lf_ebpmf_gm$F[,2], pch = 16)
+```
+
+Let's take a look at the $\hat{g}$
+```{r}
+par(mfrow=c(1,2))
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm$qg$gls[[idx]], title = sprintf("loading %d", idx))
+}
+
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm$qg$gfs[[idx]], title = sprintf("factor %d", idx))
+}
+```
+
+
+## How `ebpmf_gamma_mixture` induces shrinkage 
+do one iteration and see how it shrinks $\zeta$ ($Z_{ijk} = X_{ij} \zeta_{ijk}$,  $\sum_k \zeta_{ijk} = 1$)
+```{r}
+fit_ebpmf_gm_one = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 1, verbose = FALSE)
+
+Ez_0 = get_Ez(X, qg_random, K = k)
+Ez_one = get_Ez(X, fit_ebpmf_gm_one$qg, K = k)
+
+plot(Ez_0$zeta[,,1], Ez_one$zeta[,,1])
+abline(a = 0, b = 1, col = "red")
+plot(Ez_0$zeta[,,2], Ez_one$zeta[,,2])
+abline(a = 0, b = 1, col = "red")
+```
+
+Clearly it shrinks one $\zeta$ and increases the other (as it sums to one). The  effect is very strong since the two  $\zeta$s are computed from randomly initialized  L, F. 
+
+
+
+
+
+
+
+
+
+
+
