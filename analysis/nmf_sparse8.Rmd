@@ -166,7 +166,7 @@ fit_ebpmf_gm_mle = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, max
 saveRDS(fit_ebpmf_gm_mle, "data/nmf_sparse8_fit_ebpmf_gm_mle.Rds")
 fit_ebpmf_gm = readRDS("data/nmf_sparse8_fit_ebpmf_gm_mle.Rds")
 lf_ebpmf_gm_mle = poisson2multinom(L = fit_ebpmf_gm_mle$qg$qls_mean, F = fit_ebpmf_gm_mle$qg$qfs_mean)
-show_lf(lf =  lf_ebpmf_gm)
+show_lf(lf =  lf_ebpmf_gm_mle)
 compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm_mle, x_name = "truth", y_name = "ebpmf_gm_random")
 
 compare_lf(lf1 = lf_em, lf2 = lf_ebpmf_gm_mle, x_name = "em", y_name = "ebpmf_gm_random")
