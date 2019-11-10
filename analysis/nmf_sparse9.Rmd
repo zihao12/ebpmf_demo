@@ -1,0 +1,212 @@
+---
+title: "nmf_sparse9"
+author: "zihao12"
+date: "2019-11-08"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+I require that `ebpm_gamma_mixture` is scale invariant (explained and tested in https://zihao12.github.io/ebpmf_demo/test_ebpm_gamma_mixture_single_scale.html) and see if it can improve the fit compared with https://zihao12.github.io/ebpmf_demo/nmf_sparse8.html. 
+
+
+## Summary
+The result (psoterior mean) is very similar to when we do not enforce scale-invariant, although we can see $\hat{g}$ are quite different. 
+
+```{r warning=TRUE}
+rm(list = ls())
+library(knitr)
+opts_knit$set(global.par = FALSE)
+knitr::opts_chunk$set(autodep = TRUE)
+#devtools::load_all("../ebpm")
+library(ebpm)
+library(NNLM)
+library(ebpmf.alpha)
+source("code/misc.R")
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+
+show_lf <- function(lf){
+  k = ncol(lf$L)
+  par(mfrow=c(2,k))
+  for(i in 1:k){
+    plot(lf$L[,i], ylab = sprintf("loadings %d", i))
+  }
+  for(i in 1:k){
+    plot(lf$F[,i], ylab = sprintf("factors %d", i))
+  }
+}
+
+compare_lf <- function(lf1, lf2, x_name, y_name){
+  k = ncol(lf1$L)
+  par(mfrow=c(2,k))
+  for(i in 1:k){
+    plot(lf1$L[,i], lf2$L[,i], main = sprintf("loading %d", i), xlab = x_name, ylab = y_name)
+  }
+  for(i in 1:k){
+    plot(lf1$F[,i], lf2$F[,i], main = sprintf("factor %d", i), xlab = x_name, ylab = y_name)
+  }
+}
+
+plot_prior_gamma_mix <-  function(g, title = "main"){
+  ## choose range of g
+  d =  length(g$pi)
+  sub_mask = g$pi > 0.2/d
+  x_max = 5*max(g$shape[sub_mask]*g$scale[sub_mask])
+  x = seq(0,x_max,0.01)
+  y = lapply(x, FUN = pdf_gamma_mix, g = g)
+  plot(x, y, type = "l", xlab  = "x", ylab = "pdf", main = title)
+}
+
+pdf_gamma_mix <- function(x, g){
+  return(sum(g$pi * dgamma(x, shape = g$shape, scale = g$scale)))
+}
+```
+
+## Data
+Simulate data and visualize its structure. 
+```{r}
+set.seed(123)
+n = 100
+p = 200
+k = 2
+
+L = matrix(0, nrow = n, ncol = k)
+F = matrix(0, nrow = p, ncol = k)
+
+## generate F in the simplex space
+## first topic is has key words in 1:p/2
+F[1:(p/2),1] = 20*runif(p/2)
+F[(1+p/2):p,1] = 1*runif(p/2) 
+F[,1] = F[,1]/sum(F[,1])
+## second topic is noise
+F[,2] = runif(p)
+F[,2] = F[,2]/sum(F[,2])
+
+## first loading is mainly loaded onb the first topic
+L[1:(n/2),1] = 10 + runif(n/2)
+
+## second topic is noise
+L[,2] = 10*runif(n)
+
+L = diag(replicate(n, 100)) %*% L
+
+lambda = L  %*% t(F)
+X  = matrix(rpois(n*p, lambda = lambda), nrow = n)
+image(t(X))
+
+lf_truth = poisson2multinom(F = F, L = L)
+show_lf(lf_truth)
+```
+
+
+## MLE (EM) from random
+```{r}
+L0 = matrix(runif(n*k), ncol = k)
+F0 = matrix(runif(p*k), ncol = k)
+fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 10000,
+                    init = list(W = L0, H = t(F0)))
+#fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 1000)
+
+lf_em = poisson2multinom(L = fit_em$W, F = t(fit_em$H))
+show_lf(lf =  lf_em)
+
+compare_lf(lf_truth, lf_em, x_name = "truth", y_name = "em")
+```
+
+take a closer look at the smaller values in loading 1
+```{r}
+idx = lf_truth$L[,1] < 0.2
+plot(lf_truth$L[,1][idx], lf_em$L[,1][idx])
+```
+MLE gets very similar solution, except that the MLE for what should be exact 0s in loading 1 are too  big. So we want to shrink those fits towards 0.
+
+
+## ` ebpmf_gamma_mixture ` from random 
+It is the same random initialization as in MLE. 
+```{r warning=F, cache=TRUE}
+qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
+fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE,theta_l = "max", theta_f = "max")
+lf_ebpmf_gm = poisson2multinom(L = fit_ebpmf_gm$qg$qls_mean, F = fit_ebpmf_gm$qg$qfs_mean)
+show_lf(lf =  lf_ebpmf_gm)
+compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm, x_name = "truth", y_name = "ebpmf_gm_random")
+
+## take a closer look at the smaller values in loading 1
+idx = lf_truth$L[,1] < 0.2
+## compared  with truth
+plot(lf_truth$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
+## compared with truth
+plot(lf_em$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
+```
+It shrinks the wrong thing to 0 (the noisy part of 2nd loading and factor), and the target part is even much larger. 
+
+Let's take a look at the $\hat{g}$
+```{r}
+par(mfrow=c(1,2))
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm$qg$gls[[idx]], title = sprintf("loading %d", idx))
+}
+
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm$qg$gfs[[idx]], title = sprintf("factor %d", idx))
+}
+```
+
+## ` ebpmf_gamma_mixture ` from MLE result 
+```{r warning=F, cache=TRUE}
+qg_mle = initialize_qg_from_LF(L0 = fit_em$W, F0 = t(fit_em$H))
+fit_ebpmf_gm_mle = ebpmf.alpha:: ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, maxiter.out = 100, theta_l = "max", theta_f = "max",verbose = FALSE)
+lf_ebpmf_gm_mle = poisson2multinom(L = fit_ebpmf_gm_mle$qg$qls_mean, F = fit_ebpmf_gm_mle$qg$qfs_mean)
+show_lf(lf =  lf_ebpmf_gm_mle)
+compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm_mle, x_name = "truth", y_name = "ebpmf_gm_random")
+
+compare_lf(lf1 = lf_em, lf2 = lf_ebpmf_gm_mle, x_name = "em", y_name = "ebpmf_gm_random")
+
+## take a closer look at the smaller values in loading 1
+idx = lf_truth$L[,1] < 0.2
+## compared  with truth
+plot(lf_truth$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
+## compared with mle
+plot(lf_em$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
+```
+Here shrinkage is effective. It shrinks those smaller than `0.016` to `0` in loading 1. 
+
+Let's take a look at the $\hat{g}$
+```{r}
+par(mfrow=c(1,2))
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm_mle$qg$gls[[idx]], title = sprintf("loading %d", idx))
+}
+
+for(idx in 1:k){
+  plot_prior_gamma_mix(g = fit_ebpmf_gm_mle$qg$gfs[[idx]], title = sprintf("factor %d", idx))
+}
+```
+
+## How ` ebpmf_gamma_mixture ` induces shrinkage 
+Start from MLE, and do one iteration and see how it shrinks $\zeta$ ($Z_{ijk} = X_{ij} \zeta_{ijk}$,  $\sum_k \zeta_{ijk} = 1$)
+```{r}
+fit_ebpmf_gm_one = ebpmf.alpha:: ebpmf_gamma_mixture (X = X,K = k,qg = qg_mle, maxiter.out = 1, theta_l = "max", theta_f = "max",verbose = FALSE)
+Ez_0 = get_Ez(X, qg_mle, K = k)
+Ez_one = get_Ez(X, fit_ebpmf_gm_one$qg, K = k)
+
+plot(Ez_0$zeta[,,1], Ez_one$zeta[,,1])
+abline(a = 0, b = 1, col = "red")
+plot(Ez_0$zeta[,,2], Ez_one$zeta[,,2])
+abline(a = 0, b = 1, col = "red")
+```
+The shrinkage is not very obvious. But let's take a look at those `zeta` where shrinkage is effective in loading 1. It shrinks those corresponding $\zeta$\
+```{r}
+## I pick j = 10 for display
+idx = lf_em$L[,1] < 0.01
+plot(Ez_0$zeta[idx,10,1], Ez_one$zeta[idx,10,1])
+abline(a = 0, b = 1, col = "red")
+```
+
+
+
+
+
+
