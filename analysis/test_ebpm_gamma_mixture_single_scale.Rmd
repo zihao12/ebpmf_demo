@@ -1,0 +1,58 @@
+---
+title: "test_ebpm_gamma_mixture_single_scale"
+author: "zihao12"
+date: "2019-11-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal
+We want to make `ebpm` scale-invariant: Let $\lambda_0, \lambda$ follows the posterior distribution computed from $ebpm(x, s_0 * 1), ebpm(x, s * 1)$, then we require that $s_0 \lambda_0, s \lambda$ has the same distribution. \
+
+This requirement is satisfied if we can optimize the `ebpm` well (over all $g \in G$). However, in `ebpm_gamma_mixture`,  our choice of grids might violate this.  Then how to choose grid? To simplify, look at the where there is only one component:
+$$
+\begin{align}
+& \lambda_0 \sim Gamma(a_0, b_0)\\
+& x | \lambda_0 \sim Pois(s_0 \lambda_0)\\
+\\
+& \lambda \sim Gamma(a, b)\\
+& x | \lambda \sim Pois(s \lambda)
+\end{align}
+$$
+Then we have posterior of $\lambda_0 \sim Gamma(a_0 + x, b_0 + s_0)$ and $\lambda \sim Gamma(a + x, b + s)$. By $s_0 \lambda_0 = s \lambda$ (in distribution), we require 
+$$
+Gamma(a+x, b+s) = Gamma(a_0+x, \frac{s}{s_0} (b_0+s_0))
+$$
+So if we set $a = a_0$, and $b  = \frac{s}{s_0} b_0$, then  we satisfy this requirement. \
+
+Then in the general mixture  of gamma case, we can easily check that optimized $\pi$  would  be same for  the two models (since $L$ matrix remains unchanged). Thus to meet this requirement, we can just scale  $b$ according to $s$. (Below I use scale instead of rate, so $\theta = \frac{s_0}{s} \theta_0$)\
+
+Here  is what we do  in `ebpm_gamma_mixture_single_scale` with `theta = "max"`:\
+* Suppose we choose $\theta_0 = 1$ for $ebpm(x, s_0 = max(x))$ (this may work for some situations, but not always). \
+
+* Then for $ebpm(x, s)$ problem, we choose $\theta = \frac{s_0}{s} \theta_0  = \frac{max(x)}{s}$
+
+
+## Test algorithm
+Below I test that it is indeed scale invariant by showing posterior mean for $s*\lambda$, and compare against the case  where we always set $\theta = 1$ (what we used to do). 
+```{r}
+library(ebpm)
+x = seq(1,100,1)
+s1 = 1
+s2 = 10
+
+## scale-invariant
+fit1 = ebpm::ebpm_gamma_mixture_single_scale(x, s1, theta = "max")
+fit2 = ebpm::ebpm_gamma_mixture_single_scale(x, s2, theta = "max")
+plot(s1*fit1$posterior$mean, s2*fit2$posterior$mean)
+
+## not scale-invariant
+fit1 = ebpm::ebpm_gamma_mixture_single_scale(x, s1, theta = "one")
+fit2 = ebpm::ebpm_gamma_mixture_single_scale(x, s2, theta = "one")
+plot(s1*fit1$posterior$mean, s2*fit2$posterior$mean)
+```
+
+
+
+
