@@ -23,6 +23,7 @@ Try `ebpmf_gamma_mixture` (fix `scale` at 1 and set grids for `shape`) on a simp
 ```{r warning=TRUE}
 library(knitr)
 opts_knit$set(global.par = FALSE)
+knitr::opts_chunk$set(autodep = TRUE)
 #devtools::load_all("../ebpm")
 library(NNLM)
 library(ebpmf.alpha)
@@ -129,11 +130,9 @@ MLE gets very similar solution, except that the MLE for what should be exact 0s 
 
 ## `ebpmf_gamma_mixture` from random 
 It is the same random initialization as in MLE. 
-```{r warning=F}
+```{r warning=F, cache=TRUE}
 qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
 fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE)
-saveRDS(fit_ebpmf_gm, "data/nmf_sparse8_fit_ebpmf_gm.Rds")
-fit_ebpmf_gm = readRDS("data/nmf_sparse8_fit_ebpmf_gm.Rds")
 lf_ebpmf_gm = poisson2multinom(L = fit_ebpmf_gm$qg$qls_mean, F = fit_ebpmf_gm$qg$qfs_mean)
 show_lf(lf =  lf_ebpmf_gm)
 compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm, x_name = "truth", y_name = "ebpmf_gm_random")
@@ -160,11 +159,9 @@ for(idx in 1:k){
 ```
 
 ## `ebpmf_gamma_mixture` from MLE result 
-```{r}
+```{r, cache=TRUE}
 qg_mle = initialize_qg_from_LF(L0 = fit_em$W, F0 = t(fit_em$H))
 fit_ebpmf_gm_mle = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, maxiter.out = 100, verbose = FALSE)
-saveRDS(fit_ebpmf_gm_mle, "data/nmf_sparse8_fit_ebpmf_gm_mle.Rds")
-fit_ebpmf_gm = readRDS("data/nmf_sparse8_fit_ebpmf_gm_mle.Rds")
 lf_ebpmf_gm_mle = poisson2multinom(L = fit_ebpmf_gm_mle$qg$qls_mean, F = fit_ebpmf_gm_mle$qg$qfs_mean)
 show_lf(lf =  lf_ebpmf_gm_mle)
 compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm_mle, x_name = "truth", y_name = "ebpmf_gm_random")
