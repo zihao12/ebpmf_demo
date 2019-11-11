@@ -190,12 +190,12 @@ compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm_mle, x_name = "truth", y_name = "eb
 
 compare_lf(lf1 = lf_em, lf2 = lf_ebpmf_gm_mle, x_name = "em", y_name = "ebpmf_gm_random")
 
-## take a closer look at the smaller values in loading 1
-idx = lf_truth$L[,1] < 0.2
-## compared  with truth
-plot(lf_truth$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
-## compared with mle
-plot(lf_em$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
+# ## take a closer look at the smaller values in loading 1
+# idx = lf_truth$L[,1] < 0.2
+# ## compared  with truth
+# plot(lf_truth$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
+# ## compared with mle
+# plot(lf_em$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
 ```
 
 Look at loading 1 in the original space
