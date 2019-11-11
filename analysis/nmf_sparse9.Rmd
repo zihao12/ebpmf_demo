@@ -261,7 +261,7 @@ ggplot(elbos)+
   geom_line(aes(x = iter, y = from_mle, color = "from_mle"))+
   geom_line(aes(x = iter, y = from_random, color = "from_random"))
 
-## take closer look at init from MLE
+## take closer look at init from random
 ggplot(elbos)+
   geom_point(aes(x = iter, y = from_random, color = "from_random"))
 
@@ -273,6 +273,19 @@ ggplot(elbos)+
 Interesting. When initialized from MLE, ELBO is clearly not monotonically increasing. It seems to be jumping between a few solutions with different ELBOs. \
 
 When initialized randomly, ELBO increases monotonically. 
+
+
+## Look at `exp(E(log(l_ik)))`
+```{r}
+## init from random
+plot(exp(fit_ebpmf_gm$qg$qls_mean_log[,1]))
+
+## init from MLE
+plot(exp(fit_ebpmf_gm_mle$qg$qls_mean_log[,1]))
+
+## init from MLE (one  iteration)
+plot(exp(fit_ebpmf_gm_one$qg$qls_mean_log[,1]))
+```
 
 
 
