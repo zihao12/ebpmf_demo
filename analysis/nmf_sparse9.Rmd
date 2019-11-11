@@ -72,7 +72,7 @@ pdf_gamma_mix <- function(x, g){
 
 ## Data
 Simulate data and visualize its structure. 
-```{r warning=F, cache=TRUE}
+```{r warning=F}
 set.seed(123)
 n = 100
 p = 200
@@ -113,7 +113,7 @@ plot(L[51:100,1])
 
 
 ## MLE (EM) from random
-```{r warning=F, cache=TRUE}
+```{r warning=F}
 L0 = matrix(runif(n*k), ncol = k)
 F0 = matrix(runif(p*k), ncol = k)
 fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 10000,
