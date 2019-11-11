@@ -12,7 +12,11 @@ I require that `ebpm_gamma_mixture` is scale invariant (explained and tested in 
 
 
 ## Summary
-The result (psoterior mean) is very similar to when we do not enforce scale-invariant, although we can see $\hat{g}$ are quite different. 
+* Random initialization seems to end up in a local optimal (at  best) that its ELBO is not even as good as that from MLE (init from MLE and do one iteration). \
+
+* Initialized from MLE, we can see ELBO increases (though not monotonically) with more sparsity on the right place. \
+
+* When initialized from MLE, ELBO is not increasing monotonically. In fact it seems to jump around a few different solutions with different ELBOs. (It increases monotonically when initialized from random). Worth investigating here. \
 
 ```{r warning=TRUE}
 rm(list = ls())
@@ -23,6 +27,7 @@ knitr::opts_chunk$set(autodep = TRUE)
 library(ebpm)
 library(NNLM)
 library(ebpmf.alpha)
+library(ggplot2)
 source("code/misc.R")
 log_lik <- function(X, lam){
   return(sum(dpois(x = X, lambda = lam , log = T)))
@@ -67,7 +72,7 @@ pdf_gamma_mix <- function(x, g){
 
 ## Data
 Simulate data and visualize its structure. 
-```{r}
+```{r warning=F, cache=TRUE}
 set.seed(123)
 n = 100
 p = 200
@@ -86,7 +91,7 @@ F[,2] = runif(p)
 F[,2] = F[,2]/sum(F[,2])
 
 ## first loading is mainly loaded onb the first topic
-L[1:(n/2),1] = 10 + runif(n/2)
+L[1:(n/2),1] = 3 + runif(n/2)
 
 ## second topic is noise
 L[,2] = 10*runif(n)
@@ -101,9 +106,14 @@ lf_truth = poisson2multinom(F = F, L = L)
 show_lf(lf_truth)
 ```
 
+```{r}
+## look at original loading 1
+plot(L[51:100,1])
+```
+
 
 ## MLE (EM) from random
-```{r}
+```{r warning=F, cache=TRUE}
 L0 = matrix(runif(n*k), ncol = k)
 F0 = matrix(runif(p*k), ncol = k)
 fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 10000,
@@ -112,15 +122,18 @@ fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 10000,
 
 lf_em = poisson2multinom(L = fit_em$W, F = t(fit_em$H))
 show_lf(lf =  lf_em)
-
 compare_lf(lf_truth, lf_em, x_name = "truth", y_name = "em")
 ```
 
-take a closer look at the smaller values in loading 1
 ```{r}
-idx = lf_truth$L[,1] < 0.2
-plot(lf_truth$L[,1][idx], lf_em$L[,1][idx])
+## look at loading 1 in  original space
+plot(fit_em$W[51:100,1])
+
+## compare with truth
+plot(L[51:100, 1], fit_em$W[51:100,1])
+
 ```
+
 MLE gets very similar solution, except that the MLE for what should be exact 0s in loading 1 are too  big. So we want to shrink those fits towards 0.
 
 
@@ -128,19 +141,32 @@ MLE gets very similar solution, except that the MLE for what should be exact 0s 
 It is the same random initialization as in MLE. 
 ```{r warning=F, cache=TRUE}
 qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
-fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 100, verbose = FALSE,theta_l = "max", theta_f = "max")
+fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 1000, verbose = FALSE,theta_l = "max", theta_f = "max")
 lf_ebpmf_gm = poisson2multinom(L = fit_ebpmf_gm$qg$qls_mean, F = fit_ebpmf_gm$qg$qfs_mean)
 show_lf(lf =  lf_ebpmf_gm)
 compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm, x_name = "truth", y_name = "ebpmf_gm_random")
 
-## take a closer look at the smaller values in loading 1
-idx = lf_truth$L[,1] < 0.2
-## compared  with truth
-plot(lf_truth$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
-## compared with truth
-plot(lf_em$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
+# ## take a closer look at the smaller values in loading 1
+# idx = lf_truth$L[,1] < 0.2
+# ## compared  with truth
+# plot(lf_truth$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
+# ## compared with truth
+# plot(lf_em$L[,1][idx], lf_ebpmf_gm$L[,1][idx])
 ```
-It shrinks the wrong thing to 0 (the noisy part of 2nd loading and factor), and the target part is even much larger. 
+
+Look at loading 1 in the original space
+```{r}
+## look at loading 1 in  original space
+plot(fit_ebpmf_gm$qg$qls_mean[51:100,1])
+
+## compare with truth
+plot(L[51:100,1], fit_ebpmf_gm$qg$qls_mean[51:100,1], xlab = "L truth", ylab = "L ebpmf_gm_random")
+
+## Compare with EM 
+plot(fit_em$W[51:100,1], fit_ebpmf_gm$qg$qls_mean[51:100,1], xlab = "L EM", ylab = "L ebpmf_gm_random")
+
+```
+It shrinks the small values in loading 1 towards 0 which is great. But it also shrinks small values in  loading 2 to 0 (which should be nonzero noise). 
 
 Let's take a look at the $\hat{g}$
 ```{r}
@@ -157,7 +183,7 @@ for(idx in 1:k){
 ## ` ebpmf_gamma_mixture ` from MLE result 
 ```{r warning=F, cache=TRUE}
 qg_mle = initialize_qg_from_LF(L0 = fit_em$W, F0 = t(fit_em$H))
-fit_ebpmf_gm_mle = ebpmf.alpha:: ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, maxiter.out = 100, theta_l = "max", theta_f = "max",verbose = FALSE)
+fit_ebpmf_gm_mle = ebpmf.alpha:: ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, maxiter.out = 1000, theta_l = "max", theta_f = "max",verbose = FALSE)
 lf_ebpmf_gm_mle = poisson2multinom(L = fit_ebpmf_gm_mle$qg$qls_mean, F = fit_ebpmf_gm_mle$qg$qfs_mean)
 show_lf(lf =  lf_ebpmf_gm_mle)
 compare_lf(lf1 = lf_truth, lf2 = lf_ebpmf_gm_mle, x_name = "truth", y_name = "ebpmf_gm_random")
@@ -171,7 +197,20 @@ plot(lf_truth$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
 ## compared with mle
 plot(lf_em$L[,1][idx], lf_ebpmf_gm_mle$L[,1][idx])
 ```
-Here shrinkage is effective. It shrinks those smaller than `0.016` to `0` in loading 1. 
+
+Look at loading 1 in the original space
+```{r}
+## look at loading 1 in  original space
+plot(fit_ebpmf_gm_mle$qg$qls_mean[51:100,1])
+
+## compare with truth
+plot(L[51:100,1], fit_ebpmf_gm_mle$qg$qls_mean[51:100,1], xlab = "L truth", ylab = "L ebpmf_gm_mle")
+
+## Compare with EM 
+plot(fit_em$W[51:100,1], fit_ebpmf_gm_mle$qg$qls_mean[51:100,1], xlab = "L EM", ylab = "L ebpmf_gm_mle")
+
+```
+Here shrinkage is effective. It shrinks those smaller than `0.1` to `0` in loading 1. 
 
 Let's take a look at the $\hat{g}$
 ```{r}
@@ -205,7 +244,35 @@ plot(Ez_0$zeta[idx,10,1], Ez_one$zeta[idx,10,1])
 abline(a = 0, b = 1, col = "red")
 ```
 
+## Look at ELBO
+```{r}
+niter = length(fit_ebpmf_gm$ELBO)
+## ELBO when initialized randomly
+fit_ebpmf_gm$ELBO[niter]
+## ELBO when initialized from MLE
+fit_ebpmf_gm_mle$ELBO[niter]
+## ELBO after one iteration from MLE
+fit_ebpmf_gm_one$ELBO[length(fit_ebpmf_gm_one$ELBO)]
 
+
+elbos = data.frame(iter = 1:niter, from_mle = fit_ebpmf_gm_mle$ELBO, from_random = fit_ebpmf_gm$ELBO)
+
+ggplot(elbos)+
+  geom_line(aes(x = iter, y = from_mle, color = "from_mle"))+
+  geom_line(aes(x = iter, y = from_random, color = "from_random"))
+
+## take closer look at init from MLE
+ggplot(elbos)+
+  geom_point(aes(x = iter, y = from_random, color = "from_random"))
+
+## take closer look at init from MLE
+ggplot(elbos)+
+  geom_point(aes(x = iter, y = from_mle, color = "from_mle"))
+
+```
+Interesting. When initialized from MLE, ELBO is clearly not monotonically increasing. It seems to be jumping between a few solutions with different ELBOs. \
+
+When initialized randomly, ELBO increases monotonically. 
 
 
 
