@@ -1,0 +1,116 @@
+---
+title: "demo_ebpm_beta_gamma"
+author: "zihao12"
+date: "2019-11-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+## workhorse function
+ebpm_beta_gamma_ <- function(x, g, vparam, hidden_posterior, maxiter = 100){
+  for(iter in  1:maxiter){
+    ## update vparam
+    vparam =  update_vparam(x, g, vparam, hidden_posterior)
+    ## compute posterior
+    hidden_posterior = compute_posterior(x, g, vparam)
+    ## update g
+    g = update_g(x, g, vparam, hidden_posterior)
+  }
+  return(list(g = g, vparam = vparam, hidden_posterior = hidden_posterior))
+}
+
+## initialize ebpm_beta_gamma
+initialize_ebpm_beta_gamma <- function(x, seed = 123){
+  set.seed(seed)
+  n = length(x)
+  g =  list(alpha = 1, beta = 1, a = 0.5, b  = 0.5)
+  vparam = list(alpha = replicate(n, g$alpha),
+                beta = replicate(n, g$beta),
+                a =  replicate(n, g$a),
+                b  = replicate(n, g$b))
+  return(g = g, vparam = vparam)
+}
+
+## update variational parameters
+update_vparam <- function(x, g, vparam, hidden_posterior){
+  # logp, log1_p, v, logv, z are corresponding posterior mean
+  logp =  hidden_posterior$logp
+  log1_p =  hidden_posterior$log1_p
+  v =  hidden_posterior$v
+  logv =  hidden_posterior$logv
+  z =  hidden_posterior$z
+  
+  vparam$a = g$a + x 
+  vparam$b = g$b + z - x
+  vparam$alpha =  g$alpha + z
+  vparam$beta = g$beta + 1
+  vparam$mu =  exp(log1_p + logv)
+  return(vparam)
+}
+
+## compute needed posterior of the hiddem  variables
+compute_posterior <- function(x, vparam){
+  p_ = compute_posterior_p(x, vparam)
+  v_ = compute_posterior_v(x, vparam)
+  z = compute_posterior_z(x, vparam)
+  return(list(logp = p_$logp, log1_p = p_$log1_p,
+              v = v_$v, logv = v_$logv, z = z))
+}
+
+## update prior g
+update_g <- function(x, g, vparam, hidden_posterior){
+  fn_params = list(x = x, vparam = vparam, hidden_posterior = hidden_posterior)
+  opt = do.call(nlm, c(list(compute_elbo_nlm, transform_param(g)), fn_params))
+  g = transform_param_back(opt$estimate)
+  return(g)
+}
+
+## obj for nlm to optimize
+compute_elbo_nlm <- function(g, x, vparam, hidden_posterior){
+  g = transform_param_back(g)
+  return( compute_elbo(g, x, vparam, hidden_posterior) )
+}
+
+## function for computing ELBO
+compute_elbo <- function(g, x, vparam, hidden_posterior){
+  # logp, log1_p, v, logv, z are corresponding posterior mean
+  logp =  hidden_posterior$logp
+  log1_p =  hidden_posterior$log1_p
+  v =  hidden_posterior$v
+  logv =  hidden_posterior$logv
+  z =  hidden_posterior$z
+  
+  ll_x = x*logp + (z - x)*log1_p - lgamma(x + 1)
+  neg_kl_z =  vparam$mu -  v  + z*(logv -  log(vparam$mu)) + x*log(vparam$mu)
+  kl_v =  ((vparam$alpha - g$alpha)*logv - (vparam$beta - g$beta)*v + 
+             vparam$alpha*log(vparam$beta) - g$alpha*log(g$beta) + lgamma(g$alpha) - lgamma(vparam$alpha))
+  kl_p =  ((vparam$a - g$a)*logp + (vparam$b - g$b)*log1_p + logB(g$a, g$b)  - logB(vparam$a, vparam$b))
+  ELBO = ll_x + neg_kl_z - kl_v - kl_p
+  return(ELBO)
+}
+
+## functions for computing posterior for specific latent variables
+compute_posterior_p <- function(x, vparam){
+  ## compute <logp>,  <log (1-p)>   
+  logp = digamma(vparam$a) - digamma(vparam$a + vparam$b)
+  log1_p = digamma(vparam$b) - digamma(vparam$a + vparam$b)
+  return(list(logp = logp, log1_p = log1_p))
+}
+
+compute_posterior_v <- function(x, vparam){
+  ## compute <v>,  <log v>   
+  v = vparam$alpha/vparam$beta
+  logv = digamma(vparam$alpha) - log(vparam$beta)
+  return(list(v = v, logv = logv))
+}
+
+compute_posterior_z <- function(x, vparam){
+  ## compute <z>
+  return(vparam$mu + x)
+}
+```
+
