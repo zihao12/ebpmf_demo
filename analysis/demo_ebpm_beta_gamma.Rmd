@@ -8,31 +8,88 @@ editor_options:
 ---
 
 ## Introduction
+This is a demo for `ebpm` with prior  family `beta*gamma`. Model:
+$$
+\begin{align}
+    & x_i \sim Pois(\lambda_i)\\
+    & \lambda_i = p_i v_i\\
+    & v_i \sim Gamma(\alpha, \beta)\\
+    & p_i \sim Beta(a, b)
+\end{align}
+$$
+The algorithm uses an  equivalent model:
+$$
+\begin{align}
+    & x_i \sim Bin(z_i, p_i)\\
+    & z_i | v_i \sim Pois(v_i)\\
+    & v_i \sim Gamma(\alpha, \beta)\\
+    & p_i \sim Beta(a, b)
+\end{align}
+$$
 
+## Summary
+* Result depends heavily  on initialization!\
+
+* There are some numerical issues ...
+
+
+
+```{r warning=FALSE}
+rm(list = ls())
+library(stats)
+devtools::load_all("../ebpm") ## not installed yet in case other  scripts depend on older version 
+#library(ebpm)
+```
+
+## Main functions
 ```{r}
+ebpm_beta_gamma <- function(x, maxiter  = 100, seed = 123, 
+                            fix = list(a = FALSE, b = FALSE, alpha = FALSE, beta = FALSE), g_init = NULL){
+  set.seed(seed)
+  res_init = initialize_ebpm_beta_gamma(x = x, seed = seed, g_init =  g_init)
+  vparam = res_init$vparam
+  g = res_init$g
+  hidden_posterior = compute_posterior(x = x, vparam = vparam)
+  
+  fit = ebpm_beta_gamma_workhorse(x = x, g = g, vparam = vparam, 
+                                  hidden_posterior = hidden_posterior, maxiter = maxiter, fix  = fix, fix_val = g_init)
+  fit[["posterior"]] = list(mean = (fit$hidden_posterior$p)*(fit$hidden_posterior$v),
+                            mean_log = (fit$hidden_posterior$logp) + (fit$hidden_posterior$logv))
+  return(fit)
+}
+
+
 ## workhorse function
-ebpm_beta_gamma_ <- function(x, g, vparam, hidden_posterior, maxiter = 100){
+ebpm_beta_gamma_workhorse <- function(x, g, vparam, hidden_posterior, maxiter = 100,
+                                      fix = list(a = FALSE, b = FALSE, alpha = FALSE, beta = FALSE), fix_val = NULL){
+  ELBOs = c()
   for(iter in  1:maxiter){
     ## update vparam
     vparam =  update_vparam(x, g, vparam, hidden_posterior)
     ## compute posterior
-    hidden_posterior = compute_posterior(x, g, vparam)
+    hidden_posterior = compute_posterior(x, vparam)
     ## update g
-    g = update_g(x, g, vparam, hidden_posterior)
+    g_res = update_g(x, g, vparam, hidden_posterior, fix = fix, fix_val = fix_val)
+    g = g_res$g
+    ELBO = g_res$ELBO
+    ELBOs = c(ELBOs, ELBO)
   }
-  return(list(g = g, vparam = vparam, hidden_posterior = hidden_posterior))
+  return(list(g = g, vparam = vparam, hidden_posterior = hidden_posterior, ELBO = ELBOs))
 }
 
 ## initialize ebpm_beta_gamma
-initialize_ebpm_beta_gamma <- function(x, seed = 123){
+initialize_ebpm_beta_gamma <- function(x, seed = 123, g_init = NULL){
   set.seed(seed)
   n = length(x)
-  g =  list(alpha = 1, beta = 1, a = 0.5, b  = 0.5)
+  if(is.null(g_init)){g =  list(alpha = 0.99, beta = 0.1, a = 100, b  = 100)}
+  else{g = g_init}
+  
   vparam = list(alpha = replicate(n, g$alpha),
                 beta = replicate(n, g$beta),
                 a =  replicate(n, g$a),
-                b  = replicate(n, g$b))
-  return(g = g, vparam = vparam)
+                b  = replicate(n, g$b),
+                mu = replicate(n, 0.1))
+  return(list(g = g, vparam = vparam))
 }
 
 ## update variational parameters
@@ -57,22 +114,23 @@ compute_posterior <- function(x, vparam){
   p_ = compute_posterior_p(x, vparam)
   v_ = compute_posterior_v(x, vparam)
   z = compute_posterior_z(x, vparam)
-  return(list(logp = p_$logp, log1_p = p_$log1_p,
+  return(list(p = p_$p, logp = p_$logp, log1_p = p_$log1_p,
               v = v_$v, logv = v_$logv, z = z))
 }
 
 ## update prior g
-update_g <- function(x, g, vparam, hidden_posterior){
-  fn_params = list(x = x, vparam = vparam, hidden_posterior = hidden_posterior)
-  opt = do.call(nlm, c(list(compute_elbo_nlm, transform_param(g)), fn_params))
-  g = transform_param_back(opt$estimate)
-  return(g)
+update_g <- function(x, g, vparam, hidden_posterior, fix, fix_val){
+  fn_params = list(x = x, vparam = vparam, hidden_posterior = hidden_posterior, fix = fix, fix_val)
+  opt = do.call(nlm, c(list(obj_nlm, transform_param(g)), fn_params))
+  g = transform_param_back(opt$estimate, fix = fix, fix_val)
+  ELBO = compute_elbo(g, x, vparam, hidden_posterior)
+  return(list(g = g, ELBO  = ELBO))
 }
 
 ## obj for nlm to optimize
-compute_elbo_nlm <- function(g, x, vparam, hidden_posterior){
-  g = transform_param_back(g)
-  return( compute_elbo(g, x, vparam, hidden_posterior) )
+obj_nlm <- function(g, x, vparam, hidden_posterior, fix, fix_val){
+  g = transform_param_back(g, fix, fix_val)
+  return( - compute_elbo(g, x, vparam, hidden_posterior) )
 }
 
 ## function for computing ELBO
@@ -88,17 +146,18 @@ compute_elbo <- function(g, x, vparam, hidden_posterior){
   neg_kl_z =  vparam$mu -  v  + z*(logv -  log(vparam$mu)) + x*log(vparam$mu)
   kl_v =  ((vparam$alpha - g$alpha)*logv - (vparam$beta - g$beta)*v + 
              vparam$alpha*log(vparam$beta) - g$alpha*log(g$beta) + lgamma(g$alpha) - lgamma(vparam$alpha))
-  kl_p =  ((vparam$a - g$a)*logp + (vparam$b - g$b)*log1_p + logB(g$a, g$b)  - logB(vparam$a, vparam$b))
+  kl_p =  ((vparam$a - g$a)*logp + (vparam$b - g$b)*log1_p + compute_logB(g$a, g$b)  - compute_logB(vparam$a, vparam$b))
   ELBO = ll_x + neg_kl_z - kl_v - kl_p
-  return(ELBO)
+  return(sum(ELBO))
 }
 
 ## functions for computing posterior for specific latent variables
 compute_posterior_p <- function(x, vparam){
   ## compute <logp>,  <log (1-p)>   
+  p = vparam$a/(vparam$a + vparam$b)
   logp = digamma(vparam$a) - digamma(vparam$a + vparam$b)
   log1_p = digamma(vparam$b) - digamma(vparam$a + vparam$b)
-  return(list(logp = logp, log1_p = log1_p))
+  return(list(p = p ,logp = logp, log1_p = log1_p))
 }
 
 compute_posterior_v <- function(x, vparam){
@@ -112,5 +171,134 @@ compute_posterior_z <- function(x, vparam){
   ## compute <z>
   return(vparam$mu + x)
 }
+
+## transform  parameters for nlm optimization
+transform_param <- function(g){
+  return(c(log(g$alpha), log(g$beta), log(g$a), log(g$b)))
+}
+transform_param_back <- function(g, fix, fix_val){
+  g = list(alpha = exp(g[1]), beta = exp(g[2]), a = exp(g[3]), b = exp(g[4]))
+  ## if we fix some parameter at some value, we set them  here  so that they won't affect obj
+  if(fix$alpha){g$alpha = fix_val$alpha}
+  if(fix$beta){g$beta = fix_val$beta}
+  if(fix$a){g$a = fix_val$a}
+  if(fix$b){g$b = fix_val$b}
+  return(g)
+}
+
+## compute log B(a, b)
+compute_logB <- function(a, b){
+  return(lgamma(a) + lgamma(b) - lgamma(a + b))
+}
+
 ```
+
+
+
+## Small experiment
+```{r}
+set.seed(123)
+n = 99
+lam = replicate(n, 0)
+lam[1:(n/3)] = 50
+x = rpois(n, lambda = lam)
+## hist of data
+hist(x, breaks = 100)
+
+fit = ebpm_beta_gamma(x, maxiter = 100)
+fit2  = ebpm::ebpm_point_gamma(x)
+
+```
+
+
+
+```{r}
+## ELOB of ebpm_beta_gamma
+plot(fit$ELBO)
+
+max(fit$ELBO)
+idx = 1:n
+
+res_df = data.frame(x = x[idx], beta_gamma_posterior_mean = fit$posterior$mean[idx], beta_gamma_posterior_mean_log = fit$posterior$mean_log[idx], point_gamma_posterior_mean = fit2$posterior$mean[idx], point_gamma_posterior_mean_log = fit2$posterior$mean_log[idx])
+
+library(ggplot2)
+ggplot(res_df)+
+  geom_point(aes(x = x, y = beta_gamma_posterior_mean, color = "beta_gamma_posterior_mean")) + 
+  geom_point(aes(x = x, y = exp(beta_gamma_posterior_mean_log), color = "exp(beta_gamma_posterior_mean_log")) + 
+  geom_point(aes(x = x, y = point_gamma_posterior_mean, color = "point_gamma_posterior_mean")) +
+  geom_point(aes(x = x, y = exp(point_gamma_posterior_mean_log), color = "exp(point_gamma_posterior_mean_log")) 
+
+```
+
+
+
+```{r}
+fit$g
+fit2$fitted_g
+```
+
+
+Clearly `ebpm_point_gamma` has great shrinkage, whereas  `ebpm_beta_gamma` does not. 
+
+## Fixing `g` of `ebpm_beta_gamma` 
+(fixed `g` close to best estimate from `ebpm_point_gamma`)
+```{r}
+fix = list(alpha = TRUE, beta = TRUE, a = TRUE, b = TRUE)
+g_init = list(alpha = 650, beta = 1/0.07, a = 0.33, b = 0.66)
+fit_fix = ebpm_beta_gamma(x, maxiter = 100, fix = fix, g_init = g_init)
+
+plot(fit_fix$ELBO)
+max(fit_fix$ELBO)
+
+plot(x, fit_fix$posterior$mean, pch  = 16, col = "blue")
+lines(x, fit2$posterior$mean)
+```
+
+
+
+## initialize  `ebpm_beta_gamma`
+(using  knowledge from `ebpm_point_gamma`)
+```{r}
+# g_init = list(alpha = 650, beta = 1/0.07, a = 0.33, b = 0.66) ## strange numerical  issues. Will  investiagte later
+g_init = list(alpha = 100, beta = 10, a = 0.33, b = 0.66)
+
+fit_init = ebpm_beta_gamma(x, maxiter = 100, g_init = g_init)
+
+plot(fit_init$ELBO)
+max(fit_init$ELBO)
+
+plot(x, fit_init$posterior$mean, pch  = 16, col = "blue", ylim = c(0, max(c(fit2$posterior$mean, fit_init$posterior$mean))))
+points(x, fit2$posterior$mean)
+
+fit_init$g
+```
+
+
+Below I  summarize the ELBO, and measure of divergence from truth
+```{r}
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+KLs <- c(KL(lam, fit2$posterior$mean), KL(lam, fit$posterior$mean), KL(lam, fit_init$posterior$mean), KL(lam, fit_fix$posterior$mean))
+
+JSs <- c(JS(lam, fit2$posterior$mean), JS(lam, fit$posterior$mean), JS(lam, fit_init$posterior$mean), JS(lam, fit_fix$posterior$mean))
+
+RMSEs <- c(RMSE(lam, fit2$posterior$mean), RMSE(lam, fit$posterior$mean), RMSE(lam, fit_init$posterior$mean), RMSE(lam, fit_fix$posterior$mean))
+
+ELBOs <- c(NaN, fit$ELBO[100],fit_init$ELBO[100], fit_fix$ELBO[100])
+
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, ELBO = ELBOs, row.names = c("point_gamma", "beta_gamma", "beta_gamma_init","beta_gamma_fix"))
+```
+
+
+
 
