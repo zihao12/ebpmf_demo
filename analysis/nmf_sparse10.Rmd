@@ -1,5 +1,5 @@
 ---
-title: "nmf_sparse9"
+title: "nmf_sparse10"
 author: "zihao12"
 date: "2019-11-08"
 output: workflowr::wflow_html
@@ -93,13 +93,7 @@ L = diag(replicate(n, 100)) %*% L
 
 lambda = L  %*% t(F)
 X  = matrix(rpois(n*p, lambda = lambda), nrow = n)
-# image(t(X))
-
-# lf_truth = poisson2multinom(F = F, L = L)
-# show_lf(lf_truth)
-# 
-# ## look at original loading 1
-# plot(L[51:100,1])
+image(t(X))
 ```
 
 
