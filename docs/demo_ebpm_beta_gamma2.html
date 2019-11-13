@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="zihao12" />
+
+<meta name="date" content="2019-11-12" />
+
+<title>demo_ebpm_beta_gamma</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ebpmf_demo</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zihao12/ebpmf_demo">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">demo_ebpm_beta_gamma</h1>
+<h4 class="author">zihao12</h4>
+<h4 class="date">2019-11-12</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2019-11-12
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20190923code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20190923)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20190923code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20190923)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec956411fc136e87b3688da578fdd63f1ac95acb0targetblankc956411a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c956411fc136e87b3688da578fdd63f1ac95acb0" target="_blank">c956411</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec956411fc136e87b3688da578fdd63f1ac95acb0targetblankc956411a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/nmf_sparse8_cache/
+    Ignored:    analysis/nmf_sparse9_cache/
+
+Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  Untitled.Rmd
+    Untracked:  Untitled.html
+    Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
+    Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
+    Untracked:  analysis/draft.Rmd
+    Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/plot_g.Rmd
+    Untracked:  analysis/softmax_experiments.ipynb
+    Untracked:  cache/
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
+    Untracked:  figure/
+    Untracked:  verbose_log_1571583163.21966.txt
+    Untracked:  verbose_log_1571583324.71036.txt
+    Untracked:  verbose_log_1571583741.94199.txt
+    Untracked:  verbose_log_1571588102.40356.txt
+
+Unstaged changes:
+    Modified:   .gitignore
+    Modified:   analysis/Compare_ebpmf_nmf.Rmd
+    Modified:   analysis/Compare_ebvaepm_ebpm.Rmd
+    Modified:   analysis/Experiment_ebpmf_rank1.Rmd
+    Modified:   analysis/ebpm_demo.Rmd
+    Modified:   analysis/nmf_sparse.Rmd
+    Modified:   analysis/nmf_sparse2.Rmd
+    Modified:   analysis/nmf_sparse3.Rmd
+    Modified:   analysis/nmf_sparse6.Rmd
+    Modified:   analysis/nmf_sparse7.Rmd
+    Modified:   analysis/nmf_sparse8.Rmd
+    Modified:   analysis/nmf_sparse9.Rmd
+    Modified:   analysis/softmax_experiments.Rmd
+    Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
+    Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/c956411fc136e87b3688da578fdd63f1ac95acb0/analysis/demo_ebpm_beta_gamma2.Rmd" target="_blank">c956411</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-11-13
+</td>
+<td>
+demo_ebpm_beta_gamma2.Rmd
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>Use data where <code>ebpm_point_gamma</code> fails and see how <code>ebpm_beta_gamma</code> does.</p>
+<p>I start from the previous experiment: <a href="https://zihao12.github.io/ebpmf_demo/demo_ebpm_beta_gamma.html" class="uri">https://zihao12.github.io/ebpmf_demo/demo_ebpm_beta_gamma.html</a></p>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>With proper initialization (I basically cheated here) <code>ebpm_beta_gamma</code> does well.</p>
+<pre class="r"><code>rm(list = ls())
+library(stats)
+devtools::load_all(&quot;../ebpm&quot;) ## not installed yet in case other  scripts depend on older version </code></pre>
+<pre><code>Loading ebpm</code></pre>
+<pre class="r"><code>#library(ebpm)</code></pre>
+</div>
+<div id="main-functions" class="section level2">
+<h2>Main functions</h2>
+<pre class="r"><code>ebpm_beta_gamma &lt;- function(x, maxiter  = 100, seed = 123, 
+                            fix = list(a = FALSE, b = FALSE, alpha = FALSE, beta = FALSE), g_init = NULL){
+  set.seed(seed)
+  res_init = initialize_ebpm_beta_gamma(x = x, seed = seed, g_init =  g_init)
+  vparam = res_init$vparam
+  g = res_init$g
+  hidden_posterior = compute_posterior(x = x, vparam = vparam)
+  
+  fit = ebpm_beta_gamma_workhorse(x = x, g = g, vparam = vparam, 
+                                  hidden_posterior = hidden_posterior, maxiter = maxiter, fix  = fix, fix_val = g_init)
+  fit[[&quot;posterior&quot;]] = list(mean = (fit$hidden_posterior$p)*(fit$hidden_posterior$v),
+                            mean_log = (fit$hidden_posterior$logp) + (fit$hidden_posterior$logv))
+  return(fit)
+}
+
+
+## workhorse function
+ebpm_beta_gamma_workhorse &lt;- function(x, g, vparam, hidden_posterior, maxiter = 100,
+                                      fix = list(a = FALSE, b = FALSE, alpha = FALSE, beta = FALSE), fix_val = NULL){
+  ELBOs = c()
+  for(iter in  1:maxiter){
+    ## update vparam
+    vparam =  update_vparam(x, g, vparam, hidden_posterior)
+    ## compute posterior
+    hidden_posterior = compute_posterior(x, vparam)
+    ## update g
+    g_res = update_g(x, g, vparam, hidden_posterior, fix = fix, fix_val = fix_val)
+    g = g_res$g
+    ELBO = g_res$ELBO
+    ELBOs = c(ELBOs, ELBO)
+  }
+  return(list(g = g, vparam = vparam, hidden_posterior = hidden_posterior, ELBO = ELBOs))
+}
+
+## initialize ebpm_beta_gamma
+initialize_ebpm_beta_gamma &lt;- function(x, seed = 123, g_init = NULL){
+  set.seed(seed)
+  n = length(x)
+  if(is.null(g_init)){g =  list(alpha = 0.99, beta = 0.1, a = 100, b  = 100)}
+  else{g = g_init}
+  
+  vparam = list(alpha = replicate(n, g$alpha),
+                beta = replicate(n, g$beta),
+                a =  replicate(n, g$a),
+                b  = replicate(n, g$b),
+                mu = replicate(n, 0.1))
+  return(list(g = g, vparam = vparam))
+}
+
+## update variational parameters
+update_vparam &lt;- function(x, g, vparam, hidden_posterior){
+  # logp, log1_p, v, logv, z are corresponding posterior mean
+  logp =  hidden_posterior$logp
+  log1_p =  hidden_posterior$log1_p
+  v =  hidden_posterior$v
+  logv =  hidden_posterior$logv
+  z =  hidden_posterior$z
+  
+  vparam$a = g$a + x 
+  vparam$b = g$b + z - x
+  vparam$alpha =  g$alpha + z
+  vparam$beta = g$beta + 1
+  vparam$mu =  exp(log1_p + logv)
+  return(vparam)
+}
+
+## compute needed posterior of the hiddem  variables
+compute_posterior &lt;- function(x, vparam){
+  p_ = compute_posterior_p(x, vparam)
+  v_ = compute_posterior_v(x, vparam)
+  z = compute_posterior_z(x, vparam)
+  return(list(p = p_$p, logp = p_$logp, log1_p = p_$log1_p,
+              v = v_$v, logv = v_$logv, z = z))
+}
+
+## update prior g
+update_g &lt;- function(x, g, vparam, hidden_posterior, fix, fix_val){
+  fn_params = list(x = x, vparam = vparam, hidden_posterior = hidden_posterior, fix = fix, fix_val)
+  opt = do.call(nlm, c(list(obj_nlm, transform_param(g)), fn_params))
+  g = transform_param_back(opt$estimate, fix = fix, fix_val)
+  ELBO = compute_elbo(g, x, vparam, hidden_posterior)
+  return(list(g = g, ELBO  = ELBO))
+}
+
+## obj for nlm to optimize
+obj_nlm &lt;- function(g, x, vparam, hidden_posterior, fix, fix_val){
+  g = transform_param_back(g, fix, fix_val)
+  return( - compute_elbo(g, x, vparam, hidden_posterior) )
+}
+
+## function for computing ELBO
+compute_elbo &lt;- function(g, x, vparam, hidden_posterior){
+  # logp, log1_p, v, logv, z are corresponding posterior mean
+  logp =  hidden_posterior$logp
+  log1_p =  hidden_posterior$log1_p
+  v =  hidden_posterior$v
+  logv =  hidden_posterior$logv
+  z =  hidden_posterior$z
+  
+  ll_x = x*logp + (z - x)*log1_p - lgamma(x + 1)
+  neg_kl_z =  vparam$mu -  v  + z*(logv -  log(vparam$mu)) + x*log(vparam$mu)
+  kl_v =  ((vparam$alpha - g$alpha)*logv - (vparam$beta - g$beta)*v + 
+             vparam$alpha*log(vparam$beta) - g$alpha*log(g$beta) + lgamma(g$alpha) - lgamma(vparam$alpha))
+  kl_p =  ((vparam$a - g$a)*logp + (vparam$b - g$b)*log1_p + compute_logB(g$a, g$b)  - compute_logB(vparam$a, vparam$b))
+  ELBO = ll_x + neg_kl_z - kl_v - kl_p
+  return(sum(ELBO))
+}
+
+## functions for computing posterior for specific latent variables
+compute_posterior_p &lt;- function(x, vparam){
+  ## compute &lt;logp&gt;,  &lt;log (1-p)&gt;   
+  p = vparam$a/(vparam$a + vparam$b)
+  logp = digamma(vparam$a) - digamma(vparam$a + vparam$b)
+  log1_p = digamma(vparam$b) - digamma(vparam$a + vparam$b)
+  return(list(p = p ,logp = logp, log1_p = log1_p))
+}
+
+compute_posterior_v &lt;- function(x, vparam){
+  ## compute &lt;v&gt;,  &lt;log v&gt;   
+  v = vparam$alpha/vparam$beta
+  logv = digamma(vparam$alpha) - log(vparam$beta)
+  return(list(v = v, logv = logv))
+}
+
+compute_posterior_z &lt;- function(x, vparam){
+  ## compute &lt;z&gt;
+  return(vparam$mu + x)
+}
+
+## transform  parameters for nlm optimization
+transform_param &lt;- function(g){
+  return(c(log(g$alpha), log(g$beta), log(g$a), log(g$b)))
+}
+transform_param_back &lt;- function(g, fix, fix_val){
+  g = list(alpha = exp(g[1]), beta = exp(g[2]), a = exp(g[3]), b = exp(g[4]))
+  ## if we fix some parameter at some value, we set them  here  so that they won&#39;t affect obj
+  if(fix$alpha){g$alpha = fix_val$alpha}
+  if(fix$beta){g$beta = fix_val$beta}
+  if(fix$a){g$a = fix_val$a}
+  if(fix$b){g$b = fix_val$b}
+  return(g)
+}
+
+## compute log B(a, b)
+compute_logB &lt;- function(a, b){
+  return(lgamma(a) + lgamma(b) - lgamma(a + b))
+}</code></pre>
+</div>
+<div id="small-experiment-x-is-no-longer-integer" class="section level2">
+<h2>Small experiment (x is no longer integer)</h2>
+<pre class="r"><code>set.seed(123)
+n = 99
+lam = replicate(n, 0)
+lam[1:(n/3)] = 50
+x = rpois(n, lambda = lam)
+x = x + 1e-4*runif(n)
+## hist of data
+hist(x, breaks = 100)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit = ebpm_beta_gamma(x, maxiter = 100)
+fit2  = ebpm::ebpm_point_gamma(x)</code></pre>
+<pre class="r"><code>## ELOB of ebpm_beta_gamma
+plot(fit$ELBO)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>max(fit$ELBO)</code></pre>
+<pre><code>[1] -258.5462</code></pre>
+<pre class="r"><code>idx = 1:n
+
+res_df = data.frame(x = x[idx], beta_gamma_posterior_mean = fit$posterior$mean[idx], beta_gamma_posterior_mean_log = fit$posterior$mean_log[idx], point_gamma_posterior_mean = fit2$posterior$mean[idx], point_gamma_posterior_mean_log = fit2$posterior$mean_log[idx])
+
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>ggplot(res_df)+
+  geom_point(aes(x = x, y = beta_gamma_posterior_mean, color = &quot;beta_gamma_posterior_mean&quot;)) + 
+  geom_point(aes(x = x, y = exp(beta_gamma_posterior_mean_log), color = &quot;exp(beta_gamma_posterior_mean_log&quot;)) + 
+  geom_point(aes(x = x, y = point_gamma_posterior_mean, color = &quot;point_gamma_posterior_mean&quot;)) +
+  geom_point(aes(x = x, y = exp(point_gamma_posterior_mean_log), color = &quot;exp(point_gamma_posterior_mean_log&quot;)) </code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit$g</code></pre>
+<pre><code>$alpha
+[1] 0.08157044
+
+$beta
+[1] 0.003535219
+
+$a
+[1] 975.5604
+
+$b
+[1] 386.3536</code></pre>
+<pre class="r"><code>fit2$fitted_g</code></pre>
+<pre><code>$pi0
+[1] 0
+
+$shape
+[1] 0.08774907
+
+$scale
+[1] 188.7889
+
+attr(,&quot;class&quot;)
+[1] &quot;point_gamma&quot;
+attr(,&quot;row.names&quot;)
+[1] 1</code></pre>
+</div>
+<div id="fixing-g-of-ebpm_beta_gamma" class="section level2">
+<h2>Fixing <code>g</code> of <code>ebpm_beta_gamma</code></h2>
+<p>(fixed <code>g</code> close to best estimate from <code>ebpm_point_gamma</code> in previous analysis)</p>
+<pre class="r"><code>fix = list(alpha = TRUE, beta = TRUE, a = TRUE, b = TRUE)
+g_init = list(alpha = 650, beta = 1/0.07, a = 0.33, b = 0.66)
+fit_fix = ebpm_beta_gamma(x, maxiter = 100, fix = fix, g_init = g_init)
+
+plot(fit_fix$ELBO)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>max(fit_fix$ELBO)</code></pre>
+<pre><code>[1] -320.3288</code></pre>
+<pre class="r"><code>plot(x, fit_fix$posterior$mean, pch  = 16, col = &quot;blue&quot;)
+lines(x, fit2$posterior$mean)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="initialize-ebpm_beta_gamma" class="section level2">
+<h2>initialize <code>ebpm_beta_gamma</code></h2>
+<p>(using knowledge from <code>ebpm_point_gamma</code>)</p>
+<pre class="r"><code># g_init = list(alpha = 650, beta = 1/0.07, a = 0.33, b = 0.66) ## strange numerical  issues. Will  investiagte later
+g_init = list(alpha = 100, beta = 10, a = 0.33, b = 0.66)
+
+fit_init = ebpm_beta_gamma(x, maxiter = 100, g_init = g_init)
+
+plot(fit_init$ELBO)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>max(fit_init$ELBO)</code></pre>
+<pre><code>[1] -184.6672</code></pre>
+<pre class="r"><code>plot(x, fit_init$posterior$mean, pch  = 16, col = &quot;blue&quot;, ylim = c(0, max(c(fit2$posterior$mean, fit_init$posterior$mean))))
+points(x, fit2$posterior$mean)</code></pre>
+<p><img src="figure/demo_ebpm_beta_gamma2.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>fit_init$g</code></pre>
+<pre><code>$alpha
+[1] 546.7766
+
+$beta
+[1] 11.90224
+
+$a
+[1] 0.002975393
+
+$b
+[1] 0.005783789</code></pre>
+<p>Below I summarize the ELBO, and measure of divergence from truth</p>
+<pre class="r"><code>KL &lt;- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  &lt;- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE &lt;- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+KLs &lt;- c(KL(lam, fit2$posterior$mean), KL(lam, fit$posterior$mean), KL(lam, fit_init$posterior$mean), KL(lam, fit_fix$posterior$mean))
+
+JSs &lt;- c(JS(lam, fit2$posterior$mean), JS(lam, fit$posterior$mean), JS(lam, fit_init$posterior$mean), JS(lam, fit_fix$posterior$mean))
+
+RMSEs &lt;- c(RMSE(lam, fit2$posterior$mean), RMSE(lam, fit$posterior$mean), RMSE(lam, fit_init$posterior$mean), RMSE(lam, fit_fix$posterior$mean))
+
+ELBOs &lt;- c(NaN, fit$ELBO[100],fit_init$ELBO[100], fit_fix$ELBO[100])
+
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, ELBO = ELBOs, row.names = c(&quot;point_gamma&quot;, &quot;beta_gamma&quot;, &quot;beta_gamma_init&quot;,&quot;beta_gamma_fix&quot;))</code></pre>
+<pre><code>                       KL  JS     RMSE      ELBO
+point_gamma     22.512451 Inf 4.133046       NaN
+beta_gamma      20.742716 Inf 4.139587 -258.5462
+beta_gamma_init  5.474123 Inf 2.244659 -184.6672
+beta_gamma_fix  41.157669 Inf 4.191943 -320.3288</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggplot2_3.2.1   ebpm_0.0.0.9004 testthat_2.2.1 
+
+loaded via a namespace (and not attached):
+ [1] gtools_3.8.1        tidyselect_0.2.5    xfun_0.8           
+ [4] remotes_2.1.0       purrr_0.3.2         colorspace_1.4-1   
+ [7] usethis_1.5.1       htmltools_0.3.6     yaml_2.2.0         
+[10] rlang_0.4.1         pkgbuild_1.0.3      mixsqp_0.2-3       
+[13] later_0.8.0         pillar_1.4.2        glue_1.3.1         
+[16] withr_2.1.2         sessioninfo_1.1.1   stringr_1.4.0      
+[19] munsell_0.5.0       gtable_0.3.0        workflowr_1.5.0    
+[22] devtools_2.2.1.9000 memoise_1.1.0       evaluate_0.14      
+[25] labeling_0.3        knitr_1.25          callr_3.2.0        
+[28] httpuv_1.5.1        ps_1.3.0            Rcpp_1.0.2         
+[31] promises_1.0.1      backports_1.1.5     scales_1.0.0       
+[34] desc_1.2.0          pkgload_1.0.2       fs_1.3.1           
+[37] digest_0.6.22       stringi_1.4.3       processx_3.3.1     
+[40] dplyr_0.8.1         rprojroot_1.3-2     grid_3.5.1         
+[43] cli_1.1.0           tools_3.5.1         magrittr_1.5       
+[46] lazyeval_0.2.2      tibble_2.1.3        crayon_1.3.4       
+[49] whisker_0.3-2       pkgconfig_2.0.3     ellipsis_0.3.0     
+[52] prettyunits_1.0.2   assertthat_0.2.1    rmarkdown_1.13     
+[55] rstudioapi_0.10     R6_2.4.0            git2r_0.26.1       
+[58] compiler_3.5.1     </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
