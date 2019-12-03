@@ -1,0 +1,195 @@
+---
+title: "compare `ebpm` with `gauss_gh`"
+author: "zihao12"
+date: "2019-12-02"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to compare `ebpm` with the algorithm `Gauss-HG` propsed in paper  [Bayesian inference on quasi-sparse count data 
+](https://academic.oup.com/biomet/article/103/4/971/2659041). Below I first copy from their analysis http://dattahub.github.io/GHstancodes , then compare `ebpm` with theirs. 
+
+```{r warning=FALSE, message=FALSE}
+library(rstan)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+library(ggplot2)
+theme_set(theme_bw())
+library(plyr)
+library(dplyr)
+library(reshape2)
+```
+
+## `Gauss-HG` algorithm
+```{r cache=TRUE, warning=F, message=FALSE}
+# setup Stan Gauss-HG sampler
+{
+  library(plyr)
+  library(rstan)
+  library(parallel)
+  library(rbenchmark)
+  
+  #set_cppo("fast")
+  stan.gh.code = "
+  data{
+  int<lower=0> J;
+  int<lower=0> Y[J];
+  real<lower=0> alpha;
+  real<lower=0> a;
+  real<lower=0> b;
+  real<lower=0> gamma;
+  real<lower=0> phi;
+  }
+  parameters{
+  real<lower=0,upper=1> kappa[J];
+  real<lower=0> theta[J];
+  }
+  model{
+  for(i in 1:J) {
+  increment_log_prob((a-1)*log(kappa[i])+(b-1)*log(1-kappa[i])-gamma*log(1-phi*kappa[i]));
+  theta[i] ~ gamma(a, kappa[i]/(1-kappa[i]));
+  Y[i] ~ poisson(theta[i]);
+  }
+  }
+  "
+  stan.gh.fit = stan_model(model_code=stan.gh.code, model_name="GH")
+}
+```
+
+## simulation
+```{r warning=F}
+stan.iters = 10000
+n.chains = 2
+seed.val = 786
+set.seed(seed.val)
+
+n = 200; w = 0.9
+y = rep(0,n); idx = rep(1,n)
+lambdasparse = rep(0,n)
+for (i in 1:n)
+{
+  if(i<=round(n*w)){
+    lambdasparse[i]<-0.1
+    idx[i] <- 0}
+  else {lambdasparse[i] <-10}}
+
+y = rpois(n,lambdasparse); 
+gamma = mean(kmeans(y,centers=2)$centers)
+alpha = 0.01
+a = 0.5; b = 0.5
+gh.data = list('J'=n,'Y'=y, 'alpha' = alpha,'a' = a, 'b' = b, 'gamma' = gamma, 'phi' = 0.99)
+```
+
+## fit with `Gauss-HG`
+```{r cache=TRUE}
+{
+  gh.res = sampling(stan.gh.fit, 
+                     data = gh.data, 
+                     iter = stan.iters,
+                     warmup = floor(stan.iters/2),
+                     thin = 2,
+                     pars = c('kappa','theta'),
+                     init = 0,
+                     seed = seed.val, 
+                     chains = 1)
+  
+  gh.theta.smpls = extract(gh.res, pars=c('theta'), permuted=TRUE)[[1]]
+  gh.kappa.smpls = extract(gh.res, pars=c('kappa'), permuted=TRUE)[[1]]
+  gh.theta.mean = apply(gh.theta.smpls,2,mean)
+  gh.kappa.mean = apply(gh.kappa.smpls,2,mean)
+  
+  gh.sample.data = melt(extract(gh.res, permuted=TRUE))
+  colnames(gh.sample.data) = c("iteration", "component", "value", "variable")
+  
+  gh.sample.data= gh.sample.data %>%
+    filter(variable %in% c("theta","kappa")) 
+
+  gh.sample.data.2 = gh.sample.data %>% group_by(component, variable) %>%
+  summarise(upper = quantile(value, prob=0.975), 
+            lower = quantile(value, prob=0.225),
+            middle = mean(value))
+}
+```
+
+
+
+## fit with `ebpm`
+```{r warning=F}
+library(ebpm)
+fit_ebpm_gammamix = ebpm_gamma_mixture_single_scale(x = y, s = 1)
+fit_ebpm_expmix = ebpm_exponential_mixture(x = y, s = 1)
+fit_ebpm_pg = ebpm_point_gamma(x = y, s = 1)
+fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1)
+```
+
+
+```{r}
+fit_df = data.frame(
+  data = y,
+  lam_true = lambdasparse,
+  gh = gh.theta.mean,
+  ebpm_pg = fit_ebpm_pg$posterior$mean,
+  ebpm_tg = fit_ebpm_tg$posterior$mean,
+  ebpm_expmix = fit_ebpm_expmix$posterior$mean,
+  ebpm_gammamix = fit_ebpm_gammamix$posterior$mean
+)
+
+ggplot(data = fit_df)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = gh, color = "gauss-hg"))+
+  geom_point(aes(x = data, y = ebpm_pg, color = "ebpm_pg"))+
+  geom_point(aes(x = data, y = ebpm_tg, color = "ebpm_tg"))
+```
+
+Take a closer look at those quasi-zeros (counts that comes from small lambda)
+```{r}
+fit_df_small = fit_df[fit_df$lam_true < 1, ]
+ggplot(data = fit_df_small)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = gh, color = "gauss_hg"))+
+  geom_point(aes(x = data, y = ebpm_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = ebpm_tg, color = "ebpm_two_gamma"))
+```
+
+
+Below I show the divergence between estimation and truth (Root Mean Squared Error, Kullback–Leibler divergence , Jensen-Shannon)
+```{r}
+rmse <- function(true, est){
+  return(sqrt(mean((true - est)^2)))
+}
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+RMSEs = c(rmse(lambdasparse, gh.theta.mean), rmse(lambdasparse, fit_ebpm_gammamix$posterior$mean), 
+                     rmse(lambdasparse, fit_ebpm_expmix$posterior$mean), 
+                     rmse(lambdasparse, fit_ebpm_pg$posterior$mean),
+                     rmse(lambdasparse,fit_ebpm_tg$posterior$mean))
+
+KLs = c(KL(lambdasparse, gh.theta.mean), KL(lambdasparse, fit_ebpm_gammamix$posterior$mean), 
+                     KL(lambdasparse, fit_ebpm_expmix$posterior$mean), 
+                     KL(lambdasparse, fit_ebpm_pg$posterior$mean),
+                     KL(lambdasparse,fit_ebpm_tg$posterior$mean))
+
+JSs = c(JS(lambdasparse, gh.theta.mean), rmse(lambdasparse, fit_ebpm_gammamix$posterior$mean), 
+                     JS(lambdasparse, fit_ebpm_expmix$posterior$mean), 
+                     JS(lambdasparse, fit_ebpm_pg$posterior$mean),
+                     JS(lambdasparse,fit_ebpm_tg$posterior$mean))
+data.frame(RMSE = RMSEs, KL = KLs, JS = JSs, row.names = c("guass-hg", "ebpm_gammamix", "ebpm_expmix", "ebpm_point_gamma", "ebpm_two_gamma"))
+
+```
+
+### Comment:
+1. `GH` shrinks too much. Type-I error seems indeed pretty small, as proved in the paper. The expense is the very bad estimates for bigger counts. Maybe need to choose different hyperparameters.  
+
+2. `ebpm_point_gamma` fails for those "quasi-sparse" counts, the point-mass at 0 for prior won't affect their posteriors. They also affect the estimation for larger counts.  
+
+3. `ebpm_two_gamma` performs the best on average. It slightly overestimates those "quasi-sparse" counts, but is very close to truth overall. 
+
+4. `ebpm_expmix` and `ebpm_gammamix` does not do well. Only two prior components are effectively used, and certainly not as well-chosen as `gamma_two_gamma`. (didn't show in the plot)
+
+
