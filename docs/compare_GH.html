@@ -545,10 +545,10 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef7d19c735ddc71cb3f82c1b9d846a0cee945af6ftargetblankf7d19c7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/f7d19c735ddc71cb3f82c1b9d846a0cee945af6f" target="_blank">f7d19c7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree42ef199a4820a95a4525d257a588a0f3499717d4targetblank42ef199a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/42ef199a4820a95a4525d257a588a0f3499717d4" target="_blank">42ef199</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef7d19c735ddc71cb3f82c1b9d846a0cee945af6ftargetblankf7d19c7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree42ef199a4820a95a4525d257a588a0f3499717d4targetblank42ef199a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -640,6 +640,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/42ef199a4820a95a4525d257a588a0f3499717d4/analysis/compare_GH.Rmd" target="_blank">42ef199</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+<td>
+compare gh with ebpm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/56b957f5b038cc93d43368b9e6a74791490040a1/docs/compare_GH.html" target="_blank">56b957f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -824,9 +858,46 @@ fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1)</code></pre>
 ggplot(data = fit_df)+
   geom_point(aes(x = data, y = lam_true, color = &quot;lam_true&quot;))+
   geom_point(aes(x = data, y = gh, color = &quot;gauss-hg&quot;))+
-  geom_point(aes(x = data, y = ebpm_pg, color = &quot;ebpm_pg&quot;))+
-  geom_point(aes(x = data, y = ebpm_tg, color = &quot;ebpm_tg&quot;))</code></pre>
+  geom_point(aes(x = data, y = ebpm_pg, color = &quot;ebpm_point_gamma&quot;))+
+  geom_point(aes(x = data, y = ebpm_tg, color = &quot;ebpm_two_gamma&quot;))</code></pre>
 <p><img src="figure/compare_GH.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/56b957f5b038cc93d43368b9e6a74791490040a1/docs/figure/compare_GH.Rmd/unnamed-chunk-6-1.png" target="_blank">56b957f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Take a closer look at those quasi-zeros (counts that comes from small lambda)</p>
 <pre class="r"><code>fit_df_small = fit_df[fit_df$lam_true &lt; 1, ]
 ggplot(data = fit_df_small)+
@@ -835,6 +906,43 @@ ggplot(data = fit_df_small)+
   geom_point(aes(x = data, y = ebpm_pg, color = &quot;ebpm_point_gamma&quot;))+
   geom_point(aes(x = data, y = ebpm_tg, color = &quot;ebpm_two_gamma&quot;))</code></pre>
 <p><img src="figure/compare_GH.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/56b957f5b038cc93d43368b9e6a74791490040a1/docs/figure/compare_GH.Rmd/unnamed-chunk-7-1.png" target="_blank">56b957f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Below I show the divergence between estimation and truth (Root Mean Squared Error, Kullback–Leibler divergence , Jensen-Shannon)</p>
 <pre class="r"><code>rmse &lt;- function(true, est){
   return(sqrt(mean((true - est)^2)))
