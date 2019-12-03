@@ -139,8 +139,8 @@ fit_df = data.frame(
 ggplot(data = fit_df)+
   geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
   geom_point(aes(x = data, y = gh, color = "gauss-hg"))+
-  geom_point(aes(x = data, y = ebpm_pg, color = "ebpm_pg"))+
-  geom_point(aes(x = data, y = ebpm_tg, color = "ebpm_tg"))
+  geom_point(aes(x = data, y = ebpm_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = ebpm_tg, color = "ebpm_two_gamma"))
 ```
 
 Take a closer look at those quasi-zeros (counts that comes from small lambda)
