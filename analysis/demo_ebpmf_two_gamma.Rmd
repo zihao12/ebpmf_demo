@@ -8,6 +8,9 @@ editor_options:
 ---
 
 ## Introduction
+* `ebpmf` solve the model described in [ebpmf](https://zihao12.github.io/ebpmf_demo/ebpmf.pdf ). Here I show the `ebpmf_two_gamma` (prior family is a mixture of two gammas)
+
+* I compare  its result to that of MLE of the Poisson Matrix Factorization model, which is the same as (lee's multiplicative update)[https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf].
 
 ```{r}
 set.seed(123)
@@ -44,7 +47,7 @@ hist(X, breaks = 50, main = "histogram of count matrix")
 ```
 
 ### fit with mle and ebpmf
-```{r warning=FALSE, message=FALSE, cache=TRUE}
+```{r warning=FALSE, message=FALSE}
 fit_mle = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 500)
 fit_ebpmf_two_gamma = ebpmf_two_gamma(X = X, K = k, maxiter.out = 500)
 ```
