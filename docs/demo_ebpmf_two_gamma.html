@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb4f0788bf13017e3d062fdc10153bd5b5f2ef31ctargetblankb4f0788a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b4f0788bf13017e3d062fdc10153bd5b5f2ef31c" target="_blank">b4f0788</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree53d9ed418a017116c265099599657c1534244187targetblank53d9ed4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/53d9ed418a017116c265099599657c1534244187" target="_blank">53d9ed4</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb4f0788bf13017e3d062fdc10153bd5b5f2ef31ctargetblankb4f0788a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree53d9ed418a017116c265099599657c1534244187targetblank53d9ed4a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -549,7 +549,6 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/compare_GH_cache/
-    Ignored:    analysis/figure/
     Ignored:    analysis/nmf_sparse10_cache/
     Ignored:    analysis/nmf_sparse8_cache/
     Ignored:    analysis/nmf_sparse9_cache/
@@ -637,6 +636,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/53d9ed418a017116c265099599657c1534244187/docs/demo_ebpmf_two_gamma.html" target="_blank">53d9ed4</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -799,7 +815,7 @@ JSs = c(JS(lam_true, lam_mle),  JS(lam_true, lam_ebpmf_two_gamma))
 data.frame(loglike = lls, RMSE = RMSEs, KL = KLs, JS = JSs, row.names = c(&quot;mle&quot;, &quot;ebpmf_two_gamma&quot;))</code></pre>
 <pre><code>                  loglike      RMSE       KL       JS
 mle             -16527.58 0.4118781      Inf      Inf
-ebpmf_two_gamma -16653.01 0.4256268 366.4535 352.0669</code></pre>
+ebpmf_two_gamma -16566.55 0.4089358 286.3282 279.1409</code></pre>
 <p>I compute the data loglikelihood, as well as the various divergence between true <span class="math inline">\(\lambda\)</span> and estimates <span class="math inline">\(\hat{\lambda}\)</span>. From the result we can see MLE overfits the data too much; <code>ebpmf_two_gamma</code> is closer to the truth.</p>
 <br>
 <p>
