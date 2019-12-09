@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree63829a0f2d53d5956a288a7889b64f4ea21dd385targetblank63829a0a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/63829a0f2d53d5956a288a7889b64f4ea21dd385" target="_blank">63829a0</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb4f0788bf13017e3d062fdc10153bd5b5f2ef31ctargetblankb4f0788a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b4f0788bf13017e3d062fdc10153bd5b5f2ef31c" target="_blank">b4f0788</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree63829a0f2d53d5956a288a7889b64f4ea21dd385targetblank63829a0a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb4f0788bf13017e3d062fdc10153bd5b5f2ef31ctargetblankb4f0788a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -549,6 +549,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/compare_GH_cache/
+    Ignored:    analysis/figure/
     Ignored:    analysis/nmf_sparse10_cache/
     Ignored:    analysis/nmf_sparse8_cache/
     Ignored:    analysis/nmf_sparse9_cache/
@@ -561,6 +562,7 @@ Untracked files:
     Untracked:  analysis/Experiment_ebpmf_simple.Rmd
     Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
     Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
     Untracked:  analysis/draft.Rmd
     Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
@@ -640,6 +642,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/b4f0788bf13017e3d062fdc10153bd5b5f2ef31c/analysis/demo_ebpmf_two_gamma.Rmd" target="_blank">b4f0788</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-09
+</td>
+<td>
+demo ebpmf
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/72a390dffa0d6024a0a2656382c0585be9fc537a/docs/demo_ebpmf_two_gamma.html" target="_blank">72a390d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/63829a0f2d53d5956a288a7889b64f4ea21dd385/analysis/demo_ebpmf_two_gamma.Rmd" target="_blank">63829a0</a>
 </td>
 <td>
@@ -661,6 +697,10 @@ demo ebpmf
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
+<ul>
+<li><p><code>ebpmf</code> solve the model described in <a href="https://zihao12.github.io/ebpmf_demo/ebpmf.pdf">ebpmf</a>. Here I show the <code>ebpmf_two_gamma</code> (prior family is a mixture of two gammas)</p></li>
+<li><p>I compare its result to that of MLE of the Poisson Matrix Factorization model, which is the same as (lee’s multiplicative update)[<a href="https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf" class="uri">https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf</a>].</p></li>
+</ul>
 <pre class="r"><code>set.seed(123)
 library(NNLM)
 library(ebpmf.alpha)</code></pre>
@@ -693,17 +733,48 @@ print(sprintf(&quot;zero percentage: %f&quot;, sum(X == 0)/(n*p)))</code></pre>
 <pre><code>[1] &quot;zero percentage: 0.668500&quot;</code></pre>
 <pre class="r"><code>hist(X, breaks = 50, main = &quot;histogram of count matrix&quot;)</code></pre>
 <p><img src="figure/demo_ebpmf_two_gamma.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/72a390dffa0d6024a0a2656382c0585be9fc537a/docs/figure/demo_ebpmf_two_gamma.Rmd/unnamed-chunk-2-1.png" target="_blank">72a390d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fit-with-mle-and-ebpmf" class="section level3">
 <h3>fit with mle and ebpmf</h3>
 <pre class="r"><code>fit_mle = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 500)
 fit_ebpmf_two_gamma = ebpmf_two_gamma(X = X, K = k, maxiter.out = 500)</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but it won’t be re-run if previous chunks it depends on are updated. If you need to use caching, it is highly recommended to also set <code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the file (in a chunk that is not cached). Alternatively, you can customize the option <code>dependson</code> for each individual chunk that is cached. Using either <code>autodep</code> or <code>dependson</code> will remove this warning. See the <a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 </div>
 <div id="compare-result" class="section level3">
 <h3>compare result</h3>
@@ -756,13 +827,13 @@ other attached packages:
 [1] ebpmf.alpha_0.1.3 NNLM_0.4.2       
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.2       knitr_1.25       whisker_0.3-2    magrittr_1.5    
- [5] workflowr_1.5.0  ebpm_0.0.0.9004  R6_2.4.0         stringr_1.4.0   
- [9] tools_3.5.1      xfun_0.8         git2r_0.26.1     htmltools_0.3.6 
-[13] gtools_3.8.1     yaml_2.2.0       digest_0.6.22    rprojroot_1.3-2 
-[17] mixsqp_0.2-3     later_0.8.0      codetools_0.2-16 promises_1.0.1  
-[21] fs_1.3.1         glue_1.3.1       evaluate_0.14    rmarkdown_1.13  
-[25] stringi_1.4.3    compiler_3.5.1   backports_1.1.5  httpuv_1.5.1    </code></pre>
+ [1] Rcpp_1.0.2      knitr_1.25      whisker_0.3-2   magrittr_1.5   
+ [5] workflowr_1.5.0 ebpm_0.0.0.9004 R6_2.4.0        stringr_1.4.0  
+ [9] tools_3.5.1     xfun_0.8        git2r_0.26.1    htmltools_0.3.6
+[13] gtools_3.8.1    yaml_2.2.0      digest_0.6.22   rprojroot_1.3-2
+[17] mixsqp_0.2-3    later_0.8.0     promises_1.0.1  fs_1.3.1       
+[21] glue_1.3.1      evaluate_0.14   rmarkdown_1.13  stringi_1.4.3  
+[25] compiler_3.5.1  backports_1.1.5 httpuv_1.5.1   </code></pre>
 </div>
 </div>
 </div>
