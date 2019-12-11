@@ -150,6 +150,8 @@ sum(dpois(x = X, lambda = Lam_lda,log = TRUE))
 ## To do
 * Run MLE (EM or second-order methods). If it looks similar, then this is a good example where we need shrinkage!
 
+* Run `anchor word` type methods
+
 * See how `ebpmf` performs. 
 
 
