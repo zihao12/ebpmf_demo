@@ -1,0 +1,169 @@
+---
+title: "Generate data from anchor word model"
+author: "zihao12"
+date: "2019-12-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Because of the identifiability issue in previous experiments, I simulate data under the anchor words assumption:\
+
+Let $A \in R^{p \times k}$ be $k$ topics (each column sums to one, nonnegative). We require that for each topic, there is at least one "anchor word" $i_k$ so that $A_{i_k, j} > 0, A_{i \neq i_k, j} = 0$. I relax the strictly zero to some small  value compared to. \
+
+Then $Prob = A W$, $X_{Ij} \sim Multinom(N_j, Prob_{Ij})$ (note $X \in R^{p \times n}$). 
+
+## Data simulation. 
+```{r}
+set.seed(123)
+n = 100
+p = 500
+k = 10
+sep_val = 1
+M = 10
+
+A = matrix(runif(p*k), ncol = k)
+W = matrix(replicate(n*k, 0), nrow = k)
+X = matrix(replicate(n*p, 0), nrow = p)
+
+## get set of anchor words (id)
+## for simplicity, each topic has only one anchor word
+S = sample(x = 1:p, size = k, replace = TRUE)
+
+## generate A
+for(d in 1:k){
+  A[S[d], d] = k * sep_val
+}
+A = t(t(A)/colSums(A))
+
+## generate W
+for(i in 1:n){
+  cardin = sample(x = 1:floor(k/3), size = 1)
+  top_supp = sample(x = 1:k, size = cardin, replace = TRUE)
+  W[top_supp,i] = runif(cardin)
+  W[, i] = W[,i]/sum(W[,i])
+}
+
+prob_m = A %*% W
+
+for(i in 1:n){
+  n_word = rpois(n = 1, lambda = M)
+  X[,i] = rmultinom(n = 1, size = p, prob = prob_m[,i])
+}
+```
+
+
+## Fit with `LDA`
+```{r}
+library(topicmodels)
+fit_lda = LDA(x = t(X), k = k, method = "Gibbs")
+A_lda = t(exp(fit_lda@beta))
+W_lda = t(fit_lda@gamma)
+```
+
+## Compare topics
+```{r}
+image(A)
+image(A_lda)
+```
+
+Try to align topics
+```{r}
+topic_align <- function(A1, A2){
+  aligned = replicate(ncol(A1), 0)
+  for(d in 1:ncol(A1)){
+    a1 = A1[,d]
+    closest_id = find_closest_topic(a1, A2)
+    aligned[d] = closest_id
+  }
+  return(aligned)
+}
+
+find_closest_topic <- function(a, A){
+  min_dist = Inf
+  closest_id = -1
+  for(d in 1:ncol(A)){
+    #curr_dist = sum((a - A[,d])^2)
+    a_curr = A[,d]
+    curr_dist = sum(a*a_curr)/(sqrt(sum(a^2)) * sqrt(sum(a_curr^2)))
+    if(curr_dist < min_dist){
+      min_dist = curr_dist
+      closest_id = d
+    }
+  }
+  return(closest_id)
+}
+
+topic_align(A, A_lda)
+topic_align(A_lda, A)
+```
+Well, the topics are not close enough (under cosine similarity, or Euclidean distance which I tried). 
+
+Let's see if we can choose topics by anchor words
+
+```{r}
+anchor_set = apply(A, 2, which.max)
+anchor_set_lda = apply(A_lda, 2, which.max)
+
+aligned_ind = replicate(k, -1)
+for(d in 1:k){
+  anchor_word = anchor_set[d]
+  if(anchor_word %in% anchor_set_lda){
+    curr_id = which(anchor_set_lda == anchor_word)
+  }else{curr_id = -1}
+  aligned_ind[d] = curr_id
+}
+aligned_ind
+
+aligned_ind[aligned_ind == -1] = 9
+```
+Most topics are aligned by anchor word! For the only unmatached one, I assign topic 9.
+
+
+```{r}
+par(mfrow=c(2,2))
+for(d in 1:k){
+  plot(A[,d],main = sprintf("topic %d", d))
+  plot(A_lda[,aligned_ind[d]], main = sprintf("topic %d", d))
+}
+```
+
+
+
+Compare likelihood $p(X|A, W)$.
+```{r}
+Lam_true = A %*% W %*% diag(colSums(X))
+Lam_lda = A_lda %*% W_lda %*% diag(colSums(X))
+
+## likelihood for truth
+sum(dpois(x = X, lambda = Lam_true,log = TRUE))
+
+## likelihood for LDA result
+sum(dpois(x = X, lambda = Lam_lda,log = TRUE))
+```
+
+
+## Conclusion
+* LDA does not learn $A$ well enough. Although it can identify most topics through anchor words, the non-anchor words are too noisy.Also, the likelihood is worse than truth (maybe I didn't run LDA long enough?) 
+
+## To do
+* Run MLE (EM or second-order methods). If it looks similar, then this is a good example where we need shrinkage!
+
+* See how `ebpmf` performs. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
