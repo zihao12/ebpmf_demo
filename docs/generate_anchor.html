@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree957837ce368e77c4755f75861c8736b2b4f81286targetblank957837ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/957837ce368e77c4755f75861c8736b2b4f81286" target="_blank">957837c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree62ff45f9dbe7bd9ce75444a7cf45b59205a19251targetblank62ff45fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/62ff45f9dbe7bd9ce75444a7cf45b59205a19251" target="_blank">62ff45f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree957837ce368e77c4755f75861c8736b2b4f81286targetblank957837ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree62ff45f9dbe7bd9ce75444a7cf45b59205a19251targetblank62ff45fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -597,7 +597,6 @@ Unstaged changes:
     Modified:   analysis/nmf_sparse9.Rmd
     Modified:   analysis/softmax_experiments.Rmd
     Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
-    Modified:   code/misc.R
     Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
 
 </code></pre>
@@ -637,6 +636,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/62ff45f9dbe7bd9ce75444a7cf45b59205a19251/analysis/generate_anchor.Rmd" target="_blank">62ff45f</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+<td>
+update generate_anchor.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/generate_anchor.html" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -851,6 +884,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-3-2.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/7f84b9b32c978a322a2d99678d4329260b51a7c6/docs/figure/generate_anchor.Rmd/unnamed-chunk-3-2.png" target="_blank">7f84b9b</a>
 </td>
 <td>
@@ -878,14 +922,202 @@ for(d in 1:k){
 }
 aligned_ind</code></pre>
 <pre><code> [1]  2 10  1  9  6  7  4  5  3  8</code></pre>
-<pre class="r"><code>aligned_ind[aligned_ind == -1] = 9</code></pre>
 <p>All topics are aligned by anchor word!</p>
 <pre class="r"><code>par(mfrow=c(2,2))
 for(d in 1:k){
   plot(A[,d],main = sprintf(&quot;topic %d&quot;, d))
   plot(A_lda[,aligned_ind[d]], main = sprintf(&quot;topic %d&quot;, d))
 }</code></pre>
-<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-5-1.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-5-2.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-5-3.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
+Past versions of unnamed-chunk-5-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-5-4.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/generate_anchor.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-5">
+Past versions of unnamed-chunk-5-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51177e3110a73a973979fed6d3894c6e2dad5f1e/docs/figure/generate_anchor.Rmd/unnamed-chunk-5-5.png" target="_blank">51177e3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare likelihood <span class="math inline">\(p(X|A, W)\)</span>.</p>
 <pre class="r"><code>Lam_true = A %*% W %*% diag(colSums(X))
 Lam_lda = A_lda %*% W_lda %*% diag(colSums(X))
