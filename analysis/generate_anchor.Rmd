@@ -20,8 +20,8 @@ set.seed(123)
 n = 100
 p = 500
 k = 10
-sep_val = 1
-M = 10
+sep_val = 1 ## the bigger value, the more "separable"
+M = 2*p ## (mean) number of words per document
 
 A = matrix(runif(p*k), ncol = k)
 W = matrix(replicate(n*k, 0), nrow = k)
@@ -49,8 +49,10 @@ prob_m = A %*% W
 
 for(i in 1:n){
   n_word = rpois(n = 1, lambda = M)
-  X[,i] = rmultinom(n = 1, size = p, prob = prob_m[,i])
+  X[,i] = rmultinom(n = 1, size = n_word, prob = prob_m[,i])
 }
+
+print(sprintf("percentage of 0s: %f", sum(X == 0)/(n*p)))
 ```
 
 
@@ -68,40 +70,9 @@ image(A)
 image(A_lda)
 ```
 
-Try to align topics
-```{r}
-topic_align <- function(A1, A2){
-  aligned = replicate(ncol(A1), 0)
-  for(d in 1:ncol(A1)){
-    a1 = A1[,d]
-    closest_id = find_closest_topic(a1, A2)
-    aligned[d] = closest_id
-  }
-  return(aligned)
-}
 
-find_closest_topic <- function(a, A){
-  min_dist = Inf
-  closest_id = -1
-  for(d in 1:ncol(A)){
-    #curr_dist = sum((a - A[,d])^2)
-    a_curr = A[,d]
-    curr_dist = sum(a*a_curr)/(sqrt(sum(a^2)) * sqrt(sum(a_curr^2)))
-    if(curr_dist < min_dist){
-      min_dist = curr_dist
-      closest_id = d
-    }
-  }
-  return(closest_id)
-}
-
-topic_align(A, A_lda)
-topic_align(A_lda, A)
-```
-Well, the topics are not close enough (under cosine similarity, or Euclidean distance which I tried). 
 
 Let's see if we can choose topics by anchor words
-
 ```{r}
 anchor_set = apply(A, 2, which.max)
 anchor_set_lda = apply(A_lda, 2, which.max)
@@ -118,7 +89,7 @@ aligned_ind
 
 aligned_ind[aligned_ind == -1] = 9
 ```
-Most topics are aligned by anchor word! For the only unmatached one, I assign topic 9.
+All topics are aligned by anchor word! 
 
 
 ```{r}
@@ -128,7 +99,6 @@ for(d in 1:k){
   plot(A_lda[,aligned_ind[d]], main = sprintf("topic %d", d))
 }
 ```
-
 
 
 Compare likelihood $p(X|A, W)$.
@@ -145,10 +115,14 @@ sum(dpois(x = X, lambda = Lam_lda,log = TRUE))
 
 
 ## Conclusion
-* LDA does not learn $A$ well enough. Although it can identify most topics through anchor words, the non-anchor words are too noisy.Also, the likelihood is worse than truth (maybe I didn't run LDA long enough?) 
+* LDA is able to find topics correctly in this simple example, but the estimate has some wrong signals. Its likelihood is also worse than truth. 
+
+* The ability to recover true $A$ depends on the number of words per document. I tried using $p$ and it fails to identify one topic. Not surprising. 
 
 ## To do
-* Run MLE (EM or second-order methods). If it looks similar, then this is a good example where we need shrinkage!
+* Make a set  of anchor words for each topic ... more noise ...
+
+* Run MLE (EM or second-order methods). 
 
 * Run `anchor word` type methods
 
