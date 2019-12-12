@@ -1,0 +1,181 @@
+---
+title: "NMF experiments"
+author: "zihao12"
+date: "2019-12-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I simulate data under the anchor words assumption, using multinomial model:\
+
+Let $A \in R^{p \times k}$ be $k$ topics (each column sums to one, nonnegative). We require that for each topic, there is at least one "anchor word" $i_k$ so that $A_{i_k, j} > 0, A_{i \neq i_k, j} = 0$. I relax the strictly zero to some small  value compared to. \
+
+Then $Prob = A W$, $X_{Ij} \sim Multinom(N_j, Prob_{Ij})$ (note $X \in R^{p \times n}$). 
+
+## Data simulation. 
+```{r}
+rm(list = ls())
+set.seed(123)
+n = 100
+p = 500
+k = 10
+sep_val = 1
+M = p
+
+A = matrix(runif(p*k), ncol = k)
+W = matrix(replicate(n*k, 0), nrow = k)
+X = matrix(replicate(n*p, 0), nrow = p)
+
+## get set of anchor words (id)
+## for simplicity, each topic has only one anchor word
+S = sample(x = 1:p, size = k, replace = TRUE)
+
+## generate A
+for(d in 1:k){
+  A[S[d], d] = k * sep_val
+}
+A = t(t(A)/colSums(A))
+
+## generate W
+for(i in 1:n){
+  cardin = sample(x = 1:floor(k/3), size = 1)
+  top_supp = sample(x = 1:k, size = cardin, replace = TRUE)
+  W[top_supp,i] = runif(cardin)
+  W[, i] = W[,i]/sum(W[,i])
+}
+
+prob_m = A %*% W
+
+for(i in 1:n){
+  n_word = rpois(n = 1, lambda = M)
+  X[,i] = rmultinom(n = 1, size = n_word, prob = prob_m[,i])
+}
+
+print(sprintf("percentage of 0s: %f", sum(X == 0)/(n*p)))
+
+```
+
+
+## Fit 
+```{r}
+source("code/misc.R")
+## fit with MLE_EM
+library(NNLM)
+fit_mle_em = NNLM::nnmf(A = t(X), k = k, loss = "mkl", method = "scd", max.iter = 10000)
+lf_mlf_em = poisson2multinom(F = t(fit_mle_em$H), L = fit_mle_em$W)
+A_em = lf_mlf_em$F
+W_em = t(lf_mlf_em$L)
+
+## Fit with LDA
+library(topicmodels)
+fit_lda = LDA(x = t(X), k = k, method = "gibbs", iter.max = 10000) ## is it the right way to specify iter.max?
+A_lda = t(exp(fit_lda@beta))
+W_lda = t(fit_lda@gamma)
+```
+
+## Compare topics
+```{r}
+par(mfrow=c(1,3))
+image(A)
+image(A_em)
+image(A_lda)
+```
+
+
+Let's see if we can choose topics by anchor words
+
+```{r}
+anchor_set = apply(A, 2, which.max)
+
+anchor_set_em = apply(A_em, 2, which.max)
+aligned_em = replicate(k, -1)
+for(d in 1:k){
+  anchor_word = anchor_set[d]
+  if(anchor_word %in% anchor_set_em){
+    curr_id = which(anchor_set_em == anchor_word)
+  }else{curr_id = -1}
+  aligned_em[d] = curr_id
+}
+aligned_em
+
+anchor_set_lda = apply(A_lda, 2, which.max)
+aligned_lda = replicate(k, -1)
+for(d in 1:k){
+  anchor_word = anchor_set[d]
+  if(anchor_word %in% anchor_set_lda){
+    curr_id = which(anchor_set_lda == anchor_word)
+  }else{curr_id = -1}
+  aligned_lda[d] = curr_id
+}
+aligned_lda
+## fail to align one topic. I assign topic 5
+aligned_lda[aligned_lda == -1] = 5
+
+
+```
+Most topics are aligned by anchor word! For the only unmatached one, I assign topic 9.
+
+
+```{r}
+par(mfrow=c(2,3))
+for(d in 1:k){
+  plot(A[,d],main = sprintf("true topic %d", d))
+  plot(A_em[,aligned_em[d]], main = sprintf("mle topic %d", d))
+  plot(A_lda[,aligned_lda[d]], main = sprintf("lda topic %d", d))
+}
+```
+
+
+look at topic 8 
+```{r}
+d = 8
+plot(A[A[,d] < 0.03,d], A_em[A_em[,aligned_em[d]] < 0.03,aligned_em[d]], xlab = "A", ylab = "A_em", main = sprintf("topic %d", d))
+abline(a = 0, b = 1, col =  "red")
+```
+
+
+Compare likelihood $p(X|A, W)$.
+```{r}
+Lam_true = A %*% W %*% diag(colSums(X))
+Lam_em = A_em %*% W_em %*% diag(colSums(X))
+Lam_lda = A_lda %*% W_lda %*% diag(colSums(X))
+
+## likelihood for truth
+sum(dpois(x = X, lambda = Lam_true,log = TRUE))
+
+## likelihood for em result
+sum(dpois(x = X, lambda = Lam_em,log = TRUE))
+
+## likelihood for lda result
+sum(dpois(x = X, lambda = Lam_lda,log = TRUE))
+```
+
+
+
+
+## Some observations
+* The ability to recover $A$ depends on the number of words per document. The more words, the better estimates. (LDA results are much better when we have more double words/per document). 
+
+* I tried `VEM` (variational EM) in `LDA` method. The result  is even worse! $\hat{A}$ and loglikelihood (-67937) are much worse. This requires some caution on `EBPMF`. 
+
+## To do
+* This task is too easy for MLE. Try more anchor words per topic, and more noise (less separable)
+
+* Take a look at the `LDA` function (is it also empirical bayes? how to assess convergence?)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
