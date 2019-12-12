@@ -86,8 +86,6 @@ for(d in 1:k){
   aligned_ind[d] = curr_id
 }
 aligned_ind
-
-aligned_ind[aligned_ind == -1] = 9
 ```
 All topics are aligned by anchor word! 
 
