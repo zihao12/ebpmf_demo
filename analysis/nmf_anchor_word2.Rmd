@@ -1,0 +1,172 @@
+---
+title: "NMF experiments 2"
+author: "zihao12"
+date: "2019-12-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I simulate data under the anchor words assumption, using multinomial model:\
+
+Let $A \in R^{p \times k}$ be $k$ topics (each column sums to one, nonnegative). We require that for each topic, there is at least one "anchor word" $i_k$ so that $A_{i_k, j} > 0, A_{i \neq i_k, j} = 0$. I relax the strictly zero to some small  value compared to. \
+
+Then $Prob = A W$, $X_{Ij} \sim Multinom(N_j, Prob_{Ij})$ (note $X \in R^{p \times n}$). 
+
+## Data simulation. 
+```{r}
+rm(list = ls())
+set.seed(123)
+n = 500
+p = 2500
+k = 5
+anchor_word_per_topic = 10
+sep_val = 0.5
+M = round(p/5)
+
+A = matrix(runif(p*k), ncol = k)
+W = matrix(replicate(n*k, 0), nrow = k)
+X = matrix(replicate(n*p, 0), nrow = p)
+
+## get set of anchor words (id)
+##  each topic has only 10 anchor word
+S = sort(sample(x = 1:p, size = anchor_word_per_topic*k, replace = TRUE))
+start_id = seq(1, anchor_word_per_topic*(k-1) + 1, length.out = k)
+
+## generate A
+for(d in 1:k){
+  if(d < k){an_words = S[start_id[d]:(start_id[d+1]-1)]}
+  else{an_words = S[start_id[d]:length(S)]}
+  A[an_words, d] = sort(2 * k * sep_val * runif(n = anchor_word_per_topic, min = 0.4, max = 0.6))
+}
+A = t(t(A)/colSums(A))
+
+## generate W
+## each document has at most 3 topics (roughly)
+for(i in 1:n){
+  cardin = sample(x = 1:floor(k/3), size = 1)
+  top_supp = sample(x = 1:k, size = cardin, replace = TRUE)
+  W[top_supp,i] = runif(cardin)
+  W[, i] = W[,i]/sum(W[,i])
+}
+
+prob_m = A %*% W
+
+for(i in 1:n){
+  n_word = rpois(n = 1, lambda = M)
+  X[,i] = rmultinom(n = 1, size = n_word, prob = prob_m[,i])
+}
+
+print(sprintf("percentage of 0s: %f", sum(X == 0)/(n*p)))
+
+```
+
+
+## Fit 
+```{r}
+source("code/misc.R")
+## fit with MLE_EM
+library(NNLM)
+fit_mle_em = NNLM::nnmf(A = t(X), k = k, loss = "mkl", method = "scd", max.iter = 10000)
+lf_mlf_em = poisson2multinom(F = t(fit_mle_em$H), L = fit_mle_em$W)
+A_em = lf_mlf_em$F
+W_em = t(lf_mlf_em$L)
+
+```
+
+## Compare topics
+```{r}
+par(mfrow=c(1,2))
+image(A)
+image(A_em)
+```
+
+
+Let's see if we can choose topics by anchor words
+
+```{r}
+find_closest <- function(v, V){
+  min_dist = Inf
+  cand = -1
+  for(i in 1:ncol(V)){
+    curr_dist = sum((v - V[,i])^2)
+    if(curr_dist < min_dist){
+      min_dist = curr_dist
+      cand = i
+    }
+  }
+  return(cand)
+}
+
+
+
+anchor_set = apply(A, 2, which.max)
+
+anchor_set_em = apply(A_em, 2, which.max)
+aligned_em = replicate(k, -1)
+for(d in 1:k){
+  if(d < k){anchor_words = S[start_id[d]:(start_id[d+1]-1)]}
+  else{anchor_words = S[start_id[d]:length(S)]}
+  
+  ## only look at those anchor words and look at which topic is closest
+  curr_id = find_closest(A[anchor_words,d], A_em[anchor_words,])
+  aligned_em[d] = curr_id
+}
+aligned_em
+
+```
+
+
+```{r}
+par(mfrow=c(2,3))
+for(d in 1:k){
+  plot(A[,d],main = sprintf("true topic %d", d))
+  plot(A_em[,aligned_em[d]], main = sprintf("mle topic %d", d))
+  
+  if(d < k){anchor_words = S[start_id[d]:(start_id[d+1]-1)]}
+  else{anchor_words = S[start_id[d]:length(S)]}
+  plot(A[anchor_words,d], A_em[anchor_words, aligned_em[d]], xlab = "true  proportions", ylab = "mle proportions", main = "anchor words proportion")
+}
+```
+
+
+
+
+Compare likelihood $p(X|A, W)$.
+```{r}
+Lam_true = A %*% W %*% diag(colSums(X))
+Lam_em = A_em %*% W_em %*% diag(colSums(X))
+
+## likelihood for truth
+sum(dpois(x = X, lambda = Lam_true,log = TRUE))
+
+## likelihood for em result
+sum(dpois(x = X, lambda = Lam_em,log = TRUE))
+```
+
+## Observations
+There are two challenges:
+
+* when the number of words per document gets small (I am showing the result for average $p/3$ words): In particular, when the data gets sparser, MLE result has more values close to 0, while getting some wrong signal. \
+
+* when the topis is less separable
+
+Besides, 
+
+*  when $n, p$ grows (proportionally), it is also easier to estimate $A$
+
+* by `lee` and `scd` doesn't make too much difference. 
+
+
+
+
+
+
+
+
+
+
+
+
+
