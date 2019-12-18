@@ -545,10 +545,10 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3bdff06661c3292e171c781352e5a1607696ff31targetblank3bdff06a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/3bdff06661c3292e171c781352e5a1607696ff31" target="_blank">3bdff06</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree5da0f0bba95264e22f8e04774cf7f3370e9fadb6targetblank5da0f0ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/5da0f0bba95264e22f8e04774cf7f3370e9fadb6" target="_blank">5da0f0b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3bdff06661c3292e171c781352e5a1607696ff31targetblank3bdff06a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree5da0f0bba95264e22f8e04774cf7f3370e9fadb6targetblank5da0f0ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -650,6 +650,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/5da0f0bba95264e22f8e04774cf7f3370e9fadb6/analysis/nmf_anchor_word3.Rmd" target="_blank">5da0f0b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+<td>
+nmf_anchor_word3.Rmd with updated ebpm and ebpmf
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/c98027b10c412817633ba91794e1fa5a6e394c52/docs/nmf_anchor_word3.html" target="_blank">c98027b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -760,7 +794,7 @@ n = 100
 p = 500
 k = 5
 anchor_word_per_topic = 5
-sep_val = 1
+sep_val = 0.5
 M = round(p/3)
 
 A = matrix(runif(p*k), ncol = k)
@@ -797,7 +831,7 @@ for(i in 1:n){
 }
 
 print(sprintf(&quot;percentage of 0s: %f&quot;, sum(X == 0)/(n*p)))</code></pre>
-<pre><code>[1] &quot;percentage of 0s: 0.744200&quot;</code></pre>
+<pre><code>[1] &quot;percentage of 0s: 0.733820&quot;</code></pre>
 <pre class="r"><code>## save simulation for possible comparison with `anchorwords`
 write.table(A, &quot;data/nmf_anchor_word3_A.csv&quot;, row.names = FALSE, col.names = FALSE)
 write.table(W, &quot;data/nmf_anchor_word3_W.csv&quot;, row.names = FALSE, col.names = FALSE)
@@ -846,7 +880,7 @@ for(d in 1:k){
 }
 ## aligned topics 
 aligned_em</code></pre>
-<pre><code>[1] 4 2 3 1 5</code></pre>
+<pre><code>[1] 2 5 1 5 2</code></pre>
 <p>fit with EBPMF</p>
 <pre class="r"><code>#library(ebpmf.alpha)
 #eps = .Machine$double.xmin
@@ -875,7 +909,7 @@ for(d in 1:k){
 }
 ## aligned topics 
 aligned_ebpmf</code></pre>
-<pre><code>[1] 5 2 3 1 4</code></pre>
+<pre><code>[1] 2 2 2 4 5</code></pre>
 <pre class="r"><code>par(mfrow=c(2,3))
 for(d in 1:k){
   plot(A[,d],main = sprintf(&quot;true topic %d&quot;, d))
@@ -1036,13 +1070,13 @@ Lam_ebpmf = A_ebpmf %*% W_ebpmf %*% diag(colSums(X))
 
 ## likelihood for truth
 sum(dpois(x = X, lambda = Lam_true,log = TRUE))</code></pre>
-<pre><code>[1] -32912.06</code></pre>
+<pre><code>[1] -33702.93</code></pre>
 <pre class="r"><code>## likelihood for em result
 sum(dpois(x = X, lambda = Lam_em,log = TRUE))</code></pre>
-<pre><code>[1] -31486.29</code></pre>
+<pre><code>[1] -Inf</code></pre>
 <pre class="r"><code>## likelihood for ebpmf result
 sum(dpois(x = X, lambda = Lam_ebpmf,log = TRUE))</code></pre>
-<pre><code>[1] -32065.5</code></pre>
+<pre><code>[1] -33533.96</code></pre>
 <p>Compare ELBO</p>
 <p>For truth and MLE result, I initialize q,g with them and run 1 iteration.</p>
 <pre class="r"><code>## ELBOP FOR EBPMF
@@ -1052,12 +1086,12 @@ fit_ebpmf_two_gamma$ELBO[length(fit_ebpmf_two_gamma$ELBO)]</code></pre>
 qg_true = ebpmf.alpha::initialize_qg_from_LF(F0 = A, L0 = t(W %*% diag(colSums(X))))
 fit_tmp = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, qg = qg_true, maxiter.out = 1)
 fit_tmp$ELBO</code></pre>
-<pre><code>[1] -31707.07</code></pre>
+<pre><code>[1] -33112.64</code></pre>
 <pre class="r"><code>## ELBO FOR MLE
 qg_mle = ebpmf.alpha::initialize_qg_from_LF(F0 = t(fit_mle_em$H), L0 = fit_mle_em$W)
 fit_mle = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, qg = qg_mle, maxiter.out = 1)
 fit_mle$ELBO</code></pre>
-<pre><code>[1] -32127.03</code></pre>
+<pre><code>[1] -33952.6</code></pre>
 <pre class="r"><code>plot(fit_ebpmf_two_gamma$ELBO)</code></pre>
 <p><img src="figure/nmf_anchor_word3.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1310,11 +1344,10 @@ loaded via a namespace (and not attached):
 [25] devtools_2.2.1.9000 rprojroot_1.3-2     glue_1.3.1         
 [28] R6_2.4.0            processx_3.3.1      rmarkdown_1.13     
 [31] sessioninfo_1.1.1   mixsqp_0.2-3        callr_3.2.0        
-[34] magrittr_1.5        whisker_0.3-2       codetools_0.2-16   
-[37] usethis_1.5.1       backports_1.1.5     promises_1.0.1     
-[40] ps_1.3.0            htmltools_0.3.6     ellipsis_0.3.0     
-[43] assertthat_0.2.1    httpuv_1.5.1        stringi_1.4.3      
-[46] crayon_1.3.4       </code></pre>
+[34] magrittr_1.5        whisker_0.3-2       usethis_1.5.1      
+[37] backports_1.1.5     promises_1.0.1      ps_1.3.0           
+[40] htmltools_0.3.6     ellipsis_0.3.0      assertthat_0.2.1   
+[43] httpuv_1.5.1        stringi_1.4.3       crayon_1.3.4       </code></pre>
 </div>
 </div>
 
