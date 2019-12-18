@@ -26,8 +26,8 @@ n = 100
 p = 500
 k = 5
 anchor_word_per_topic = 5
-sep_val = 0.5
-M = round(p/3)
+sep_val = 1
+M = round(p/5)
 
 A = matrix(runif(p*k), ncol = k)
 W = matrix(replicate(n*k, 0), nrow = k)
