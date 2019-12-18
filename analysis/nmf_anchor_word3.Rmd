@@ -123,7 +123,7 @@ fit with EBPMF
 #eps = .Machine$double.xmin
 eps = 0
 qg0 = ebpmf.alpha::initialize_qg_from_LF(L0 = fit_mle_em$W + eps, F0 = t(fit_mle_em$H + eps))
-fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 200, verbose = TRUE)
+  fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 200, verbose = FALSE)
 ```
 
 
