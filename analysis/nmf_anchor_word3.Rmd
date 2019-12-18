@@ -123,7 +123,7 @@ fit with EBPMF
 #eps = .Machine$double.xmin
 eps = 0
 qg0 = ebpmf.alpha::initialize_qg_from_LF(L0 = fit_mle_em$W + eps, F0 = t(fit_mle_em$H + eps))
-fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 1000, verbose = FALSE)
+fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 200, verbose = TRUE)
 ```
 
 
@@ -179,7 +179,7 @@ sum(dpois(x = X, lambda = Lam_ebpmf,log = TRUE))
 Compare ELBO
 
 For truth and MLE result, I initialize q,g with them and run 1 iteration. 
-```{r}
+```{r message=FALSE, warning=FALSE}
 ## ELBOP FOR EBPMF
 fit_ebpmf_two_gamma$ELBO[length(fit_ebpmf_two_gamma$ELBO)]
 
@@ -198,19 +198,19 @@ fit_mle$ELBO
 
 
 ```{r}
- fit_ebpmf_two_gamma$qg$gfs
+plot(fit_ebpmf_two_gamma$ELBO)
 
- fit_ebpmf_two_gamma$qg$gls
+fit_ebpmf_two_gamma$qg$gfs
+
+fit_ebpmf_two_gamma$qg$gls
 ```
 
-
-
 ## Conclusion
-* `ebpmf` with two gammas has optimization issues. The default initialization for `ebpm_two_gamma` is using k-means; however, when applying this, the ELBO does not increase monotonically, and get NaN in `nlm`. So I initialize `ebpm_two_gamma` with fixed `g` each time. But the estimated $\hat{g}$ for each loading & factor has $\pi_0 = 0$, so only one gamma is used. Why is that ??
+* `ebpmf` with two gammas has some optimization issues: ELBO sometimes jump to a very large number; sometimes get ELBO gets NaN (in iteration 448 in this example). Need to figure it out.
 
 * ELBO: Truth > ebpmf >  MLE
 
-* By comparing $A$, we can't find obvious differences between MLE and ebpmf result. 
+* `ebpmf_two_gamma` seems to be small advantages over `mle` result.  
 
 
 
