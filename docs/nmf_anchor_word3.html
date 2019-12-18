@@ -545,10 +545,10 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree1d6f9050fe9d777efdd8056ea3fafe17fb70e5e6targetblank1d6f905a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/1d6f9050fe9d777efdd8056ea3fafe17fb70e5e6" target="_blank">1d6f905</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3bdff06661c3292e171c781352e5a1607696ff31targetblank3bdff06a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/3bdff06661c3292e171c781352e5a1607696ff31" target="_blank">3bdff06</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree1d6f9050fe9d777efdd8056ea3fafe17fb70e5e6targetblank1d6f905a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3bdff06661c3292e171c781352e5a1607696ff31targetblank3bdff06a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -650,6 +650,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3bdff06661c3292e171c781352e5a1607696ff31/analysis/nmf_anchor_word3.Rmd" target="_blank">3bdff06</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+<td>
+nmf_anchor_word3.Rmd with updated ebpm and ebpmf
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/be67c884140717e5848541e9b994ce95d3d499ea/docs/nmf_anchor_word3.html" target="_blank">be67c88</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -818,407 +852,7 @@ aligned_em</code></pre>
 #eps = .Machine$double.xmin
 eps = 0
 qg0 = ebpmf.alpha::initialize_qg_from_LF(L0 = fit_mle_em$W + eps, F0 = t(fit_mle_em$H + eps))
-fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 200, verbose = TRUE)</code></pre>
-<pre><code>[1] &quot;iter         ELBO&quot;
-[1] &quot;1:    -32234.301100&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;2:    -32211.521049&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;3:    -32171.786325&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;4:    -32142.151403&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;5:    -32105.867368&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;6:    -32080.905263&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;7:    -32052.610332&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;8:    -32026.390639&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;9:    -32001.341388&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;10:    -31975.776569&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;11:    -31950.065819&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;12:    -31930.001982&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;13:    -31914.133257&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;14:    -31896.849768&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;15:    -31880.990929&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;16:    -31869.191561&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;17:    -31860.327026&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;18:    -31854.681038&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;19:    -31506.109778&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;20:    -31848.157505&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;21:    -31845.124999&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;22:    -31844.806607&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;23:    -31844.520726&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;24:    -31844.205932&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;25:    -31843.799950&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;26:    -31843.150699&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;27:    -31842.192991&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;28:    -31841.980864&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;29:    -31841.916900&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;30:    -31841.844900&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;31:    -31841.774585&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;32:    -31841.668303&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;33:    -31841.545007&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;34:    -31841.435507&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;35:    -31841.236608&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;36:    -31840.875848&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;37:    -31840.132481&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;38:    -31839.401492&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;39:    -31839.451433&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;40:    -31839.405736&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;41:    -31839.384379&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;42:    -31839.382537&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;43:    -31815.209229&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;44:    -31839.484968&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;45:    -31839.386395&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;46:    -31839.382530&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;47:    -31839.030059&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;48:    -31839.380003&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;49:    -31839.375523&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;50:    -31821.124799&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;51:    -31839.416885&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;52:    -31839.372568&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;53:    -31839.346389&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;54:    -31839.369719&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;55:    -31839.028862&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;56:    -31839.348030&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;57:    -31839.360588&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;58:    -31839.239299&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;59:    -31839.357717&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;60:    -31839.336667&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;61:    -31839.354279&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;62:    -31839.355426&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;63:    -31803.212300&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;64:    -31839.335732&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;65:    -31839.343663&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;66:    -31839.351666&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;67:    -31838.968454&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;68:    -31839.318561&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;69:    -31839.175316&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;70:    -31839.298894&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;71:    -31839.327526&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;72:    -31839.321011&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;73:    -31838.992842&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;74:    -31839.038493&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;75:    -31839.319997&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;76:    -31839.304343&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;77:    -31839.276634&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;78:    -31838.950175&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;79:    -31839.138135&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;80:    -31737.270152&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;81:    -31840.186639&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;82:    -31838.851009&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;83:    -27334.979890&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;84:    -31565.507195&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;85:    -31837.887328&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;86:    -31836.835517&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;87:    -31836.874181&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;88:    -31831.932493&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;89:    -31836.821265&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;90:    -31835.935048&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;91:    -30342.548002&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;92:    -31836.501216&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;93:    -31836.752055&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;94:    -31836.763225&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;95:    -31836.773839&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;96:    -31836.725530&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;97:    -31836.780468&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;98:    -31831.584816&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;99:    -31836.815819&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;100:    -31836.813423&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;101:    -31836.809898&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;102:    -31836.799241&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;103:    -31836.806061&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;104:    -31836.796711&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;105:    -31836.791876&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;106:    -31836.790549&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;107:    -31836.787882&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;108:    -31836.789299&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;109:    -31836.787914&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;110:    -31836.746286&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;111:    -31836.748457&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;112:    -31836.759733&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;113:    -31836.789303&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;114:    -31836.788860&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;115:    -31836.788176&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;116:    -31836.787503&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;117:    -31836.786906&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;118:    -31836.785232&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;119:    -31836.785410&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;120:    -31836.793939&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;121:    -31836.785538&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;122:    -31836.793056&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;123:    -31836.782098&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;124:    -31836.790741&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;125:    -31836.792486&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;126:    -31836.684915&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;127:    -31836.773815&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;128:    -31836.792370&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;129:    -31836.791166&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;130:    -31836.782448&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;131:    472923295.016372&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;132:    -31837.507520&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;133:    -31836.761040&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;134:    -31836.745637&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;135:    -31836.696430&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;136:    -31836.781275&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;137:    -31836.775561&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;138:    -31836.758152&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;139:    -31836.738850&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;140:    -31836.766858&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;141:    -31836.759236&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;142:    -31836.759927&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;143:    -31836.741567&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;144:    -31836.760106&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;145:    -31829.995250&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;146:    -31836.758332&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;147:    -31836.766954&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;148:    -31836.755144&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;149:    -31836.772037&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;150:    -31836.754274&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;151:    -31836.774958&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;152:    -31836.765566&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;153:    -31836.757984&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;154:    -31836.628722&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;155:    -31836.756956&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;156:    -31836.756940&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;157:    -31836.776840&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;158:    -31836.755966&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;159:    -31836.775393&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;160:    -31836.756392&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;161:    -31836.745176&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;162:    -31495.459407&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;163:    -31836.756487&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;164:    -31836.729541&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;165:    -31836.719711&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;166:    -31836.756778&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;167:    -31836.738178&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;168:    -31836.778264&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;169:    -31836.758159&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;170:    -31836.758126&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;171:    -31836.639251&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;172:    -31836.745817&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;173:    -31836.756451&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;174:    -31836.596263&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;175:    -31836.775032&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;176:    -31836.757876&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;177:    -31836.761985&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;178:    -31836.725756&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;179:    -31836.740829&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;180:    -31836.753401&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;181:    -31836.737373&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;182:    -31836.611004&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;183:    -31836.754580&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;184:    -31836.777690&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;185:    -31836.756799&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;186:    -31836.785620&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;187:    -31836.742713&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;188:    -31836.743815&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;189:    -31836.714544&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;190:    -31836.756549&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;191:    -31836.727536&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;192:    -31836.763210&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;193:    -31836.785386&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;194:    -31836.756771&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;195:    -31836.744639&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;196:    -31836.741275&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;197:    -31728.451292&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;198:    -31836.819867&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;199:    -31836.811718&quot;
-[1] &quot;iter         ELBO&quot;
-[1] &quot;200:    -31836.803583&quot;</code></pre>
+  fit_ebpmf_two_gamma = ebpmf.alpha::ebpmf_two_gamma(X = t(X), K = k, maxiter.out = 200, verbose = FALSE)</code></pre>
 <div class="alert alert-warning">
 <p>
 <strong>Warning:</strong> The above code chunk cached its results, but it won’t be re-run if previous chunks it depends on are updated. If you need to use caching, it is highly recommended to also set <code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the file (in a chunk that is not cached). Alternatively, you can customize the option <code>dependson</code> for each individual chunk that is cached. Using either <code>autodep</code> or <code>dependson</code> will remove this warning. See the <a href="https://yihui.name/knitr/options/#cache"
@@ -1273,6 +907,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/be67c884140717e5848541e9b994ce95d3d499ea/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-1.png" target="_blank">be67c88</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/1766be13c89dded328c6035c4550f1217c76e897/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-1.png" target="_blank">1766be1</a>
 </td>
 <td>
@@ -1311,6 +956,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/be67c884140717e5848541e9b994ce95d3d499ea/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-2.png" target="_blank">be67c88</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/1766be13c89dded328c6035c4550f1217c76e897/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-2.png" target="_blank">1766be1</a>
 </td>
 <td>
@@ -1347,6 +1003,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/be67c884140717e5848541e9b994ce95d3d499ea/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-3.png" target="_blank">be67c88</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/1766be13c89dded328c6035c4550f1217c76e897/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-6-3.png" target="_blank">1766be1</a>
@@ -1393,6 +1060,43 @@ fit_mle$ELBO</code></pre>
 <pre><code>[1] -32127.03</code></pre>
 <pre class="r"><code>plot(fit_ebpmf_two_gamma$ELBO)</code></pre>
 <p><img src="figure/nmf_anchor_word3.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/be67c884140717e5848541e9b994ce95d3d499ea/docs/figure/nmf_anchor_word3.Rmd/unnamed-chunk-9-1.png" target="_blank">be67c88</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>fit_ebpmf_two_gamma$qg$gfs</code></pre>
 <pre><code>[[1]]
 [[1]]$pi0
@@ -1606,10 +1310,11 @@ loaded via a namespace (and not attached):
 [25] devtools_2.2.1.9000 rprojroot_1.3-2     glue_1.3.1         
 [28] R6_2.4.0            processx_3.3.1      rmarkdown_1.13     
 [31] sessioninfo_1.1.1   mixsqp_0.2-3        callr_3.2.0        
-[34] magrittr_1.5        whisker_0.3-2       usethis_1.5.1      
-[37] backports_1.1.5     promises_1.0.1      ps_1.3.0           
-[40] htmltools_0.3.6     ellipsis_0.3.0      assertthat_0.2.1   
-[43] httpuv_1.5.1        stringi_1.4.3       crayon_1.3.4       </code></pre>
+[34] magrittr_1.5        whisker_0.3-2       codetools_0.2-16   
+[37] usethis_1.5.1       backports_1.1.5     promises_1.0.1     
+[40] ps_1.3.0            htmltools_0.3.6     ellipsis_0.3.0     
+[43] assertthat_0.2.1    httpuv_1.5.1        stringi_1.4.3      
+[46] crayon_1.3.4       </code></pre>
 </div>
 </div>
 
