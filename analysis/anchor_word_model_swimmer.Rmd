@@ -1,0 +1,119 @@
+---
+title: "anchor_word_model_swimmer"
+author: "zihao12"
+date: "2020-01-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Test anchor word methods on swimmer dataset. This dataset is often used in evaluation for topic modeling, first (?) appearing in https://web.stanford.edu/~vcs/papers/NMFCDP.pdf: "We built the Swimmer image library of 256 32×32 images. Each image contains a “torso”
+of 12 pixels in the center and four “limbs” of 6 pixels that can be in one of 4 positions. All
+combinations of all possible limb positions gives us 256 images." 
+
+## result
+anchor-word method seems to be better: all topics learn one and only one limb position; it has some topics not haunted by the ghostly "torso".
+
+```{r message=FALSE}
+rm(list = ls())
+library(R.matlab)
+library(NNLM)
+source("code/misc.R")
+swimmer = readMat("data/swimmer.mat")[[1]]
+dim(swimmer)
+image(matrix(swimmer[,2], nrow = 32, byrow = TRUE))
+sprintf("%d images of size %d^2", ncol(swimmer), sqrt(nrow(swimmer)))
+```
+
+## fit with anchor-word method
+```{r cache=TRUE, autodep=TRUE}
+r = 16
+input_name = "anchor_word_swimmer"
+write.table(swimmer, sprintf("data/%s_X.csv",input_name), row.names = FALSE, col.names = FALSE)
+start = proc.time()
+system(sprintf("python2 code/anchor-word-recovery/nmf_anchor_exper.py %s %d", input_name, r))
+runtime_a = proc.time() - start
+runtime_a
+A_a = read.table(sprintf("data/%s_A_anchor.csv", input_name),sep = " ")
+
+system(sprintf("rm data/%s_A_anchor.csv", input_name))
+system(sprintf("rm data/%s_X.csv", input_name))
+```
+
+## fit with EM method
+```{r cache=TRUE, autodep=TRUE}
+## fit with MLE_EM
+start = proc.time()
+fit_mle_em = NNLM::nnmf(A = t(swimmer), k = r, loss = "mkl", method = "scd", max.iter = 5000, rel.tol = 1e-20)
+runtime_em = proc.time() - start
+runtime_em
+lf_mlf_em = poisson2multinom(F = t(fit_mle_em$H), L = fit_mle_em$W)
+A_em = lf_mlf_em$F
+W_em = t(lf_mlf_em$L)
+```
+
+
+## align topics
+```{r}
+find_closest <- function(v, V){
+  min_dist = Inf
+  cand = -1
+  for(i in 1:ncol(V)){
+    curr_dist = sum((v - V[,i])^2)
+    if(curr_dist < min_dist){
+      min_dist = curr_dist
+      cand = i
+    }
+  }
+  return(cand)
+}
+
+align_id = replicate(r, -1) ## align_id[i] is topic in mle that corresponds to topic_i in anchor-word
+for(i in 1:r){
+  id = find_closest(A_a[,i], A_em)
+  align_id[i] = id
+}
+
+table(align_id)
+```
+
+
+## show topics
+```{r}
+## x is a long vector of length d^2
+show_image <- function(x, title){
+  d = sqrt(length(x))
+  image(matrix(x, nrow = d, byrow = TRUE), main = title)
+}
+
+for(i in 1:r){
+  par(mfrow=c(1,2))
+  show_image(A_a[,i], title = sprintf("anchor: topic %d", i))
+  show_image(A_em[,align_id[i]], title = sprintf("mle: topic %d", i))
+}
+```
+
+Note: Donoho's paper says "The presence
+of the torso (i.e. an invariant region) violates our conditions for a Factorial Separable
+Articulation Library, and, not unexpectedly, ghosts of the torso contaminate several of the
+reconstructed generators." It seems to contaminate topics learnt by MLE, while anchor-word method has some uncontaminated topics. 
+
+```{r}
+for(i in 1:r){
+  par(mfrow=c(1,1))
+  plot(A_a[,i], A_em[,align_id[i]], main = sprintf("topic %d", i), xlab = "anchor word", ylab = "mle")
+}
+```
+
+
+
+Is the sample size big enough?
+```{r}
+n = ncol(swimmer)
+m = nrow(swimmer)
+eps = 0.1
+m0 = round( (log(n) + 6 * log(r))/(eps^2) )
+sprintf("required sample size for eps = %f is %d", eps, m0)
+```
+
