@@ -1,0 +1,66 @@
+---
+title: "numerical_lgamma"
+author: "zihao12"
+date: "2019-12-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+The following function computes a part of negative binomial loglikelihod (allows for continuous number ...). It should be continuous w.r.t to $x$, but when $a$ is much larger than $x$, there is some numerical issue. 
+
+```{r}
+f <- function(x, a){
+  return(lgamma(x + a) - lgamma(a))
+}
+
+a = 2*1e+16
+
+xs = seq(0,50, 0.01)
+
+plot(xs, f(xs, a))
+```
+
+
+```{r}
+f(2, a)
+
+f(3, a)
+
+f(11,a)
+
+f(20,a)
+
+f(30,a)
+
+f(40,a)
+
+f(50,a)
+```
+
+
+Is `lgamma` continuous?
+
+```{r}
+ys = seq(1,1000,0.01)
+plot(ys, lgamma(ys))
+
+
+plot(ys, lgamma(1e+5 + ys))
+
+plot(ys, lgamma(1e+10 + ys))
+
+plot(ys, lgamma(1e+15 + ys))
+
+plot(ys, lgamma(1e+17 + ys))
+
+```
+
+
+
+
+
+
+
