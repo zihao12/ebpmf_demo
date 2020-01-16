@@ -16,6 +16,7 @@ data = readRDS("../ebpm/data/ebpmf_two_gamma_issue2.Rds")
 x = data$x
 s = data$s
 hist(x)
+print(s)
 
 print("the following are the possible ll from ebpm (initialized with K-means)")
 replicate(20,ebpm_two_gamma(x = x, s = s)$log_likelihood)
