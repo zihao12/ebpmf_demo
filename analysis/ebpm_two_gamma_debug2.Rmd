@@ -1,0 +1,298 @@
+---
+title: "ebpm_two_gamma_debug2"
+author: "zihao12"
+date: "2020-01-14"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Current `ebpm_two_gamma` method in `ebpm` package  has severe optimization issue, as a result the ELBO does not monotonically increase in `ebpmf`. I want to build a more stable method, with EM. I call it `ebpm_two_gamm2` for this analysis.
+
+The issue of `ebpm_two_gamma` is investigated here: https://zihao12.github.io/ebpmf_demo/numerical_lgamma.html. 
+
+
+## EM algorithm for two-gamma prior.
+The algorithm is very similar to Gaussion mixture, except the parameters for the two components are not analytic: we need to maximize weighted sum of negative binomial log-likelihoods (with `nlm`; I only use one `nlm` step for every M-step: `control = list(ndigit = 8, stepmax = 1, iterlim = 1, check.analyticals = FALSE)`). 
+```{r warning=FALSE, message=FALSE}
+rm(list = ls())
+library(stats) ## use nlm solver
+library(ebpm)
+set.seed(123)
+
+
+ebpm_two_gamma2 <- function(x, s, n_iter){
+  init = init_two_gamma(x, s)
+  fit = ebpm_two_gamma_util(x = x, s = s, n_iter = n_iter, pi1 = init$pi0,
+                      a1 = init$shape1, b1 = 1/init$scale1,
+                      a2 = init$shape2, b2 = 1/init$scale2)
+
+  fit$init = init
+  return(fit)
+}
+
+
+init_two_gamma <- function(x, s){
+  #browser()
+  ## use k-means to find 2 clusters
+  clst = try(kmeans(x = x/s, centers = 2))
+
+  if(class(clst) == "try-error"){ ## then probably there should be only 1 cluster
+    pi0 = 0
+    shape1 = 1; scale1 = 1;
+    shape2 = 1; scale2 = 1;
+  }else{
+    ## initialzie pi0
+    pi0 = sum(clst$cluster == 1)/length(x)
+    ## estimate shape1, scale1
+    idx = which(clst$cluster == 1)
+    fit_ = ebpm_point_gamma(x = x[idx], s = s[idx], pi0 = 0)
+    shape1 = fit_$fitted_g$shape
+    scale1 = fit_$fitted_g$scale
+    ## estimate shape2, scale2
+    idx = which(clst$cluster == 2)
+    fit_ = ebpm_point_gamma(x = x[idx], s = s[idx], pi0 = 0)
+    shape2 = fit_$fitted_g$shape
+    scale2 = fit_$fitted_g$scale
+  }
+  return(list(pi0 = pi0, shape1 = shape1, scale1 = scale1, shape2 = shape2, scale2 = scale2))
+}
+
+## model:
+## x_i | lambda_i ~ Pois(s_i lambda_i)
+## lambda_i ~ pi1 * gamma(.;a1, b1) + pi2 * gamma(.;a2, b2)
+
+## input
+## x, s are vectors of the same length
+## pi1, a1, b1, a2, b2 are initialization for the parameters
+
+## output
+## list(param, ll)
+ebpm_two_gamma_util <- function(x, s, n_iter, pi1, a1, b1, a2, b2){
+  control = list(ndigit = 8, stepmax = 1, iterlim = 1, check.analyticals = FALSE)
+  n = length(x)
+  #browser()
+  progress = replicate(n_iter, -1e+20)
+  for(i in 1:n_iter){
+    ### E-step: compute Z | X, pi^0
+    w1 = compute_posterior_w(x, s, pi1, a1,b1, a2, b2)
+    w2 = 1 - w1
+    ### M-step:
+    ## update pi1
+    pi1 = sum(w1)/n
+    ## update a1, b1
+    tmp_ab = update_ab(w1, x, s, a1, b1, control)
+    a1 = tmp_ab$a
+    b1 = tmp_ab$b
+    ## update a2, b2
+    tmp_ab = update_ab(w2, x, s, a2, b2, control)
+    a2 = tmp_ab$a
+    b2 = tmp_ab$b
+
+    ## record progress
+    progress[i] = compute_ll(x, s, pi1, a1, b1, a2, b2)
+    #print(sprintf("%d   %f", i, progress[i]))
+  }
+  param = list(pi1 = pi1, a1 = a1, b1 = b1, a2 = a2, b2 = b2)
+  return(list(param = param, progress = progress))
+}
+
+## compute NB(x, size = a, prob = p)
+compute_nb <- function(x, a, p)
+  exp(compute_nb_log(x, a, p))
+
+
+## compute log NB(x, size = a, prob = p)
+## NB(x, a, p) = Gamma(x + a)/(x!*Gamma(a)) * p^a  * (1-p)^x
+compute_nb_log <- function(x, a, p){
+  tmp = x*log(1-p)
+  tmp[x==0] = 0
+  return( lgamma(x + a) - lgamma(x + 1) - lgamma(a) + a*log(p) + tmp )
+}
+
+
+compute_ll <- function(x, s, pi1, a1, b1, a2, b2){
+  n = length(x)
+  nb1 = compute_nb(x, a = replicate(n, a1), p = b1/(b1 + s))
+  nb2 = compute_nb(x, a = replicate(n, a2), p = b2/(b2 + s))
+  return(sum(log(pi1*nb1 + (1 - pi1)*nb2)))
+}
+
+
+## compute posterior for w: P(Z | X, pi^0)
+compute_posterior_w <- function(x, s, pi1, a1,b1, a2, b2){
+  n = length(x)
+  ## compute posterior Z | X, pi1^0
+  w1 =  pi1 * compute_nb(x, replicate(n, a1), b1/(b1+s))   ## P(Z = 1 | X, pi1^0), not scaled yet
+  w2 =  (1 - pi1) * compute_nb(x, replicate(n, a2), b2/(b2+s))   ## P(Z = 1 | X, pi1^0), not scaled yet
+  w1 = w1/(w1 + w2)
+  return(w1)
+}
+
+
+## update a, b in weighted NB
+## max_{a,b} sum_i w_i log NB(x_i, a, b/b+s_i)
+update_ab <- function(w, x, s, a, b, control){
+  fn_params = list(x = x, s = s,  w = w)
+  init_t = c(log(a), log(b))
+  opt = do.call(nlm, c(list(obj_w_nb, init_t), fn_params, control))
+  log_likelihood =  -obj_w_nb(opt$estimate, x, s, w)
+  a = exp(opt$estimate[1])
+  b = exp(opt$estimate[2])
+  return(list(a = a, b = b))
+}
+
+
+
+compute_weighted_nb_log <- function(w, x, a, p)
+  sum( w * compute_nb_log(x,a,p))
+
+## obj for nlm
+## par = c(log(a), log(b))
+obj_w_nb <- function(par, x, s, w){
+  n = length(x)
+  a = exp(par[1])
+  b = exp(par[2])
+  return(- compute_weighted_nb_log(w, x,replicate(n, a), b/(b + s)))
+}
+
+
+simulate_two_gamma_poisson <- function(pi1, a1, b1, a2, b2, s, n_sample = 1000){
+  lam1 = rgamma(n = n_sample, shape = a1, rate = b1)
+  lam2 = rgamma(n = n_sample, shape = a2, rate = b2)
+  z = rbinom(n = n_sample, size = 1, prob = pi1)
+  lam = z * lam1 + (1-z) * lam2
+  x = rpois(n = n_sample, lambda = s * lam)
+  return(list(x = x, lam = lam))
+}
+```
+
+## on simulated data
+The simulated dataset is easily separable into two clusters. I run `ebpm_two_gamma` and `ebpm_two_gamma2` (with different initializations for the latter).  
+```{r cache=TRUE, autodep=TRUE, warning=FALSE, message=FALSE}
+pi1 = 0.5
+a1 = 500; b1 = 10
+a2 = 20; b2 = 2
+n_sample = 1000
+s = replicate(n_sample, 1)
+tmp_sample = simulate_two_gamma_poisson(pi1, a1, b1, a2, b2, s, n_sample)
+x = tmp_sample$x
+lam = tmp_sample$lam
+hist(lam)
+hist(x)
+
+fit1 = ebpm_two_gamma(x, s)
+
+## initialize from truth
+n_iter1 = 50
+fit2_1 = ebpm_two_gamma_util(x, s, n_iter1, pi1, a1, b1, a2, b2)
+
+## initialize from elsewhere
+n_iter2 = 1000
+pi1 = 0.1
+a1 = 10; b1 = 10
+a2 = 100; b2 = 100
+fit2_2 = ebpm_two_gamma_util(x, s, n_iter2, pi1, a1, b1, a2, b2)
+```
+
+```{r}
+## loglikelihood from ebpm_two_gamm
+fit1$log_likelihood
+## loglikelihood from EM (initialized from truth)
+fit2_1$progress[length(fit2_1$progress)]
+## loglikelihood from EM (initialized elsewhere)
+fit2_2$progress[length(fit2_2$progress)]
+
+## plot loglikelihood for EM (initialized from truth)
+plot(fit2_1$progress)
+## plot loglikelihood for EM (initialized elsewhere)
+plot(fit2_2$progress[300:length(fit2_2$progress)])
+
+## fitted g from ebpm_two_gamma
+fit1$fitted_g
+## fitted g from EM (initialized from truth)
+fit2_1$param
+## fitted g from EM (initialized elsewhere)
+fit2_2$param
+```
+Note that the mixture means are similar, but the mixture variance can be pretty different. 
+
+## on dataset where `ebpm_two_gamma` could fail
+I use `k-means` to initialize the two methods (the initialization is random).
+
+```{r cache=TRUE, autodep=TRUE, warning=FALSE, message=FALSE}
+data = readRDS("../ebpm/data/ebpmf_two_gamma_issue2.Rds")
+x = data$x
+s = data$s
+hist(x)
+hist(s)
+
+print("the following are the possible ll from ebpm (initialized with K-means)")
+replicate(20,ebpm_two_gamma(x = x, s = s)$log_likelihood)
+
+n_iter = 100
+print("the following are the possible ll from EM (initialized with K-means)")
+replicate(20, ebpm_two_gamma2(x, s, n_iter)$progress[n_iter])
+```
+
+### look at results from EM
+For EM: there are at least two possible local optimal, depending on the initialization. Shown below: 
+```{r cache=TRUE, autodep=TRUE, warning=FALSE, message=FALSE}
+stop = FALSE
+while(!stop){
+  fit_ = ebpm_two_gamma2(x, s, n_iter)
+  ll = fit_$progress[n_iter]
+  if(ll < -1139){
+    stop = TRUE
+    print(sprintf("ll = %f", ll))
+    print("init is")
+    print(fit_$init)
+    print("fitted_g")
+    print(fit_$param)
+  }
+}
+
+stop = FALSE
+while(!stop){
+  fit_ = ebpm_two_gamma2(x, s, n_iter)
+  ll = fit_$progress[n_iter]
+  if(ll > -1135){
+    stop = TRUE
+    print(sprintf("ll = %f", ll))
+    print("init is")
+    print(fit_$init)
+    print("fitted_g")
+    print(fit_$param)
+  }
+}
+```
+
+
+## compare speed
+```{r}
+print(length(x))
+
+replicate(5, system.time(fit_ <- ebpm_two_gamma2(x, s, n_iter = 100))[["elapsed"]])
+
+replicate(5, system.time(fit_ <- ebpm_two_gamma(x, s))[["elapsed"]])
+```
+
+
+
+
+## Thoughts:
+In the examples above, we can see:
+
+* current `ebpm_two_gamma` has severe optimization issue, under some initializations
+
+* not sure if `ebpm_two_gamma2` (EM) suffers the same issue. But I haven't seen it so far. Will do more testing
+
+* If we use `ebpm_two_gamma` in `ebpmf`, how many EM iterations do we need? Since it will be very slow if we use too many EM iterations. 
+
+
+
+
+
+
+
