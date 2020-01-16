@@ -1,0 +1,93 @@
+---
+title: "ebpm_two_gamma_debug1"
+author: "zihao12"
+date: "2020-01-16"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+There were issues with `ebpm_two_gamma` (when used in `ebpmf`). I reproduce the problem below. 
+
+```{r}
+library(ebpm)
+data = readRDS("../ebpm/data/ebpmf_two_gamma_issue2.Rds")
+x = data$x
+s = data$s
+hist(x)
+
+print("the following are the possible ll from ebpm (initialized with K-means)")
+replicate(20,ebpm_two_gamma(x = x, s = s)$log_likelihood)
+```
+
+### look at results from `ebpm_point_gamma`
+For `ebpm_point_gamma`, find out why it can have positive ll. 
+```{r}
+stop = FALSE
+while(!stop){
+  fit_ = ebpm_two_gamma(x, s)
+  ll = fit_$log_likelihood
+  if(ll > 0){
+    stop = TRUE
+    print(sprintf("ll = %f", ll))
+    print("fitted_g")
+    print(fit_$fitted_g)
+  }
+}
+```
+
+well, when `a` and `b` gets too big, the computation of NB likelihood becomes inaccurate (even positive). 
+```{r}
+## (in ebpm package) the obj function
+tg_nlm_fn <- function(par, x, s){
+  ## d1 = NB(x, a1, b1/(b1+s)); d2 = NB(x, a2, b2/(b2+s))
+  ## return - log(pi0 * d1 + (1-pi0) * d2)
+  #browser()
+  pi0 = 1/(1+ exp(-par[1]))
+  a1 = exp(par[2])
+  b1  =  exp(par[3])
+  a2 = exp(par[4])
+  b2  =  exp(par[5])
+  d1_log <- dnbinom_cts_log_vec(x, a1, b1/(b1+s))
+  d2_log <- dnbinom_cts_log_vec(x, a2, b2/(b2+s))
+  out = sum( log( pi0*exp(d1_log)  + (1-pi0)*exp(d2_log) ) )
+  return(-out)
+}
+
+
+## (in ebpm package) function that computes NB loglikelihood
+dnbinom_cts_log_vec <- function(x, a, prob){
+  tmp = x*log(1-prob)
+  tmp[x == 0] = 0 ## R says 0*-Inf = NaN
+  return(a*log(prob) + tmp + lgamma(x+a) - lgamma(x+1) - lgamma(a))
+}
+
+## use jensen inequality:
+## sum( log( pi0*exp(d1_log)  + (1-pi0)*exp(d2_log) ) ) >=  sum ( pi0*d1_log + (1-pi0)*d2_log ) = pi0 * sum(d1_log) + (1-pi0)*sum(d2_log)
+## below I show sum(d1_log) & sum(d2_log)
+
+pi0 = fit_$fitted_g$pi0
+
+## likelihood for mixture 1
+a = fit_$fitted_g$shape1
+b = 1/fit_$fitted_g$scale1
+prob = b/(b + s)
+sum_d1_log = sum(dnbinom_cts_log_vec(x, a, prob))
+sum_d1_log
+
+a = fit_$fitted_g$shape2
+b = 1/fit_$fitted_g$scale2
+prob = b/(b + s)
+sum_d2_log = sum(dnbinom_cts_log_vec(x, a, prob))
+sum_d2_log
+
+## the lower bound for loglikelihood p(x | s, pi0, a1, a2, b1, b2)
+pi0 * sum_d1_log + (1 - pi0) * sum_d2_log
+```
+So the problem is our `dnbinom_cts_log_vec` function can't handle extremely large `a` and `b`. Think the problem as something to do with `lgamma` for big numbers. See `numerical_lgamma.html`. \
+
+Also, why it goes to infinity during the optimization?
+
+
+
