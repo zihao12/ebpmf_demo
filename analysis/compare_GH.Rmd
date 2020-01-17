@@ -121,7 +121,7 @@ library(ebpm)
 fit_ebpm_gammamix = ebpm_gamma_mixture_single_scale(x = y, s = 1)
 fit_ebpm_expmix = ebpm_exponential_mixture(x = y, s = 1)
 fit_ebpm_pg = ebpm_point_gamma(x = y, s = 1)
-fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1)
+fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1, rel_tol = 1e-8)
 ```
 
 
