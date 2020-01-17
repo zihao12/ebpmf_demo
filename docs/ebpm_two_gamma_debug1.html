@@ -445,7 +445,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-01-16
+<strong>Last updated:</strong> 2020-01-17
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -536,10 +536,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea64d2ac47ed1d92bdbcfc5803691e0453bc47b57targetblanka64d2aca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/a64d2ac47ed1d92bdbcfc5803691e0453bc47b57" target="_blank">a64d2ac</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree66c39fd30f43435253849f9a529019e510d1265ctargetblank66c39fda"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/66c39fd30f43435253849f9a529019e510d1265c" target="_blank">66c39fd</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea64d2ac47ed1d92bdbcfc5803691e0453bc47b57targetblanka64d2aca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree66c39fd30f43435253849f9a529019e510d1265ctargetblank66c39fda" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -574,6 +574,7 @@ Untracked files:
     Untracked:  analysis/draft.Rmd
     Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
     Untracked:  analysis/ebpm_two_gamma_test.R
+    Untracked:  analysis/ebpm_two_gamma_test.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  analysis/ebpmf_rank1_demo2.Rmd
     Untracked:  analysis/investigate_nmf_sparse.Rmd
@@ -617,6 +618,7 @@ Unstaged changes:
     Modified:   analysis/nmf_sparse9.Rmd
     Modified:   analysis/softmax_experiments.Rmd
     Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
+    Modified:   code/misc.R
     Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
 
 </code></pre>
@@ -656,6 +658,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/66c39fd30f43435253849f9a529019e510d1265c/docs/ebpm_two_gamma_debug1.html" target="_blank">66c39fd</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -841,9 +860,9 @@ length(p)), : NA/Inf replaced by maximum positive value
 
 Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
 length(p)), : NA/Inf replaced by maximum positive value</code></pre>
-<pre><code> [1] -1138.841 -1121.936 -1121.936 -1138.841 26940.280 26940.280 -1121.936
- [8] 26940.280 -1138.841 26940.280 -1121.936 26940.280 26940.280 -1138.841
-[15] -1138.841  8377.015 -1138.841 -1138.841 -1121.936 -1138.841</code></pre>
+<pre><code> [1] -1121.943 -1121.936 -1121.936 -1121.943 -1121.943 -1121.943 -1121.936
+ [8] -1121.943 -1121.943 -1121.943 -1121.936 -1121.943 -1121.943 -1121.943
+[15] -1121.943  9406.343 -1121.943 -1121.943 -1121.936 -1121.943</code></pre>
 <div id="look-at-results-from-ebpm_point_gamma" class="section level3">
 <h3>look at results from <code>ebpm_point_gamma</code></h3>
 <p>For <code>ebpm_point_gamma</code>, find out why it can have positive ll.</p>
@@ -858,22 +877,32 @@ while(!stop){
     print(fit_$fitted_g)
   }
 }</code></pre>
-<pre><code>[1] &quot;ll = 26940.279532&quot;
+<pre><code>Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value
+
+Warning in (function (f, p, ..., hessian = FALSE, typsize = rep(1,
+length(p)), : NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>[1] &quot;ll = 9406.343234&quot;
 [1] &quot;fitted_g&quot;
 $pi0
-[1] 0.8472216
+[1] 0.9026986
 
 $shape1
-[1] 2.620881
+[1] 3.079231
 
 $scale1
-[1] 0.03495997
+[1] 0.0234935
 
 $shape2
-[1] 2.383709e+16
+[1] 8.83275e+16
 
 $scale2
-[1] 2.425218e-17</code></pre>
+[1] 8.205692e-18
+
+attr(,&quot;class&quot;)
+[1] &quot;two_gamma&quot;
+attr(,&quot;row.names&quot;)
+[1] 1</code></pre>
 <p>well, when <code>a</code> and <code>b</code> gets too big, the computation of NB likelihood becomes inaccurate (even positive).</p>
 <pre class="r"><code>## (in ebpm package) the obj function
 tg_nlm_fn &lt;- function(par, x, s){
@@ -911,16 +940,16 @@ b = 1/fit_$fitted_g$scale1
 prob = b/(b + s)
 sum_d1_log = sum(dnbinom_cts_log_vec(x, a, prob))
 sum_d1_log</code></pre>
-<pre><code>[1] -1147.332</code></pre>
+<pre><code>[1] -1157.427</code></pre>
 <pre class="r"><code>a = fit_$fitted_g$shape2
 b = 1/fit_$fitted_g$scale2
 prob = b/(b + s)
 sum_d2_log = sum(dnbinom_cts_log_vec(x, a, prob))
 sum_d2_log</code></pre>
-<pre><code>[1] 20992</code></pre>
+<pre><code>[1] -3584</code></pre>
 <pre class="r"><code>## the lower bound for loglikelihood p(x | s, pi0, a1, a2, b1, b2)
 pi0 * sum_d1_log + (1 - pi0) * sum_d2_log</code></pre>
-<pre><code>[1] 2235.079</code></pre>
+<pre><code>[1] -1393.536</code></pre>
 <p>So the problem is our <code>dnbinom_cts_log_vec</code> function can’t handle extremely large <code>a</code> and <code>b</code>. Think the problem as something to do with <code>lgamma</code> for big numbers. See <code>numerical_lgamma.html</code>.<br />
 Also, why it goes to infinity during the optimization?</p>
 <br>
@@ -946,7 +975,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ebpm_0.0.0.9008
+[1] ebpm_0.0.0.9010
 
 loaded via a namespace (and not attached):
  [1] workflowr_1.5.0 Rcpp_1.0.2      gtools_3.8.1    rprojroot_1.3-2
