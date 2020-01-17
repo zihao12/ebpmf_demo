@@ -427,7 +427,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -436,7 +436,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -445,10 +445,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-12-02
+<strong>Last updated:</strong> 2020-01-17
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -512,21 +512,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
-<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-The following chunks had caches available:
-<ul>
-<li>
-unnamed-chunk-2
-</li>
-<li>
-unnamed-chunk-4
-</li>
-</ul>
-<p>To ensure reproducibility of the results, delete the cache directory <code>compare_GH_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
 </div>
 </div>
 </div>
@@ -545,19 +536,23 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree42ef199a4820a95a4525d257a588a0f3499717d4targetblank42ef199a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/42ef199a4820a95a4525d257a588a0f3499717d4" target="_blank">42ef199</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec31ca0483dbe5bb5584217d0eed01476cbce295btargetblankc31ca04a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c31ca0483dbe5bb5584217d0eed01476cbce295b" target="_blank">c31ca04</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree42ef199a4820a95a4525d257a588a0f3499717d4targetblank42ef199a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec31ca0483dbe5bb5584217d0eed01476cbce295btargetblankc31ca04a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/compare_GH_cache/
+    Ignored:    analysis/anchor_word_model_swimmer_cache/
+    Ignored:    analysis/ebpm_two_gamma_debug2_cache/
+    Ignored:    analysis/nmf_anchor_word3_cache/
+    Ignored:    analysis/nmf_anchor_word4_cache/
     Ignored:    analysis/nmf_sparse10_cache/
     Ignored:    analysis/nmf_sparse8_cache/
     Ignored:    analysis/nmf_sparse9_cache/
@@ -568,17 +563,36 @@ Untracked files:
     Untracked:  Untitled.html
     Untracked:  analysis/.ipynb_checkpoints/
     Untracked:  analysis/Experiment_ebpmf_simple.Rmd
+    Untracked:  analysis/anchor_word_model1.Rmd
+    Untracked:  analysis/anchor_word_model2.Rmd
+    Untracked:  analysis/anchor_word_model3.Rmd
+    Untracked:  analysis/debug_ebpmf_two_gamma.Rmd
     Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
     Untracked:  analysis/draft.Rmd
     Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
+    Untracked:  analysis/ebpm_two_gamma_test.R
+    Untracked:  analysis/ebpm_two_gamma_test.Rmd
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/investigate_nmf_sparse.Rmd
+    Untracked:  analysis/nmf_anchor_word4.Rmd
+    Untracked:  analysis/nmf_symm.Rmd
     Untracked:  analysis/play_prior.Rmd
     Untracked:  analysis/plot_g.Rmd
     Untracked:  analysis/softmax_experiments.ipynb
     Untracked:  cache/
+    Untracked:  code/anchor-word-recovery/
+    Untracked:  data/anchor_word_model1.csv
+    Untracked:  data/nmf_anchor_word3_A.csv
+    Untracked:  data/nmf_anchor_word3_W.csv
+    Untracked:  data/nmf_anchor_word3_X.csv
+    Untracked:  data/nmf_anchor_word4_A.csv
+    Untracked:  data/nmf_anchor_word4_W.csv
     Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
     Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
+    Untracked:  data/swimmer.mat
     Untracked:  figure/
     Untracked:  verbose_log_1571583163.21966.txt
     Untracked:  verbose_log_1571583324.71036.txt
@@ -592,6 +606,8 @@ Unstaged changes:
     Modified:   analysis/Experiment_ebpmf_rank1.Rmd
     Modified:   analysis/demo_ebpm_beta_gamma2.Rmd
     Modified:   analysis/ebpm_demo.Rmd
+    Modified:   analysis/nmf_anchor_word2.Rmd
+    Modified:   analysis/nmf_anchor_word3.Rmd
     Modified:   analysis/nmf_sparse.Rmd
     Modified:   analysis/nmf_sparse2.Rmd
     Modified:   analysis/nmf_sparse3.Rmd
@@ -601,6 +617,7 @@ Unstaged changes:
     Modified:   analysis/nmf_sparse9.Rmd
     Modified:   analysis/softmax_experiments.Rmd
     Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
+    Modified:   code/misc.R
     Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
 
 </code></pre>
@@ -640,6 +657,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/c31ca0483dbe5bb5584217d0eed01476cbce295b/analysis/compare_GH.Rmd" target="_blank">c31ca04</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-17
+</td>
+<td>
+rerun compare_GH with new ebpm_two_gamma
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/9cb8796930fab077c88e78aedb616c48f9c25af7/docs/compare_GH.html" target="_blank">9cb8796</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -809,8 +860,8 @@ gh.data = list(&#39;J&#39;=n,&#39;Y&#39;=y, &#39;alpha&#39; = alpha,&#39;a&#39; 
 <pre><code>
 SAMPLING FOR MODEL &#39;GH&#39; NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 0.00019 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.9 seconds.
+Chain 1: Gradient evaluation took 0.000152 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.52 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -827,9 +878,9 @@ Chain 1: Iteration: 8000 / 10000 [ 80%]  (Sampling)
 Chain 1: Iteration: 9000 / 10000 [ 90%]  (Sampling)
 Chain 1: Iteration: 10000 / 10000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 20.3628 seconds (Warm-up)
-Chain 1:                21.8004 seconds (Sampling)
-Chain 1:                42.1632 seconds (Total)
+Chain 1:  Elapsed Time: 22.2665 seconds (Warm-up)
+Chain 1:                21.9842 seconds (Sampling)
+Chain 1:                44.2507 seconds (Total)
 Chain 1: </code></pre>
 <div class="alert alert-warning">
 <p>
@@ -844,7 +895,7 @@ Chain 1: </code></pre>
 fit_ebpm_gammamix = ebpm_gamma_mixture_single_scale(x = y, s = 1)
 fit_ebpm_expmix = ebpm_exponential_mixture(x = y, s = 1)
 fit_ebpm_pg = ebpm_point_gamma(x = y, s = 1)
-fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1)</code></pre>
+fit_ebpm_tg = ebpm_two_gamma(x = y, s = 1, rel_tol = 1e-8)</code></pre>
 <pre class="r"><code>fit_df = data.frame(
   data = y,
   lam_true = lambdasparse,
@@ -883,6 +934,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9cb8796930fab077c88e78aedb616c48f9c25af7/docs/figure/compare_GH.Rmd/unnamed-chunk-6-1.png" target="_blank">9cb8796</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2019-12-03
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/56b957f5b038cc93d43368b9e6a74791490040a1/docs/figure/compare_GH.Rmd/unnamed-chunk-6-1.png" target="_blank">56b957f</a>
@@ -972,8 +1034,8 @@ data.frame(RMSE = RMSEs, KL = KLs, JS = JSs, row.names = c(&quot;guass-hg&quot;,
 guass-hg         1.1529090 88.3375455 60.4323648
 ebpm_gammamix    0.9544262 24.7393189  0.9544262
 ebpm_expmix      0.8374462 12.2507980 13.6031322
-ebpm_point_gamma 0.9419141 24.2177962 32.0882989
-ebpm_two_gamma   0.1140922  0.5261136  0.5411592</code></pre>
+ebpm_point_gamma 0.9419139 24.2177883 32.0882859
+ebpm_two_gamma   0.1115488  0.5186065  0.5334489</code></pre>
 <div id="comment" class="section level3">
 <h3>Comment:</h3>
 <ol style="list-style-type: decimal">
@@ -1002,12 +1064,13 @@ locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
 
 other attached packages:
-[1] ebpm_0.0.0.9004    reshape2_1.4.3     dplyr_0.8.1       
-[4] plyr_1.8.4         rstan_2.19.2       ggplot2_3.2.1     
-[7] StanHeaders_2.19.0
+[1] ebpm_0.0.0.9010    rbenchmark_1.0.0   reshape2_1.4.3    
+[4] dplyr_0.8.1        plyr_1.8.4         rstan_2.19.2      
+[7] ggplot2_3.2.1      StanHeaders_2.19.0
 
 loaded via a namespace (and not attached):
  [1] gtools_3.8.1       tidyselect_0.2.5   xfun_0.8          
@@ -1017,9 +1080,9 @@ loaded via a namespace (and not attached):
 [13] later_0.8.0        pillar_1.4.2       glue_1.3.1        
 [16] withr_2.1.2        matrixStats_0.54.0 stringr_1.4.0     
 [19] munsell_0.5.0      gtable_0.3.0       workflowr_1.5.0   
-[22] evaluate_0.14      labeling_0.3       inline_0.3.15     
-[25] knitr_1.25         callr_3.2.0        httpuv_1.5.1      
-[28] ps_1.3.0           parallel_3.5.1     Rcpp_1.0.2        
+[22] codetools_0.2-16   evaluate_0.14      labeling_0.3      
+[25] inline_0.3.15      knitr_1.25         callr_3.2.0       
+[28] httpuv_1.5.1       ps_1.3.0           Rcpp_1.0.2        
 [31] promises_1.0.1     scales_1.0.0       backports_1.1.5   
 [34] fs_1.3.1           gridExtra_2.3      digest_0.6.22     
 [37] stringi_1.4.3      processx_3.3.1     grid_3.5.1        
