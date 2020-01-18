@@ -51,10 +51,10 @@ dnbinom(x = mode_,size = a, prob = prob, log = TRUE)
 xs = seq(0,6,0.001)
 plot(xs, dnbinom_cts_log_vec(xs, a = a, prob = prob))
 ```
-
+So `dnbinom_cts_log_vec` is problematic at this circumstance. 
 
 ## what could be the reason?
-From https://zihao12.github.io/ebpmf_demo/numerical_lgamma.html it seems `lgamma(a + x) - lgamma(a)` is not "continuous" (numerically) w.r.t $x$ when $a$ is huge. 
+There could be a problem for `lgamma(a + x)` function when `a` is huge and `x` is small. From https://zihao12.github.io/ebpmf_demo/numerical_lgamma.html, it seems `lgamma(a + x) - lgamma(a)` is not "continuous" (numerically) w.r.t $x$ when $a$ is huge. 
 
 
 
