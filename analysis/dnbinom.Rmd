@@ -9,7 +9,7 @@ editor_options:
 
 ## Introduction
 
-I want to compute $NB(x; a, p)$ where $p(x) = \frac{\Gamma(x + a)}{\Gamma(a) \Gamma(x + 1)} p^a (1 - p)^x$ for continuous (nonnegative) $x$. 
+I want to compute log-likelihood for $NB(x; a, p)$ where $p(x) = \frac{\Gamma(x + a)}{\Gamma(a) \Gamma(x + 1)} p^a (1 - p)^x$ for continuous (nonnegative) $x$. 
 
 My current function goes wrong when $a >> 1$, $p  \approx 1$. 
 
@@ -44,4 +44,17 @@ mode_ = round((a - 1) *(1-prob)/prob)
 dnbinom_cts_log_vec(mode_, a = a, prob = prob)
 dnbinom(x = mode_,size = a, prob = prob, log = TRUE)
 ```
+
+
+
+```{r}
+xs = seq(0,6,0.001)
+plot(xs, dnbinom_cts_log_vec(xs, a = a, prob = prob))
+```
+
+
+## what could be the reason?
+From https://zihao12.github.io/ebpmf_demo/numerical_lgamma.html it seems `lgamma(a + x) - lgamma(a)` is not "continuous" (numerically) w.r.t $x$ when $a$ is huge. 
+
+
 
