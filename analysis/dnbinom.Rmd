@@ -1,0 +1,47 @@
+---
+title: "dnbinom_cts"
+author: "zihao12"
+date: "2020-01-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+I want to compute $NB(x; a, p)$ where $p(x) = \frac{\Gamma(x + a)}{\Gamma(a) \Gamma(x + 1)} p^a (1 - p)^x$ for continuous (nonnegative) $x$. 
+
+My current function goes wrong when $a >> 1$, $p  \approx 1$. 
+
+```{r}
+# my function
+dnbinom_cts_log_vec <- function(x, a, prob){
+  tmp = x*log(1-prob)
+  tmp[x == 0] = 0 ## R says 0*-Inf = NaN
+  return(a*log(prob) + tmp + lgamma(x+a) - lgamma(x+1) - lgamma(a))
+}
+```
+
+## when a, p are "ordinary"
+```{r}
+a = 5
+prob = 0.7
+mode_ = round((a - 1) *(1-prob)/prob)
+
+dnbinom_cts_log_vec(mode_, a = a, prob = prob)
+dnbinom(x = mode_,size = a, prob = prob, log = TRUE)
+```
+
+## when a, p are "extraordinary"
+```{r}
+a = 5.633577e+14
+b = 4.687713e+16
+s = 239.5013
+prob = b/(b + s)
+
+mode_ = round((a - 1) *(1-prob)/prob)
+
+dnbinom_cts_log_vec(mode_, a = a, prob = prob)
+dnbinom(x = mode_,size = a, prob = prob, log = TRUE)
+```
+
