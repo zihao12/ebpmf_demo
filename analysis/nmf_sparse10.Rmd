@@ -1,395 +1,180 @@
 ---
-title: "nmf_sparse10"
+title: "nmf_sparse"
 author: "zihao12"
-date: "2019-11-08"
+date: "2019-10-30"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
 ---
 
+Adapted from https://stephens999.github.io/misc/nmf_sparse.html
 
-```{r warning=FALSE}
+
+
+```{r warning=F, message=F}
 rm(list = ls())
-library(knitr)
-opts_knit$set(global.par = FALSE)
-knitr::opts_chunk$set(autodep = TRUE)
-devtools::load_all("../ebpm")
-devtools::load_all("../ebpmf.alpha")
-
-#library(ebpm)
-#library(ebpmf.alpha)
-
-library(NNLM)
-library(ggplot2)
+library("NNLM")
+library("ebpm")
+library("ebpmf")
 source("code/misc.R")
-log_lik <- function(X, lam){
-  return(sum(dpois(x = X, lambda = lam , log = T)))
-}
-
-show_lf <- function(lf){
-  k = ncol(lf$L)
-  par(mfrow=c(2,k))
-  for(i in 1:k){
-    plot(lf$L[,i], ylab = sprintf("loadings %d", i))
-  }
-  for(i in 1:k){
-    plot(lf$F[,i], ylab = sprintf("factors %d", i))
-  }
-}
-
-compare_lf <- function(lf1, lf2, x_name, y_name){
-  k = ncol(lf1$L)
-  par(mfrow=c(2,k))
-  for(i in 1:k){
-    plot(lf1$L[,i], lf2$L[,i], main = sprintf("loading %d", i), xlab = x_name, ylab = y_name)
-  }
-  for(i in 1:k){
-    plot(lf1$F[,i], lf2$F[,i], main = sprintf("factor %d", i), xlab = x_name, ylab = y_name)
-  }
-}
-
-plot_prior_gamma_mix <-  function(g, title = "main"){
-  ## choose range of g
-  d =  length(g$pi)
-  sub_mask = g$pi > 0.2/d
-  x_max = 5*max(g$shape[sub_mask]*g$scale[sub_mask])
-  x = seq(0,x_max,0.01)
-  y = lapply(x, FUN = pdf_gamma_mix, g = g)
-  plot(x, y, type = "l", xlab  = "x", ylab = "pdf", main = title)
-}
-
-pdf_gamma_mix <- function(x, g){
-  return(sum(g$pi * dgamma(x, shape = g$shape, scale = g$scale)))
-}
 ```
 
-## Data
-Simulate data and visualize its structure. 
-```{r warning=F}
+## Introduction
+The goal is to do some simple simulations where the factors are sparse
+and look at the sparsity of the solutions from regular (unpenalized) nmf.
+
+## Result:
+* After we add a dense fourth factor, we can see `ebpmf_two_gamma` obtains "better" loadings. \
+* current `ebpmf_two_gamma` is much slower to fit
+
+We simulate data with 3 factors with a "block-like"" structure.
+```{r}
 set.seed(123)
-n = 100
-p = 200
-k = 2
-
-L = matrix(0, nrow = n, ncol = k)
-F = matrix(0, nrow = p, ncol = k)
-
-## generate F in the simplex space
-## first topic is has key words in 1:p/2
-F[1:(p/2),1] = 20*runif(p/2)
-F[(1+p/2):p,1] = 1*runif(p/2) 
-F[,1] = F[,1]/sum(F[,1])
-## second topic is noise
-F[,2] = runif(p)
-F[,2] = F[,2]/sum(F[,2])
-
-## first loading is mainly loaded onb the first topic
-L[1:(n/2),1] = 3 + runif(n/2)
-
-## second topic is noise
-L[,2] = 10*runif(n)
-
-L = diag(replicate(n, 100)) %*% L
-
-lambda = L  %*% t(F)
-X  = matrix(rpois(n*p, lambda = lambda), nrow = n)
-image(t(X))
+n = 99
+p = 300
+k= 3
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+  
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
 ```
 
+Now run MLE
+```{r warning=F, message=F}
+fit_lee = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "lee", max.iter = 10000)
 
-
-
-## Fitting models
-```{r warning=F, cache=TRUE}
-## random initialization
-L0 = matrix(runif(n*k), ncol = k)
-F0 = matrix(runif(p*k), ncol = k)
-## MLE
-fit_em = NNLM::nnmf(A = X, k = k,loss = "mkl", method = "lee", max.iter = 10000,
-                    init = list(W = L0, H = t(F0)))
-## ebpmf_gm from random
-qg_random = ebpmf.alpha::initialize_qg_from_LF(L0 = L0, F0 = F0)
-fit_ebpmf_gm = ebpmf.alpha::ebpmf_gamma_mixture(X = X,K = k,qg = qg_random, maxiter.out = 1000, verbose = FALSE,scale_l = "max", scale_f = "max")
-## ebpmf_gm from mle estimate
-qg_mle = initialize_qg_from_LF(L0 = fit_em$W, F0 = t(fit_em$H))
-fit_ebpmf_gm_mle = ebpmf.alpha:: ebpmf_gamma_mixture(X = X,K = k,qg = qg_mle, maxiter.out = 1000, scale_l = "max", scale_f = "max",verbose = FALSE)
-```
-
-Below I also record the the $E_z$ during computation
-```{r warning=F, cache=TRUE}
-iter = 1
-n_iter = 1000
-l_1 = matrix(0, nrow = n, ncol  = n_iter)
-l_log_1 = matrix(0, nrow = n, ncol  = n_iter)
-x_l = matrix(0, nrow = n, ncol  = n_iter)
-s_l = replicate(n_iter, 0)
-x_f = matrix(0, nrow = p, ncol  = n_iter)
-s_f = replicate(n_iter, 0)
-Ez_sum = replicate(n_iter, 0)
-qg_  = qg_random
-for(i in 1:n_iter){
-  fit_ = ebpmf_gamma_mixture(X = X, K = 2, qg = qg_, scale_l = "max", scale_f = "max", maxiter.out = 1,verbose = FALSE)
-  qg_ = fit_$qg
-  l_1[,i] = qg_$qls_mean[,1]
-  l_log_1[,i] = qg_$qls_mean_log[,1]
-  x_l[,i] = rowSums(get_Ez(X, qg_, K = 2)$Ez[,,1])
-  s_l[i] = sum(qg_$qfs_mean[,1])
-  x_f[,i] = colSums(get_Ez(X, qg_, K = 2)$Ez[,,1])
-  s_f[i] = sum(qg_$qls_mean[,1])
-  Ez_sum[i] = sum(get_Ez(X, qg_, K = 2)$Ez[,,1])
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee: estimated loadings ",i))
 }
 ```
 
-Transform the  result to multinomial  model 
-```{r}
-lf_truth = poisson2multinom(F = F, L = L)
-lf_mle = poisson2multinom(F = t(fit_em$H), L = fit_em$W)
-lf_gm_random =  poisson2multinom(F = fit_ebpmf_gm$qg$qfs_mean, L = fit_ebpmf_gm$qg$qls_mean)
-lf_gm_mle =  poisson2multinom(F = fit_ebpmf_gm_mle$qg$qfs_mean, L = fit_ebpmf_gm_mle$qg$qls_mean)
+
+
+
+## Add a dense fourth factor
+
+Now I add a fourth factor that is dense.
+Note that we can make the problem much harder
+by making the 4th (dense) factor have larger PVE (increase `mfac` in the code).
+That may be useful for comparing methods on a harder problem...
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
 ```
 
-## Check if estimates are similar to truth
-```{r}
-show_lf(lf =  lf_truth)
-show_lf(lf =  lf_mle)
-show_lf(lf =  lf_gm_random)
-show_lf(lf =  lf_gm_mle)
-```
-They are indeed similar to truth. 
 
 
-## Compare ELBOs
-check ELBO for `fit_ebpmf_gm`
-```{r}
-plot(fit_ebpmf_gm$ELBO)
-# plot(fit_ebpmf_gm$ELBO[400:500])
-# plot(fit_ebpmf_gm$ELBO[500:600])
-# plot(fit_ebpmf_gm$ELBO[700:800])
-```
-If we take a closer look, we can see it does not increase monotonically, and that it reaches peak  in  500 iterations.
+### Fit with  MLE (lee) , ebpmf (point-gamma & two-gamma). 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+k = 4
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000, verbose = FALSE)
+fit_ebpmf_pg = ebpmf.alpha::ebpmf_point_gamma(X, K = k, maxiter.out = 100, verbose = FALSE)
+fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 100, verbose = FALSE)
 
-check ELBO for `fit_ebpmf_mle`
-```{r}
-plot(fit_ebpmf_gm_mle$ELBO)
-# plot(fit_ebpmf_gm_mle$ELBO[400:500])
-# plot(fit_ebpmf_gm_mle$ELBO[500:600])
-# plot(fit_ebpmf_gm_mle$ELBO[700:800])
-```
-It is disturbing that it seems to be jumping between two different ELBO values
-
-
-```{r}
-df_ = data.frame(niter = 1:1000, random_init = fit_ebpmf_gm$ELBO, mle_init = fit_ebpmf_gm_mle$ELBO)
-ggplot(df_) + 
-  geom_point(aes(x = niter, y = random_init, color = "random_init"))+
-  geom_point(aes(x = niter, y = mle_init, color = "mle_init"))
-
-print(sprintf("max elbo for mle     init:  %f", max(fit_ebpmf_gm_mle$ELBO)))
-print(sprintf("max elbo for random  init:  %f", max(fit_ebpmf_gm$ELBO)))
+## ll (oracle)
+sum(dpois(X, L %*% t(F),log=TRUE))
+## ll (mle-lee)
+sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
+## ll (ebpmf-point-gamma)
+sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
+## ll (ebpmf-two-gamma)
+sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE))
 ```
 
-## Compare divergence from truth
+
+### Look at the loadings:
 ```{r}
-KL <- function(true,est){
-  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee: loadings ",i), ylab = "loading")
 }
-
-JS  <- function(true,est){
-  0.5*(KL(true, est) + KL(est, true))
+## ebpmf_pg 
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf("ebpmf_point_gamma: loadings %d", d), ylab = "loading")
 }
-
-RMSE <- function(true, est){
-  sqrt(mean((true - est)^2))
+## ebpmf_tg 
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma: loadings %d", d), ylab = "loading")
 }
+```
 
-compute_ll <- function(data, lam){
-  return(sum(dpois(x = data, lambda = lam, log = T)))
+### Look at the factors:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0("mle_lee: factors ",i), ylab = "factor")
 }
-
-lam_true = L %*% t(F)
-lam_mle = fit_em$W %*% fit_em$H
-lam_gm_random = fit_ebpmf_gm$qg$qls_mean %*% t(fit_ebpmf_gm$qg$qfs_mean)
-lam_gm_mle = fit_ebpmf_gm_mle$qg$qls_mean %*% t(fit_ebpmf_gm_mle$qg$qfs_mean)
-
-
-KLs = c(KL(lam_true, lam_true), KL(lam_true, lam_mle), KL(lam_true, lam_gm_random), KL(lam_true, lam_gm_mle))
-JSs = c(JS(lam_true, lam_true), JS(lam_true, lam_mle), JS(lam_true, lam_gm_random), JS(lam_true, lam_gm_mle))
-RMSEs = c(RMSE(lam_true, lam_true), RMSE(lam_true, lam_mle), RMSE(lam_true, lam_gm_random), RMSE(lam_true, lam_gm_mle))
-lls = c(compute_ll(X, lam_true), compute_ll(X, lam_mle), compute_ll(X, lam_gm_random), compute_ll(X, lam_gm_mle))
-
-data.frame(KL = KLs, JS = JSs,  RMSE =  RMSEs, ll = lls, row.names = c("truth", "mle", "gm_random", "gm_mle"))
+## ebpmf_pg 
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qfs_mean[,d],main=sprintf("ebpmf_point_gamma: factors %d", d), ylab = "factor")
+}
+## ebpmf_tg 
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf("ebpmf_two_gamma: factors %d", d), ylab = "factor")
+}
 ```
-Note that there are places where measure of divergence doesn't agree with each other.
 
-## Look at shrinkage towards 0
-We can see that we need to  shrink  small values in loading 1 from plots above. Let's compare the shrinkage effect.
+
+
+Compare $\Lambda_{est}$ with $\Lambda_{true}$
 ```{r}
-loading_one = data.frame(idx = 1:n,truth = L[,1], mle = fit_em$W[,1], gm_random = fit_ebpmf_gm$qg$qls_mean[,1], gm_mle = fit_ebpmf_gm_mle$qg$qls_mean[,1])
+lam_mle = fit_lee$W %*% fit_lee$H
+lam_ebpmf_pg = fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean)
+lam_ebpmf_tg = fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean)
 
-idx_show = 51:100
-loading_one_ =  loading_one[idx_show, ]
-ggplot(loading_one_)+
-  geom_point(aes(x = idx, y = truth, color = "truth"))+
-  geom_point(aes(x = idx, y = mle, color = "mle"))+
-  geom_point(aes(x = idx, y = gm_random, color = "gm_random"))+
-  geom_point(aes(x = idx, y = gm_mle, color = "gm_mle"))
-```
+rmse = c(RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_pg), RMSE(lambda, lam_ebpmf_tg))
+js = c(JS(lambda, lam_mle), JS(lambda, lam_ebpmf_pg), JS(lambda, lam_ebpmf_tg))
+kl = c(KL(lambda, lam_mle), KL(lambda, lam_ebpmf_pg), KL(lambda, lam_ebpmf_tg))
 
-There might be problem with scale. So let's see teh result in multinomial model
-```{r}
-loading_one_m = data.frame(idx = 1:n,truth = lf_truth$L[,1], mle = lf_mle$L[,1], gm_random = lf_gm_random$L[,1], gm_mle = lf_gm_mle$L[,1])
-
-idx_show = 1:100
-loading_one_m_ =  loading_one_m[idx_show, ]
-ggplot(loading_one_m_)+
-  geom_point(aes(x = idx, y = truth, color = "truth"))+
-  geom_point(aes(x = idx, y = mle, color = "mle"))+
-  geom_point(aes(x = idx, y = gm_random, color = "gm_random"))+
-  geom_point(aes(x = idx, y = gm_mle, color = "gm_mle"))
-
-## only look at 0 loading
-idx_show = 51:100
-loading_one_m_ =  loading_one_m[idx_show, ]
-ggplot(loading_one_m_)+
-  geom_point(aes(x = idx, y = truth, color = "truth"))+
-  geom_point(aes(x = idx, y = mle, color = "mle"))+
-  geom_point(aes(x = idx, y = gm_random, color = "gm_random"))+
-  geom_point(aes(x = idx, y = gm_mle, color = "gm_mle"))
-```
-
-## how do we have sparsity
-I got `fit_` by running 1000 iterations of `ebpm_gm` using  random initialization. I record  the changes of rowSums of $Ez[,,1]$.  
-
-```{r}
-## the fitted value for "should-be-0" part of the loading 1
-plot(fit_$qg$qls_mean[1:100,1])
-
-plot(fit_$qg$qls_mean[51:100,1])
-
-## I  find  the max and min value of loading 1 from 51 to 100 (truth  are 0); beside I choose one loading whose truth is not 0, as comparison
-large_idx = 21
-max_idx = which.max(fit_$qg$qls_mean[51:100,1]) + 50
-min_idx = which.min(fit_$qg$qls_mean[51:100,1]) + 50
-print(fit_$qg$qls_mean[c(max_idx,min_idx),1])
-
-## see how they change
-plot(l_1[large_idx,])
-plot(l_1[max_idx,])
-plot(l_1[min_idx,])
-
-## take a closer look
-plot(l_1[large_idx,900:1000])
-
-
-# plot(l_1[min_idx,200:300])
-# plot(l_1[min_idx,300:400])
-# plot(l_1[min_idx,400:500])
-plot(l_1[min_idx,900:1000])
-
-# plot(l_1[max_idx,200:300])
-# plot(l_1[max_idx,300:400])
-# plot(l_1[max_idx,400:500])
-plot(l_1[max_idx,900:1000])
-
-## see how the `x` change for their `ebpm(x, s)` problem
-par(mfrow=c(1,1))
-plot(x_l[large_idx,])
-plot(x_l[max_idx,])
-plot(x_l[min_idx,])
-
-plot(x_l[min_idx,300:400])
-
-
-## plot `s`  in `ebpm(x, s)` problem
-plot(s_l)
+dist = data.frame(cbind(rmse, js, kl), row.names = c("mle", "point-gamma", "two-gamma"))
+dist
 ```
 
 
-Look at posterior mean/MLE
-```{r}
-idx_ = 1:1000
-plot(l_1[large_idx,idx_]/(x_l[large_idx,idx_]/s_l[idx_]), ylab  = "posterior mean/MLE")
-plot(l_1[max_idx,idx_]/(x_l[max_idx,idx_]/s_l[idx_]), ylab  = "posterior mean/MLE")
-#plot(l_1[min_idx,]/(x_l[min_idx,]*s_l), ylab  = "posterior mean/MLE") ## MLE is 0 after a few iterations
-```
 
 
-```{r}
-idx = 51
-
-plot(exp(l_log_1[idx,idx_])/(x_l[idx,idx_]/s_l[idx_]), ylab  = "exp(posterior mean log)/MLE")
-
-```
 
 
-So, in each `ebpm` we don't shrink smaller values to 0. Let's see how it acts on `exp(E(log(l)))`:
-```{r}
-plot(exp(l_log_1[large_idx,idx_])/(x_l[large_idx,idx_]/s_l[idx_]), ylab  = "exp(posterior mean log)/MLE")
-print((exp(l_log_1[large_idx,idx_])/(x_l[large_idx,idx_]/s_l[idx_]))[990:1000])
-
-plot(exp(l_log_1[max_idx,idx_])/(x_l[max_idx,idx_]/s_l[idx_]), ylab  = "exp(posterior mean log)/MLE")
-print((exp(l_log_1[max_idx,idx_])/(x_l[max_idx,idx_]/s_l[idx_]))[990:1000])
-
-## x/s becomes 0 afterwards
-plot(exp(l_log_1[min_idx,idx_])/(x_l[min_idx,idx_]/s_l[idx_]), ylab  = "exp(posterior mean log)/MLE")
-```
-It seems to be shrinking those large values (which is not 0 in truth), while increasing those small nonzero values (which is 0 in truth). Look at the specific `ebpm` problem  it is solving. 
 
 
-## The `ebpm` problem after 1000 iterations 
-```{r}
-plot(x_l[,1000])
-print(s_l[1000])
-fit_l = ebpm_gamma_mixture_single_scale(x = x_l[,1000], s = s_l[1000])
-
-top_idx = sort(fit_l$fitted_g$pi, index.return =  TRUE, decreasing = TRUE)$ix[1:3]
-
-## biggest proportions
-fit_l$fitted_g$pi[top_idx]
-
-## shapes for the biggest proportions
-fit_l$fitted_g$shape[top_idx]
-
-## scales for the biggest proportions
-fit_l$fitted_g$scale[top_idx]
-
-## look  at the proportions of 0s
-print(sum(x_l[,1000] == 0)/n)
-
-## look  at the proportions of nozero (nonzero in true L as well)
-print(sum(x_l[,1000] > 100)/n)
-
-## look  at the proportions of zeros (zero in true L)
-print(sum(x_l[,1000] > 0 & x_l[,1000] < 100)/n)
-```
-So basically is one very small shape (0.3 weight), and two larger shapes (they are neighboring grids) for the rest of the weight
 
 
-Let's look at the posterior proportion `Pi_tilde`:
-```{r}
-## let's further look at the posterior proportion:
-L = compute_L(x = x_l[,1000], s = replicate(n, s_l[1000]), a = fit_l$fitted_g$shape, b = 1/fit_l$fitted_g$scale)$L
-Pi_tilde = t(t(L) * fit_l$fitted_g$pi)
-Pi_tilde = Pi_tilde/rowSums(Pi_tilde)
-
-## nonzero (truth is not 0): puts weights on big shapes
-plot(Pi_tilde[large_idx,])
-
-## nonzero  (truth is 0): puts weights on two big shapes
-plot(Pi_tilde[max_idx,])
-
-## zero (truth is 0) : puts weights on teh smallest shape
-plot(Pi_tilde[min_idx,])
-```
-It seems that `ebpm` sees 2 main clusters: zero and nonzero. Within nonzero values, the posterior proportions  are  all on large components with large shapes. Therefore, we can expect that the  nonzero values will be shrunk to their mean, thus explaining why the bigger values are smaller and smaller nonzero values get bigger. 
 
 
-## show g
-```{r}
-fit_ebpmf_gm$qg$gls
 
-fit_ebpmf_gm_mle$qg$gls
-```
+
+
+
+
+
+
+
 
 
 
