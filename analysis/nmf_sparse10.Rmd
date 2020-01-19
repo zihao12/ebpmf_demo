@@ -48,13 +48,18 @@ X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)
 ```
 
-Now run MLE
+Now run MLE and show L, F
 ```{r warning=F, message=F}
 fit_lee = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "lee", max.iter = 10000)
 
 par(mfrow = c(2,2))
 for(i in 1:k){
   plot(fit_lee$W[,i],main=paste0("mle_lee:  loadings ",i), ylab = "loading")
+}
+
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0("mle_lee:  factors ",i), ylab = "factor")
 }
 ```
 
