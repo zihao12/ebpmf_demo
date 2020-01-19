@@ -25,7 +25,7 @@ and look at the sparsity of the solutions from regular (unpenalized) nmf.
 
 ## Result:
 * After we add a dense fourth factor, we can see `ebpmf_two_gamma` obtains loadings very similar to truth (advantage is not very clear for factors). \
-* current `ebpmf_two_gamma` is much slower to fit
+* current `ebpmf_two_gamma` is much slower to fit; it also converges very slowly
 
 ## "easy" data with "block-like structure" 
 We simulate data with 3 factors with a "block-like" structure.
