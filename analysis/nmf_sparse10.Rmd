@@ -24,10 +24,11 @@ The goal is to do some simple simulations where the factors are sparse
 and look at the sparsity of the solutions from regular (unpenalized) nmf.
 
 ## Result:
-* After we add a dense fourth factor, we can see `ebpmf_two_gamma` obtains "better" loadings. \
+* After we add a dense fourth factor, we can see `ebpmf_two_gamma` obtains loadings very similar to truth (advantage is not very clear for factors). \
 * current `ebpmf_two_gamma` is much slower to fit
 
-We simulate data with 3 factors with a "block-like"" structure.
+## "easy" data with "block-like structure" 
+We simulate data with 3 factors with a "block-like" structure.
 ```{r}
 set.seed(123)
 n = 99
@@ -51,8 +52,9 @@ Now run MLE
 ```{r warning=F, message=F}
 fit_lee = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "lee", max.iter = 10000)
 
+par(mfrow = c(2,2))
 for(i in 1:k){
-  plot(fit_lee$W[,i],main=paste0("mle_lee: estimated loadings ",i))
+  plot(fit_lee$W[,i],main=paste0("mle_lee:  loadings ",i), ylab = "loading")
 }
 ```
 
@@ -60,7 +62,6 @@ for(i in 1:k){
 
 
 ## Add a dense fourth factor
-
 Now I add a fourth factor that is dense.
 Note that we can make the problem much harder
 by making the 4th (dense) factor have larger PVE (increase `mfac` in the code).
@@ -88,25 +89,18 @@ image(X)
 
 
 
-### Fit with  MLE (lee) , ebpmf (point-gamma & two-gamma). 
+## Fit with  MLE (lee) , ebpmf (point-gamma & two-gamma). 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 k = 4
 fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000, verbose = FALSE)
-fit_ebpmf_pg = ebpmf.alpha::ebpmf_point_gamma(X, K = k, maxiter.out = 100, verbose = FALSE)
-fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 100, verbose = FALSE)
+fit_ebpmf_pg = ebpmf.alpha::ebpmf_point_gamma(X, K = k, maxiter.out = 500, verbose = FALSE)
+fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 500, verbose = FALSE)
 
-## ll (oracle)
-sum(dpois(X, L %*% t(F),log=TRUE))
-## ll (mle-lee)
-sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE))
-## ll (ebpmf-point-gamma)
-sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE))
-## ll (ebpmf-two-gamma)
-sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE))
+
 ```
 
 
-### Look at the loadings:
+## Look at the loadings:
 ```{r}
 ## lee from truth
 par(mfrow = c(2,2))
@@ -122,8 +116,9 @@ for(d in 1:k){
   plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma: loadings %d", d), ylab = "loading")
 }
 ```
+two-gamma gets the structure right!
 
-### Look at the factors:
+## Look at the factors:
 ```{r}
 ## lee from truth
 par(mfrow = c(2,2))
@@ -140,29 +135,97 @@ for(d in 1:k){
 }
 ```
 
-
-
-Compare $\Lambda_{est}$ with $\Lambda_{true}$
+## Compare $\Lambda_{est}$ with $\Lambda_{true}$
 ```{r}
 lam_mle = fit_lee$W %*% fit_lee$H
 lam_ebpmf_pg = fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean)
 lam_ebpmf_tg = fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean)
 
-rmse = c(RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_pg), RMSE(lambda, lam_ebpmf_tg))
-js = c(JS(lambda, lam_mle), JS(lambda, lam_ebpmf_pg), JS(lambda, lam_ebpmf_tg))
-kl = c(KL(lambda, lam_mle), KL(lambda, lam_ebpmf_pg), KL(lambda, lam_ebpmf_tg))
+rmse = c(0, RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_pg), RMSE(lambda, lam_ebpmf_tg))
+js = c(0, JS(lambda, lam_mle), JS(lambda, lam_ebpmf_pg), JS(lambda, lam_ebpmf_tg))
+kl = c(0, KL(lambda, lam_mle), KL(lambda, lam_ebpmf_pg), KL(lambda, lam_ebpmf_tg))
+ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
+       sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE)),
+       sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE)),
+       sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE)))
 
-dist = data.frame(cbind(rmse, js, kl), row.names = c("mle", "point-gamma", "two-gamma"))
+dist = data.frame(cbind(rmse, js, kl, ll), row.names = c("oracle","mle", "point-gamma", "two-gamma"))
 dist
 ```
 
+<!-- 
+```{r}
+lf_true = poisson2multinom(F = F, L = L)
+lf_mle = poisson2multinom(F = t(fit_lee$H), L = fit_lee$W)
+lf_pg = poisson2multinom(F = fit_ebpmf_pg$qg$qfs_mean, L = fit_ebpmf_pg$qg$qls_mean)
+lf_tg = poisson2multinom(F = fit_ebpmf_tg$qg$qfs_mean, L = fit_ebpmf_tg$qg$qls_mean)
 
 
+plot(lf_true$F[,1])
+plot(lf_tg$F[,3])
+plot(lf_pg$F[,3])
+plot(lf_mle$F[,4])
+
+plot(lf_true$L[,2])
+plot(lf_mle$L[,1])
+plot(lf_pg$L[,4])
+plot(lf_tg$L[,4])
+```
+-->
 
 
+## two-gamma: Look at the loading 4 
+
+### estimated prior explains shrinkage effect
+```{r}
+gl4 = as.numeric(fit_ebpmf_tg$qg$gls[[4]])
+names(gl4) = c("pi0", "shape1", "scale1", "shape2", "scale2")
+
+## prior mean for first component
+pm1 = gl4[["shape1"]] * gl4[["scale1"]]
+pm1
+
+## prior mean for second component
+pm2 = gl4[["shape2"]] * gl4[["scale2"]]
+pm2
+
+plot(fit_ebpmf_tg$qg$qls_mean[,4])
+abline(h = pm1, col = "red")
+abline(h = pm2, col = "blue")
+```
 
 
+### convergence
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+n_iter = 500
+gl4s = matrix(, nrow = 5, ncol = n_iter)
+fit_ = ebpmf.alpha::ebpmf_two_gamma(X = X, K = k, maxiter.out = 1, verbose = FALSE)
+row_names = c("pi0", "shape1", "scale1", "shape2", "scale2")
+rownames(gl4s) = row_names
+gl4s[,1] = as.numeric(fit_$qg$gls[[1]])
 
+for(i in 2:n_iter){
+  fit_ = ebpmf.alpha::ebpmf_two_gamma(X = X, K = k, maxiter.out = 1, qg = fit_$qg,verbose = FALSE)
+  gl4s[,i] = as.numeric(fit_$qg$gls[[1]])
+}
+```
+
+I plot the $\hat{g}$ for loading 4 below:
+```{r}
+for(name in row_names){
+  plot(gl4s[name,], ylab = name, xlab = "iter")
+}
+
+mean1 = gl4s["shape1", ] * gl4s["scale1", ]
+mean2 = gl4s["shape2", ] * gl4s["scale2", ]
+var1 = gl4s["shape1", ] * gl4s["scale1", ]**2
+var2 = gl4s["shape2", ] * gl4s["scale2", ]**2
+
+plot(mean1, main = "mean1", xlab = "iter")
+plot(mean2, main = "mean2", xlab = "iter")
+plot(var1, main = "var1", xlab = "iter")
+plot(var2, main = "var2", xlab = "iter")
+```
 
 
 
