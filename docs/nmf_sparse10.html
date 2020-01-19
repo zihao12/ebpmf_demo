@@ -548,10 +548,10 @@ unnamed-chunk-5
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeac69c8443f421aa22e9b78b4c6ec51333944c0f4targetblankac69c84a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/ac69c8443f421aa22e9b78b4c6ec51333944c0f4" target="_blank">ac69c84</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef5f8981ed15e05ada4def7528f1216f008d1b9d6targetblankf5f8981a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/f5f8981ed15e05ada4def7528f1216f008d1b9d6" target="_blank">f5f8981</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeac69c8443f421aa22e9b78b4c6ec51333944c0f4targetblankac69c84a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreef5f8981ed15e05ada4def7528f1216f008d1b9d6targetblankf5f8981a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -673,6 +673,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/f5f8981ed15e05ada4def7528f1216f008d1b9d6/analysis/nmf_sparse10.Rmd" target="_blank">f5f8981</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-19
+</td>
+<td>
+nmf_sparse10.Rmd with more runs, add one plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/cbf88275ca0dca468495114177532c3db20d7a0b/docs/nmf_sparse10.html" target="_blank">cbf8827</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1021,13 +1055,15 @@ zihao12
 </table>
 </div>
 </div>
-<p>Now run MLE</p>
+<p>Now run MLE and show L, F</p>
 <pre class="r"><code>fit_lee = NNLM::nnmf(A = X, k = 3, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 10000)
 
 par(mfrow = c(2,2))
 for(i in 1:k){
   plot(fit_lee$W[,i],main=paste0(&quot;mle_lee:  loadings &quot;,i), ylab = &quot;loading&quot;)
-}</code></pre>
+}
+
+par(mfrow = c(2,2))</code></pre>
 <p><img src="figure/nmf_sparse10.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
@@ -1065,6 +1101,58 @@ zihao12
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/fab723cb0563900144bf0d4c7487a4c1b6a25abf/docs/figure/nmf_sparse10.Rmd/unnamed-chunk-3-1.png" target="_blank">fab723c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-18
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0(&quot;mle_lee:  factors &quot;,i), ylab = &quot;factor&quot;)
+}</code></pre>
+<p><img src="figure/nmf_sparse10.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/75c84e714ba3836bf5396c6408f87e00ead1e450/docs/figure/nmf_sparse10.Rmd/unnamed-chunk-3-2.png" target="_blank">75c84e7</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-01-19
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/fab723cb0563900144bf0d4c7487a4c1b6a25abf/docs/figure/nmf_sparse10.Rmd/unnamed-chunk-3-2.png" target="_blank">fab723c</a>
 </td>
 <td>
 zihao12
