@@ -1,0 +1,97 @@
+---
+title: "demo_sparse_ebpmf_two_gamma"
+author: "zihao12"
+date: "2020-01-21"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r warning=F, message=F}
+rm(list = ls())
+library("NNLM")
+library("ebpm")
+library("ebpmf")
+source("code/misc.R")
+```
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(L[,i],main=paste0("true loading ",i), ylab = "loading")
+}
+
+for(i in 1:k){
+  plot(F[,i],main=paste0("true factor ",i), ylab = "factor")
+}
+
+lf_truth = poisson2multinom(F = F, L = L)
+for(i in 1:k){
+  plot(lf_truth$L[,i],main=paste0("true loading (scaled)",i), ylab = "loading")
+}
+
+for(i in 1:k){
+  plot(lf_truth$F[,i],main=paste0("true factor (scaled)",i), ylab = "factor")
+}
+```
+
+
+## Fit with  MLE (lee) , ebpmf (point-gamma & two-gamma). 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+k = 4
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000, verbose = FALSE)
+fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 100, verbose = TRUE)
+```
+
+
+
+## Look at the loadings:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee: loadings ",i), ylab = "loading")
+}
+
+## ebpmf_tg
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma: loadings %d", d), ylab = "loading")
+}
+```
+two-gamma gets the structure right!
+
+## Look at the factors:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0("mle_lee: factors ",i), ylab = "factor")
+}
+
+## ebpmf_tg
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf("ebpmf_two_gamma: factors %d", d), ylab = "factor")
+}
+```
