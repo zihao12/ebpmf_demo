@@ -8,15 +8,17 @@ editor_options:
 ---
 
 ## Introduction
-
+The goal is to simulate data with sparse factors and loadings, and see which method can recover them. I compare our method `ebpmf_two_gamma` with MLE (using lee's multiplicative update) for Poisson Matrix Factorization. 
 ```{r warning=F, message=F}
 rm(list = ls())
 library("NNLM")
 library("ebpm")
 library("ebpmf")
 source("code/misc.R")
-par(mfrow = c(2,2))
 ```
+
+## Simulate data and fit 
+Let $\Lambda = \sum_{k = 1}^4 l_{ik} f_{jk}$ be the underlying mean. The first 3 loadings & factors have a "block-like" structure. The 4th loading and factor are noise. \
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 set.seed(123)
@@ -37,31 +39,43 @@ F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
 F[,4]= 1+mfac*runif(p)
 lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
-image(X)
 
-## show scaled L, F
-## I transfrom the L, F from the Poisson model to the multinomial model
-lf_truth = poisson2multinom(F = F, L = L)
-for(i in 1:k){
-  plot(lf_truth$L[,i],main=paste0("true loading (scaled)",i), ylab = "loading")
-}
-for(i in 1:k){
-  plot(lf_truth$F[,i],main=paste0("true factor (scaled)",i), ylab = "factor")
-}
 ```
 
+I fit with `ebpmf_two_gamma` and MLE. Assume the true number of topics is known. 
 
-## Fit with  MLE (lee) , ebpmf (point-gamma & two-gamma). 
+MLE uses EM algorithm so I use 10000 iterations so that it is close to convergence. 
+
+For `ebpmf_two_gamma` I find 500 iterations are good enough. 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 k = 4
 fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000, verbose = FALSE)
-fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 500, verbose = TRUE)
+fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 500, verbose = FALSE)
 ```
 
 
-## Look at the loadings:
+## what does the data look like
+I show the matrix X
+```{r}
+image(X)
+## show scaled L, F
+## I transfrom the L, F from the Poisson model to the multinomial model
+# lf_truth = poisson2multinom(F = F, L = L)
+# par(mfrow = c(2,2))
+# for(i in 1:k){
+#   plot(lf_truth$L[,i],main=paste0("true loading (scaled)",i), ylab = "loading")
+# }
+# par(mfrow = c(2,2))
+# for(i in 1:k){
+#   plot(lf_truth$F[,i],main=paste0("true factor (scaled)",i), ylab = "factor")
+# }
+```
+
+
+## Compare the loadings:
 ```{r}
 ## show true L
+par(mfrow = c(2,2))
 for(i in 1:k){
   plot(L[,i],main=paste0("true loading ",i), ylab = "loading")
 }
@@ -73,15 +87,19 @@ for(i in 1:k){
 }
 
 ## ebpmf_tg
+par(mfrow = c(2,2))
 for(d in 1:k){
   plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma: loadings %d", d), ylab = "loading")
 }
 ```
-two-gamma gets the loading structure right!
+* MLE solution does not get sparse loadings, though the basic structure is right. 
 
-## Look at the factors:
+* two-gamma gets the sparse loadings!
+
+## Compare the factors:
 ```{r}
 ## show true F
+par(mfrow = c(2,2))
 for(i in 1:k){
   plot(F[,i],main=paste0("true factor ",i), ylab = "factor")
 }
@@ -93,10 +111,14 @@ for(i in 1:k){
 }
 
 ## ebpmf_tg
+par(mfrow = c(2,2))
 for(d in 1:k){
   plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf("ebpmf_two_gamma: factors %d", d), ylab = "factor")
 }
 ```
-It is harder to recover factors. 
+
+* Both methods get the basic structure, but fails to get the sparse solutions.
+
+* Factors are harder to recover for the `ebpmf_two_gamma` in this example, because the randomness in the signal makes the `ebpm` subproblem harder to solve (difficult to identify clusters).  
 
 
