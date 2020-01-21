@@ -15,6 +15,7 @@ library("NNLM")
 library("ebpm")
 library("ebpmf")
 source("code/misc.R")
+par(mfrow = c(2,2))
 ```
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
@@ -38,20 +39,12 @@ lambda = L %*% t(F)
 X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 image(X)
 
-par(mfrow = c(2,2))
-for(i in 1:k){
-  plot(L[,i],main=paste0("true loading ",i), ylab = "loading")
-}
-
-for(i in 1:k){
-  plot(F[,i],main=paste0("true factor ",i), ylab = "factor")
-}
-
+## show scaled L, F
+## I transfrom the L, F from the Poisson model to the multinomial model
 lf_truth = poisson2multinom(F = F, L = L)
 for(i in 1:k){
   plot(lf_truth$L[,i],main=paste0("true loading (scaled)",i), ylab = "loading")
 }
-
 for(i in 1:k){
   plot(lf_truth$F[,i],main=paste0("true factor (scaled)",i), ylab = "factor")
 }
@@ -62,13 +55,17 @@ for(i in 1:k){
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 k = 4
 fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 10000, verbose = FALSE)
-fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 100, verbose = TRUE)
+fit_ebpmf_tg = ebpmf.alpha::ebpmf_two_gamma(X, K = k, maxiter.out = 500, verbose = TRUE)
 ```
-
 
 
 ## Look at the loadings:
 ```{r}
+## show true L
+for(i in 1:k){
+  plot(L[,i],main=paste0("true loading ",i), ylab = "loading")
+}
+
 ## lee from truth
 par(mfrow = c(2,2))
 for(i in 1:k){
@@ -80,10 +77,15 @@ for(d in 1:k){
   plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma: loadings %d", d), ylab = "loading")
 }
 ```
-two-gamma gets the structure right!
+two-gamma gets the loading structure right!
 
 ## Look at the factors:
 ```{r}
+## show true F
+for(i in 1:k){
+  plot(F[,i],main=paste0("true factor ",i), ylab = "factor")
+}
+
 ## lee from truth
 par(mfrow = c(2,2))
 for(i in 1:k){
@@ -95,3 +97,6 @@ for(d in 1:k){
   plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf("ebpmf_two_gamma: factors %d", d), ylab = "factor")
 }
 ```
+It is harder to recover factors. 
+
+
