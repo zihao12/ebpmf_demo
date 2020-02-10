@@ -1,0 +1,222 @@
+---
+title: "ebpm-gh-gamma"
+author: "zihao12"
+date: "2020-02-06"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to implement EB version for https://academic.oup.com/biomet/article/103/4/971/2659041 (with simulation: http://dattahub.github.io/GHsim) .On this page, I want to see the speed and the goodness of fit of various optimization options (which variables to estimate). 
+
+
+
+## preliminary results
+* The current stable (need more testing) methods (within gh-gamma-poisson) are: `beta-gamma-poisson`, and only estimating $\gamma$ or $\phi$. 
+
+* Those methods are faster than `ebpm_point_gamma` and much faster than `ebpm_two_gamma` (will speed still depend a lot on specific datasets). 
+
+* Since we can't optimize all 5 parameters together, their likelihoods are all worse than `ebpm_two_gamma`. 
+
+## to do
+* look at posterior means and posterior log mean
+
+* try more complicated datasets (> 2 clusters or when clusters are not well separated)
+
+```{r}
+rm(list = ls())
+set.seed(123)
+library(ebpm)
+library(ebpmf.alpha)
+library(base)
+# library(BMS)
+library(gsl)
+library(stats)
+```
+
+```{r}
+## this speeds up a lot (compared to hypergeo function) !!
+# f21.my <- function(A, B,C,z){
+#   if(z < 1 && z > -1){return(f21hyper(A,B,C,z))}
+#   return(+Inf)
+# }
+# 
+# f21.my.vector <- Vectorize(f21.my)
+
+f21.my.vector <- function(A,B,C,z){
+    if(z>=0 & z<1){
+        hyperg_2F1(A,B,C,z)
+    }else{
+            hyperg_2F1(C-A,B,C,1-1/(1-z))/(1-z)^B
+        }
+}
+
+loglik.gh.gamma <- function(y, gam, phi, alpha, a, b){
+  tmp = lgamma(y + alpha) - lgamma(y + 1) - lgamma(alpha) ## could be a problem when big number adds small number
+  tmp = tmp + lbeta(alpha + a, y + b) - lbeta(a, b) ## again, big number add small number ..
+  # tmp = tmp + log(hypergeo(A = gam, B = alpha + a, C = y + alpha + a + b, z = 1 - phi)) - log(hypergeo(A = gam, B = a, C = a + b, z = 1 - phi))
+  tmp = tmp + log(f21.my.vector(A = gam, B = alpha + a, C = y + alpha + a + b, z = 1 - phi)) - log(f21.my.vector(A = gam, B = a, C = a + b, z = 1 - phi))
+  return(sum(Re(tmp)))
+}
+nlm_control_defaults <- function() {
+  return(list(ndigit = 8, stepmax = 30, check.analyticals = FALSE))
+}
+```
+
+
+```{r}
+transform.gh.gamma <- function(vars, back = FALSE){
+  # return(ifelse(back, yes = exp(vars), no = log(vars)))
+  if(back){return(exp(vars))}
+  else{return(log(vars))}
+}
+
+obj.gh.gamma <- function(var.est.t, y, var.fix, var.n){
+  #browser()
+  if(length(var.est.t) == 6){vars = transform.gh.gamma(var.est.t, back = TRUE)}
+  else{vars = c(transform.gh.gamma(var.est.t, back = TRUE), var.fix)}
+  #vars = c(transform.gh.gamma(var.est.t, back = TRUE), var.fix)
+  names(vars) = var.n
+  obj = - loglik.gh.gamma(y = y, gam = vars[["gam"]], phi = vars[["phi"]], 
+                          alpha = vars[["alpha"]], a = vars[["a"]], b = vars[["b"]])
+  return(obj)
+}
+
+## output a list
+process.param <- function(var.est, var.fix){
+  var.n = c(names(var.est), names(var.fix))
+  var.est.t = transform.gh.gamma(as.numeric(var.est))
+  var.fix = as.numeric(var.fix)
+  return(list(var.est.t = var.est.t, var.fix = var.fix, var.n = var.n))
+}
+
+mle.gh.gamma <- function(y, var.fix, var.est, control = NULL){
+  if(is.null(control)){control = nlm_control_defaults()}
+  #browser()
+  tmp = process.param(var.est, var.fix)
+  start = proc.time()
+  # fit = nlm(f = obj.gh.gamma, p = tmp$var.est.t, y = y, var.fix = tmp$var.fix, var.n = tmp$var.n)
+  fn_params = list(y = y, var.fix = tmp$var.fix, var.n = tmp$var.n)
+  fit = do.call(nlm, c(list(obj.gh.gamma, tmp$var.est.t), fn_params, control))
+  runtime = (proc.time() - start)[[3]]
+  fit[["time"]] = runtime
+  return(fit)
+}
+
+posterior.gh.gamma <- function(y, g){
+  
+}
+```
+
+
+
+
+
+
+#### simulate dataset
+```{r}
+## simulate simple dataset
+# y = c(replicate(1000,0), rpois(n = 200, lambda = 10))
+
+## I make y not integers
+y = c(runif(1000), rpois(n = 2000, lambda = 10))
+```
+ 
+## with default parameters
+```{r}
+## fit with default parameters
+a = b = alpha = 0.5
+gam = mean(kmeans(x = y, centers = 2)$centers)
+phi = min(0.9, sum(y > 0)/sum(y == 0))
+ll.default = loglik.gh.gamma(y, gam, phi, alpha, a, b)
+print(sprintf("ll.default: %f", ll.default))
+```
+
+## EB experiments 
+I do Empirical Bayes on this data (initialize with default).
+
+Note: it becomes very slow and unstable when I optimize over more variables ...
+
+<!-- ### optimize over $\gamma, \phi, \alpha, a, b$ -->
+<!-- ```{r warning=FALSE, message=FALSE} -->
+<!-- var.fix = list() -->
+<!-- var.est = list(gam = gam, phi = phi, alpha = alpha, a = a, b = b) -->
+<!-- fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est) -->
+<!-- print(sprintf("runtime %s", fit$time)) -->
+<!-- print(sprintf("ll.eb: %s", -fit$minimum)) -->
+<!-- exp(fit$estimate) -->
+<!-- ``` -->
+
+<!-- ### optimize over $\gamma, \phi, \alpha$ -->
+<!-- ```{r warning=FALSE, message=FALSE} -->
+<!-- var.fix = list(a = a, b = b) -->
+<!-- var.est = list(gam = gam, phi = phi, alpha = alpha) -->
+<!-- fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est) -->
+<!-- print(sprintf("runtime %s", fit$time)) -->
+<!-- print(sprintf("ll.eb: %s", -fit$minimum)) -->
+<!-- exp(fit$estimate) -->
+<!-- ``` -->
+
+### optimize over $\alpha, a, b$
+I let $\gamma = 0$ so it degenerates to beta-gamma-poisson
+```{r warning=FALSE, message=FALSE}
+var.fix = list(gam = 0, phi = 1) ## degenerate to beta-gamma-poisson
+var.est = list(a = a, b = b, alpha = alpha)
+
+fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est)
+print(sprintf("runtime %s", fit$time))
+print(sprintf("ll.eb: %s", -fit$minimum))
+exp(fit$estimate)
+```
+<!-- ### optimize over $\gamma, \phi$ -->
+<!-- ```{r warning=FALSE, message=FALSE} -->
+<!-- var.fix = list(a = a, b = b, alpha = alpha) -->
+<!-- var.est = list(gam = gam, phi = phi) -->
+<!-- fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est) -->
+<!-- print(sprintf("runtime %s", fit$time)) -->
+<!-- print(sprintf("ll.eb: %s", -fit$minimum)) -->
+<!-- exp(fit$estimate) -->
+<!-- ``` -->
+
+
+### optimize over $\phi$
+```{r warning=FALSE, message=FALSE}
+var.fix = list(a = a, b = b, alpha = alpha, gam = gam)
+var.est = list(phi = phi)
+fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est)
+print(sprintf("runtime %s", fit$time))
+print(sprintf("ll.eb: %s", -fit$minimum))
+exp(fit$estimate)
+
+```
+
+### optimize over $\gamma$
+```{r warning=FALSE, message=FALSE}
+var.fix = list(a = a, b = b, alpha = alpha, phi = phi)
+var.est = list(gam = gam)
+fit = mle.gh.gamma(y = y, var.fix = var.fix, var.est = var.est)
+print(sprintf("runtime %s", fit$time))
+print(sprintf("ll.eb: %s", -fit$minimum))
+exp(fit$estimate)
+
+```
+
+### compare with `ebpm_point_gamma`
+```{r warning=FALSE, message=FALSE}
+start = proc.time()
+fit = ebpm_point_gamma(x = y)
+runtime = proc.time() - start
+print(sprintf("runtime %s", runtime[[3]]))
+print(sprintf("ll.eb: %s", fit$log_likelihood))
+```
+
+### compare with `ebpm_two_gamma`
+```{r warning=FALSE, message=FALSE}
+start = proc.time()
+fit = ebpm_two_gamma(x = y)
+runtime = proc.time() - start
+print(sprintf("runtime %s", runtime[[3]]))
+print(sprintf("ll.eb: %s", fit$log_likelihood))
+```
+
