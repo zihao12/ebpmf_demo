@@ -1,0 +1,115 @@
+---
+title: "f21_deriv3"
+author: "zihao12"
+date: "2020-02-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to find a good way of computing $_2 F_{1}(a, b ; c ; z)$ and $_2 F_{1}^{(0,0,1,0)}(a, b ; c ; z)$ ($b$ is a vector). 
+
+## Methods and Results
+* For computing $_2 F_{1}$, I use `BMS::f21hyper` (vectorized), `hypergeo::hypergeo` and `gsl::hyperg_2F1` (use transformations for some values of $z$, which I name to be `Gauss2F1b`; this methods is from [a question in stack overflow](https://stats.stackexchange.com/questions/33451/computation-of-hypergeometric-function-in-r)). `Gauss2F1b` is much faster (I didn't try to figure out why). \
+
+* For computing  $_2 F_{1}^{(0,0,1,0)}(a, b ; c ; z)$, I use numerical differentiation. I only tried `numDeriv::grad`, with `Richardson`. I will explore more methods if the current methods are not fast enough. ([mathworld](http://mathworld.wolfram.com/) provides two formula for computing it, but both seem complicated to implement)
+
+
+```{r}
+rm(list = ls())
+library(BMS)
+library(numDeriv)
+library(gsl) ## need to install GSL to computer: https://astrointro.wordpress.com/2017/05/17/installing-gnu-scientific-library-gsl-in-ubuntu-16-04-and-compiling-codes/ &&  https://blog.csdn.net/qtyl1988/article/details/25636555 
+
+f21.my <- function(A, B, C, z){
+  if(z < 1 && z > -1){return(f21hyper(A,B,C,z))}
+  return(+Inf) ## not sure for z < -1
+}
+
+f21.my.vector <- Vectorize(f21.my)
+hypergeo.vector = Vectorize(hypergeo::hypergeo) ## not sure if vectorization is necessary here
+
+
+## I got a very good method from stack overflow: https://stats.stackexchange.com/questions/33451/computation-of-hypergeometric-function-in-r
+Gauss2F1 <- function(A,B,C,z){
+    if(z>=0 & z<1){
+        hyperg_2F1(A,B,C,z)
+    }else{
+            hyperg_2F1(C-A,B,C,1-1/(1-z))/(1-z)^B
+        }
+}
+```
+
+
+```{r}
+f21deriv3.exp <- function(nz = 2000, nnz = 1000, seed = 123){
+  n = nz + nnz
+  print(sprintf("problem size is %d", n))
+  set.seed(seed)
+  ## simulate data
+  x = c(replicate(nz, 0), rpois(n = nnz, lambda = 10))
+  ## use default parameters for g
+  a = b = alpha = 0.5
+  gam = mean(kmeans(x = x, centers = 2)$centers)
+  phi = min(0.9, sum(x > 0)/sum(x == 0))
+  g = list(a = a, b = b, alpha = alpha, gam = gam, phi = phi)
+  
+  ## parameter for posterior of psi
+  a = g$a + g$alpha
+  b = g$b + x
+  gam = g$gam
+  z = - (1 - g$phi)
+  
+  
+  ## use runtime for computing beta as benchmark
+  print("compute beta as benchmark")
+  start = proc.time()
+  test0 = beta(a = a, b = b)
+  runtime = proc.time() - start
+  print(sprintf("compute beta: %s seconds", runtime[[3]]))
+  
+  
+  
+  ################################## compare runtime for computing f21
+  print("################")
+  print("compute f21 with different methods")
+  ## f21hyper
+  start = proc.time()
+  test1 = f21.my.vector(A = gam, B = a, C = a + b, z = z)
+  runtime = proc.time() - start
+  print(sprintf("compute f21 with f21hyper: %s seconds", runtime[[3]]))
+  
+  ## hypergeo
+  start = proc.time()
+  test2 = hypergeo::hypergeo(A = gam, B = a, C = a + b, z = z)
+  runtime = proc.time() - start
+  print(sprintf("compute f21 with hypergeo: %s seconds", runtime[[3]]))
+  
+  ## 
+  start = proc.time()
+  test3 = Gauss2F1(A = gam, B = a, C = a + b, z = z)
+  runtime = proc.time() - start
+  print(sprintf("compute f21 with Gauss2F1: %s seconds", runtime[[3]]))
+  print(sprintf("max difference between f21hyper and Gauss2F1 is %20f", max(abs(test1 - test3))))
+  
+  
+  ## compute derivative
+  print("################")
+  print("now we use Gauss2F1 to compute gradient")
+
+  ## compute derivative
+  start = proc.time()
+  grad(Gauss2F1, x = a + b, A = gam, B = a, z = z, method = "Richardson")
+  runtime = proc.time() - start
+  print(sprintf("Richardson's extrapolation method: %s seconds", runtime[[3]]))
+}
+```
+
+
+```{r}
+f21deriv3.exp(nz = 20000, nnz = 10000)
+```
+
+
+
