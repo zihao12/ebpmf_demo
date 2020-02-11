@@ -1,0 +1,84 @@
+---
+title: "invbeta_gamma"
+author: "zihao12"
+date: "2020-02-11"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+The goal is to find a generalization of point-gamma. Naturally we think of beta * gamma:
+\begin{align}
+& x_i \sim \text{Pois}(\theta_i)\\
+& \theta_i = d_i \mu_i\\
+& \mu_i \sim \text{Ga}(\alpha, \beta)\\
+& d_i \sim \text{Beta}(a, b)
+\end{align}
+
+
+
+But optimization is hard (need to introduce another variable, and the objective obtained by Variational Inference is not the objective we want in `ebpmf`). 
+
+A conjugate prior is to use GH-Gamma-Poisson. Here I want to study its submodel -- invBeta-gamma-poisson (or PrimeBeta-Gamma-Poisson):
+
+\begin{align}
+& x_i \sim \text{Pois}(\theta_i)\\
+& \theta_i \sim \text{Ga}(\alpha, \beta_i)\\
+& \beta_i \sim \text{invBeta}(a, b)
+\end{align}
+
+```{r}
+library(extraDistr)
+```
+
+
+## $p(\theta)$ in beta*gamma
+```{r}
+n = 10000
+alpha = 10
+beta = 1
+a = 0.01
+b = 0.01
+
+d = rbeta(n, a, b)
+mu = rgamma(n, alpha, rate = beta)
+theta = d * mu
+plot(density(d))
+plot(density(mu))
+plot(density(theta))
+```
+We can get $\theta$ with two modes using `beta * gamma`. Can we do the same un `invBeta-gamma`?
+
+## $p(\theta)$ in invBeta-gamma
+To choose appropriate parameters, we want to focus on $\beta_i$. Ideally we $1/\beta_i$ to be of similar shape (two modes) of scaled beta (like its correspondent in beta*gamma)
+```{r}
+n = 10000
+a =20
+b = 10
+beta = rbetapr(n = n, shape1 = a, shape2 = b)
+theta = rgamma(n = n, shape = alpha, rate = beta)
+plot(density(1/beta))
+plot(density(theta))
+```
+After playing with a few choices of $(a, b)$, I think it is impossible to get two modes in $p(\beta)$ and $p(\theta)$
+
+## other ways?
+We want $1/\beta_i$ to have two modes, where $p(\beta_i)$ has support on $(0,1)$, and we need it be conjugate to gamma. Let's use the shape-scale parameterization for gamma: we want to find $h(.)$ that's two mode, with bounded support,  and is conjugate to Gamma:
+
+\begin{align}
+& x_i \sim \text{Pois}(\theta_i)\\
+& \theta_i \sim \text{Ga}(\alpha, d_i)\\
+& d_i \sim h(.)
+\end{align}
+
+```{r}
+# beta.gh <- function(psi){
+#   psi/(1 - psi)
+# }
+# 
+# psi = rbeta(n = n, shape1 = 0.1, shape2 = 0.1)
+# plot(density(psi))
+# plot(density(beta.gh(psi)))
+```
+
