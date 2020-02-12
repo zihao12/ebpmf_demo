@@ -195,6 +195,50 @@ for(d in 1:k){
 ```
 
 
+## Look at the factors:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(F[,i],main=paste0("truth: factors ",i), ylab = "factors")
+}
+
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(t(fit_lee$H)[,i],main=paste0("mle_lee: factors ",i), ylab = "factors")
+}
+
+## fit_ebpmf_pg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf("ebpmf_two_gamma: factors %d", d), ylab = "factors")
+}
+
+
+## fit_ebpmf_pg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qfs_mean[,d],main=sprintf("ebpmf_point_gamma: factors %d", d), ylab = "factors")
+}
+
+## fit_ebpmf_bg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_bg$qg$qfs_mean[,d],main=sprintf("ebpmf_invBeta_gamma: factors %d", d), ylab = "factors")
+}
+
+## fit_ebpmf_gammamix
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_gammamix$qg$qfs_mean[,d],main=sprintf("ebpmf_gammamix(single_scale): factors %d", d), ylab = "factors")
+}
+```
+
+
+
+
+
 ## compare divergence from truth
 ```{r}
 source("code/misc.R")
