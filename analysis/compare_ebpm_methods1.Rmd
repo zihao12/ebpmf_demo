@@ -1,0 +1,216 @@
+---
+title: "compare_ebpm_methods1"
+author: "zihao12"
+date: "2020-02-12"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+library(ebpm)
+library(ggplot2)
+source("code/misc.R")
+set.seed(123)
+```
+
+## simulate data
+```{r}
+n_z = 1000
+n_nz = 2000
+lam = c(replicate(n_z, 0), replicate(n_nz, 10))
+x = rpois(n = n_z + n_nz, lam)
+
+x_cts = x + 0.01 * runif(n = n_z + n_nz)
+lam_cts = lam + 0.01*0.5
+```
+
+
+## fit count data
+```{r message=FALSE, warning=FALSE}
+data = x
+lam_true = lam
+
+start = proc.time()
+fit_tg = ebpm_two_gamma(x = data)
+fit_tg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_pg = ebpm_point_gamma(x = data)
+fit_pg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_bg = ebpm_invBeta_gamma(x = data, fix_g = c(FALSE, FALSE, FALSE))
+fit_bg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_gammamix = ebpm_gamma_mixture_single_scale(x = data)
+fit_gammamix$runtime = (proc.time() - start)[[3]]
+```
+
+### compare runtime
+```{r}
+t(list(pg = fit_pg$runtime, tg = fit_tg$runtime, bg = fit_bg$runtime, gammamix = fit_gammamix$runtime))
+```
+
+### compare fits
+```{r}
+fit_df = data.frame(
+  data = data,
+  lam_true = lam_true,
+  fit_pg = fit_pg$posterior$mean,
+  fit_tg = fit_tg$posterior$mean,
+  fit_bg = fit_bg$posterior$mean,
+  fit_gammamix = fit_gammamix$posterior$mean
+)
+fit_df_small = fit_df[fit_df$lam_true < 1, ]
+
+
+ggplot(data = fit_df)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = fit_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = fit_tg, color = "ebpm_two_gamma"))+
+  geom_point(aes(x = data, y = fit_bg, color = "ebpm_invBeta_gamma"))+
+  geom_point(aes(x = data, y = fit_gammamix, color = "ebpm_gammamix"))
+
+## look at small lambdas
+ggplot(data = fit_df_small)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = fit_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = fit_tg, color = "ebpm_two_gamma"))+
+  geom_point(aes(x = data, y = fit_bg, color = "ebpm_invBeta_gamma"))+
+  geom_point(aes(x = data, y = fit_gammamix, color = "ebpm_gammamix"))
+
+```
+
+### other comparisons
+```{r}
+rmse <- function(true, fit){
+  est = fit$posterior$mean
+  return(sqrt(mean((true - est)^2)))
+}
+KL_ <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+KL <- function(true,fit){
+  KL_(true, fit$posterior$mean)
+}
+
+JS  <- function(true,fit){
+  est = fit$posterior$mean
+  0.5*(KL_(true, est) + KL_(est, true))
+}
+
+RMSEs = c(rmse(lam_true, fit_pg), rmse(lam_true, fit_tg), rmse(lam_true, fit_bg),  rmse(lam_true, fit_gammamix))
+
+KLs = c(KL(lam_true, fit_pg), KL(lam_true, fit_tg), KL(lam_true, fit_bg),  KL(lam_true, fit_gammamix))
+
+JSs = c(JS(lam_true, fit_pg), JS(lam_true, fit_tg), JS(lam_true, fit_bg),  JS(lam_true, fit_gammamix))
+
+lls = c(fit_pg$log_likelihood, fit_tg$log_likelihood, fit_bg$log_likelihood, fit_gammamix$log_likelihood)
+
+data.frame(RMSE = RMSEs, KL = KLs, JS = JSs, ll =lls, row.names = c("point-gamma", "two-gamma", "invBeta-gamma", "gammamix"))
+```
+
+
+
+
+## fit continuous data
+```{r message=FALSE, warning=FALSE}
+data = x_cts
+lam_true = lam_cts
+
+start = proc.time()
+fit_tg = ebpm_two_gamma(x = data)
+fit_tg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_pg = ebpm_point_gamma(x = data)
+fit_pg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_bg = ebpm_invBeta_gamma(x = data)
+fit_bg$runtime = (proc.time() - start)[[3]]
+
+start = proc.time()
+fit_gammamix = ebpm_gamma_mixture_single_scale(x = data)
+fit_gammamix$runtime = (proc.time() - start)[[3]]
+```
+
+### compare runtime
+```{r}
+t(list(pg = fit_pg$runtime, tg = fit_tg$runtime, bg = fit_bg$runtime, gammamix = fit_gammamix$runtime))
+```
+
+### compare fits
+```{r}
+fit_df = data.frame(
+  data = data,
+  lam_true = lam_true,
+  fit_pg = fit_pg$posterior$mean,
+  fit_tg = fit_tg$posterior$mean,
+  fit_bg = fit_bg$posterior$mean,
+  fit_gammamix = fit_gammamix$posterior$mean
+)
+fit_df_small = fit_df[fit_df$lam_true < 1, ]
+
+
+ggplot(data = fit_df)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = fit_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = fit_tg, color = "ebpm_two_gamma"))+
+  geom_point(aes(x = data, y = fit_bg, color = "ebpm_invBeta_gamma"))+
+  geom_point(aes(x = data, y = fit_gammamix, color = "ebpm_gammamix"))
+
+## look at small lambdas
+ggplot(data = fit_df_small)+
+  geom_point(aes(x = data, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = data, y = fit_pg, color = "ebpm_point_gamma"))+
+  geom_point(aes(x = data, y = fit_tg, color = "ebpm_two_gamma"))+
+  geom_point(aes(x = data, y = fit_bg, color = "ebpm_invBeta_gamma"))+
+  geom_point(aes(x = data, y = fit_gammamix, color = "ebpm_gammamix"))
+```
+
+
+### other comparisons
+```{r}
+rmse <- function(true, fit){
+  est = fit$posterior$mean
+  return(sqrt(mean((true - est)^2)))
+}
+KL_ <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+KL <- function(true,fit){
+  KL_(true, fit$posterior$mean)
+}
+
+JS  <- function(true,fit){
+  est = fit$posterior$mean
+  0.5*(KL_(true, est) + KL_(est, true))
+}
+
+RMSEs = c(rmse(lam_true, fit_pg), rmse(lam_true, fit_tg), rmse(lam_true, fit_bg),  rmse(lam_true, fit_gammamix))
+
+KLs = c(KL(lam_true, fit_pg), KL(lam_true, fit_tg), KL(lam_true, fit_bg),  KL(lam_true, fit_gammamix))
+
+JSs = c(JS(lam_true, fit_pg), JS(lam_true, fit_tg), JS(lam_true, fit_bg),  JS(lam_true, fit_gammamix))
+
+lls = c(fit_pg$log_likelihood, fit_tg$log_likelihood, fit_bg$log_likelihood, fit_gammamix$log_likelihood)
+
+data.frame(RMSE = RMSEs, KL = KLs, JS = JSs, ll =lls, row.names = c("point-gamma", "two-gamma", "invBeta-gamma", "gammamix"))
+```
+
+
+
+
+
+
+
+
+
+
