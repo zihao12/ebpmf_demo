@@ -1,0 +1,213 @@
+---
+title: "nmf_sparse"
+author: "zihao12"
+date: "2019-10-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+Adapted from https://stephens999.github.io/misc/nmf_sparse.html
+
+I compare `ebpmf` methods with different prior families: `point-gamma`, `invBeta-gamma`, `gammamix`
+```{r warning=F, message=F}
+rm(list = ls())
+library("NNLM")
+#library("ebpm")
+devtools::load_all("../ebpm")
+#library("ebpmf.alpha")
+devtools::load_all("../ebpmf.alpha")
+source("code/misc.R")
+```
+
+
+
+## "easy" data with "block-like structure" 
+We simulate data with 3 factors with a "block-like" structure.
+```{r}
+set.seed(123)
+n = 99
+p = 300
+k= 3
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+  
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+Now run MLE and show L, F
+```{r warning=F, message=F}
+fit_lee = NNLM::nnmf(A = X, k = 3, loss = "mkl", method = "lee", max.iter = 10000)
+
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee:  loadings ",i), ylab = "loading")
+}
+
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0("mle_lee:  factors ",i), ylab = "factor")
+}
+```
+
+
+
+
+## Add a dense fourth factor
+Now I add a fourth factor that is dense.
+Note that we can make the problem much harder
+by making the 4th (dense) factor have larger PVE (increase `mfac` in the code).
+That may be useful for comparing methods on a harder problem...
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+image(X)
+```
+
+
+
+## Fit with  MLE (lee) 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+k = 4
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = 1000, verbose = FALSE)
+# qg_mle = ebpmf.alpha::initialize_qg_from_LF(L0 = fit_lee$W, F0 =t( fit_lee$H))
+# init_list = list(qg = qg_mle)
+```
+
+## Fit with  ebpmf with different prior families 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+## run ebpmf methods
+### setup
+maxiter = 1000
+verbose = FALSE
+tol = 1e-30
+
+### initialiazation
+init_lf = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 20, verbose = FALSE)
+init = list(qg = initialize_qg_from_LF(L0 = init_lf$W, F0 = t(init_lf$H)))
+
+
+
+### point-gamma
+start = proc.time()
+fit_ebpmf_pg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_point_gamma, init = init,
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_pg$runtime = runtime[[3]]
+
+### invBeta-gamma
+start = proc.time()
+fit_ebpmf_bg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_invBeta_gamma, init = init,
+                                  pm_control = list(fix_g = c(FALSE, FALSE, FALSE)),
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_bg$runtime = runtime[[3]]
+
+### gamma-mixture-single-scale
+start = proc.time()
+fit_ebpmf_gammamix = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_gamma_mixture_single_scale, init = init,
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_gammamix$runtime = runtime[[3]]
+
+# ### exp-mixture (has a bug, at least when iter = 100)
+# start = proc.time()
+# fit_ebpmf_expmix = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_exponential_mixture, init = init,
+#                                   maxiter = maxiter, verbose = verbose, tol = tol)
+# # runtime = proc.time()- start
+# fit_ebpmf_expmix$runtime = runtime[[3]]
+
+# ### two-gamma (this is very very slow, around 60 tims slower than others)
+# start = proc.time()
+# fit_ebpmf_tg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma, init = init, 
+#                                   maxiter = maxiter, verbose = verbose, tol = tol)
+# runtime = proc.time()- start
+# fit_ebpmf_tg$runtime = runtime[[3]]
+```
+
+## compare runtime
+```{r}
+t(list(lee = fit_lee$run.time[[3]], pg = fit_ebpmf_pg$runtime, bg = fit_ebpmf_bg$runtime, gammamix = fit_ebpmf_gammamix$runtime))
+```
+
+## Look at the loadings:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(L[,i],main=paste0("truth: loadings ",i), ylab = "loading")
+}
+
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee: loadings ",i), ylab = "loading")
+}
+
+## fit_ebpmf_pg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf("ebpmf_point_gamma: loadings %d", d), ylab = "loading")
+}
+
+## fit_ebpmf_bg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_bg$qg$qls_mean[,d],main=sprintf("ebpmf_invBeta_gamma: loadings %d", d), ylab = "loading")
+}
+
+## fit_ebpmf_gammamix
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_gammamix$qg$qls_mean[,d],main=sprintf("ebpmf_gammamix(single_scale): loadings %d", d), ylab = "loading")
+}
+```
+
+
+## compare divergence from truth
+```{r}
+source("code/misc.R")
+lam_mle = fit_lee$W %*% fit_lee$H
+lam_ebpmf_pg = fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean)
+lam_ebpmf_bg = fit_ebpmf_bg$qg$qls_mean %*% t(fit_ebpmf_bg$qg$qfs_mean)
+lam_ebpmf_gammamix = fit_ebpmf_gammamix$qg$qls_mean %*% t(fit_ebpmf_gammamix$qg$qfs_mean)
+
+rmse = c(0, RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_pg), 
+         RMSE(lambda, lam_ebpmf_bg), RMSE(lambda, lam_ebpmf_gammamix))
+js = c(0, JS(lambda, lam_mle), JS(lambda, lam_ebpmf_pg), 
+         JS(lambda, lam_ebpmf_bg), JS(lambda, lam_ebpmf_gammamix))
+kl = c(0, KL(lambda, lam_mle), KL(lambda, lam_ebpmf_pg), 
+         KL(lambda, lam_ebpmf_bg), KL(lambda, lam_ebpmf_gammamix))
+ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
+       sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE)),
+       sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE)),
+       sum(dpois(X, fit_ebpmf_bg$qg$qls_mean %*% t(fit_ebpmf_bg$qg$qfs_mean),log=TRUE)),
+       sum(dpois(X, fit_ebpmf_gammamix$qg$qls_mean %*% t(fit_ebpmf_gammamix$qg$qfs_mean),log=TRUE)))
+
+dist = data.frame(cbind(rmse, js, kl, ll), row.names = c("oracle","mle", "point-gamma", "invBeta-gamma", "gammamix"))
+dist
+```
+
