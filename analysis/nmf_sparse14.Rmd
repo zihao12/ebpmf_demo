@@ -149,10 +149,10 @@ fit_ebpmf_gammamix$runtime = runtime[[3]]
 
 ```
 
-## compare runtime
-```{r}
-t(list(lee = fit_lee$run.time[[3]], tg = fit_ebpmf_tg$runtime, pg = fit_ebpmf_pg$runtime, bg = fit_ebpmf_bg$runtime, gammamix = fit_ebpmf_gammamix$runtime))
-```
+<!-- ## compare runtime -->
+<!-- ```{r} -->
+<!-- t(list(lee = fit_lee$run.time[[3]], tg = fit_ebpmf_tg$runtime, pg = fit_ebpmf_pg$runtime, bg = fit_ebpmf_bg$runtime, gammamix = fit_ebpmf_gammamix$runtime)) -->
+<!-- ``` -->
 
 ## Look at the loadings:
 ```{r}
@@ -220,7 +220,10 @@ ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
 elbo = c(NA, NA, fit_ebpmf_tg$ELBO[length(fit_ebpmf_tg$ELBO)],  fit_ebpmf_pg$ELBO[length(fit_ebpmf_pg$ELBO)],
           fit_ebpmf_bg$ELBO[length(fit_ebpmf_bg$ELBO)],  fit_ebpmf_gammamix$ELBO[length(fit_ebpmf_gammamix$ELBO)])
 
-dist = data.frame(cbind(rmse, js, kl, ll, elbo), row.names = c("oracle","mle", "two-gamma" ,"point-gamma", "invBeta-gamma", "gammamix"))
+runtime = c(NA, fit_lee$run.time[[3]], fit_ebpmf_tg$runtime, fit_ebpmf_pg$runtime, 
+            fit_ebpmf_bg$runtime, fit_ebpmf_gammamix$runtime)
+
+dist = data.frame(cbind(rmse, js, kl, ll, elbo, runtime), row.names = c("oracle","mle", "two-gamma" ,"point-gamma", "invBeta-gamma", "gammamix"))
 dist
 ```
 
