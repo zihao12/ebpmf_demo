@@ -1,0 +1,168 @@
+---
+title: "nmf_sparse"
+author: "zihao12"
+date: "2019-10-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Goal and Description
+* Previous results show that `ebpmf-two-gamma` can recover the sparse truth very well. However it is too slow. \
+
+* Original `ebpm-two-gamma` runs EM algorithm for the MLE part, and terminates when parameters change little.\
+
+* I speed up each EM iteration (see [comparison](https://zihao12.github.io/ebpmf_demo/compare_ebpm_two_gamma_speed.html#result_summary)), and restrict the number of EM iterations. \
+
+## Result
+* [Runtime](https://zihao12.github.io/ebpmf_demo/nmf_sparse16.html#compare_runtime): `ebpmf-two-gamma_fast` is comparable to `ebpmf-point-gamma`\
+
+* Fit: however fit is worse. One sparse loading is [not recovered](https://zihao12.github.io/ebpmf_demo/nmf_sparse16.html#look_at_the_loadings:), and the recoevered mean is further from truth compared to `ebpmf_two_gamma_slow`. \
+
+* Look at the [ELBO](https://zihao12.github.io/ebpmf_demo/nmf_sparse16.html#compare_elbo), we can see the restricted number of iterations prevent the algorithm from getting a good solution. \
+
+* Will try different stopping criteria for each `ebpm_two_gamma` problem. 
+
+```{r warning=F, message=F}
+rm(list = ls())
+library("NNLM")
+library("ebpm")
+#devtools::load_all("../ebpm")
+library("ebpmf.alpha")
+#devtools::load_all("../ebpmf.alpha")
+source("code/misc.R")
+```
+
+## Simulate data
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+```
+
+## Fit with  MLE and ebpmf methods
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+## run ebpmf methods
+### setup
+maxiter = 1000
+verbose = FALSE
+tol = -1
+
+## Fit with  MLE (lee) 
+k = 4
+fit_lee = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "lee", max.iter = maxiter, verbose = FALSE)
+
+### initialiazation
+init_lf = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 20, verbose = FALSE)
+init = list(qg = initialize_qg_from_LF(L0 = init_lf$W, F0 = t(init_lf$H)))
+
+### point-gamma
+start = proc.time()
+fit_ebpmf_pg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_point_gamma, init = init,
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_pg$runtime = runtime[[3]]
+
+
+### two-gamma (faster version)
+start = proc.time()
+fit_ebpmf_tg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma_fast3, 
+                                  pm_control = list(n_iter = 10, control = list(tol_in = 1e-2)),
+                                  init = init, maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_tg$runtime = runtime[[3]]
+
+### two-gamma (this is very very slow, around 60 tims slower than others)
+start = proc.time()
+fit_ebpmf_tg_slow = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma, init = init,
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_tg_slow$runtime = runtime[[3]]
+```
+
+## compare runtime
+```{r}
+t(list(lee = fit_lee$run.time[[3]], tg_slow = fit_ebpmf_tg_slow$runtime, tg = fit_ebpmf_tg$runtime, pg = fit_ebpmf_pg$runtime))
+```
+
+## Look at the loadings:
+```{r}
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(L[,i],main=paste0("truth: loadings ",i), ylab = "loading")
+}
+
+## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$W[,i],main=paste0("mle_lee: loadings ",i), ylab = "loading")
+}
+
+## fit_ebpmf_tg_slow
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_tg_slow$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma (slow): loadings %d", d), ylab = "loading")
+}
+
+
+## fit_ebpmf_tg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf("ebpmf_two_gamma (fast): loadings %d", d), ylab = "loading")
+}
+
+
+## fit_ebpmf_pg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf("ebpmf_point_gamma: loadings %d", d), ylab = "loading")
+}
+```
+
+
+## compare divergence from truth
+```{r}
+source("code/misc.R")
+lam_mle = fit_lee$W %*% fit_lee$H
+lam_ebpmf_tg_slow = fit_ebpmf_tg_slow$qg$qls_mean %*% t(fit_ebpmf_tg_slow$qg$qfs_mean)
+lam_ebpmf_tg = fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean)
+lam_ebpmf_pg = fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean)
+
+rmse = c(0, RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_tg_slow),RMSE(lambda, lam_ebpmf_tg), RMSE(lambda, lam_ebpmf_pg))
+js = c(0, JS(lambda, lam_mle), JS(lambda, lam_ebpmf_tg_slow),JS(lambda, lam_ebpmf_tg), JS(lambda, lam_ebpmf_pg))
+kl = c(0, KL(lambda, lam_mle), KL(lambda, lam_ebpmf_tg_slow), KL(lambda, lam_ebpmf_tg), KL(lambda, lam_ebpmf_pg))
+ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
+       sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE)),
+       sum(dpois(X, fit_ebpmf_tg_slow$qg$qls_mean %*% t(fit_ebpmf_tg_slow$qg$qfs_mean),log=TRUE)),
+       sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE)),
+       sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE)))
+
+
+elbo = c(NA, NA, fit_ebpmf_tg_slow$ELBO[length(fit_ebpmf_tg_slow$ELBO)],fit_ebpmf_tg$ELBO[length(fit_ebpmf_tg$ELBO)],  fit_ebpmf_pg$ELBO[length(fit_ebpmf_pg$ELBO)])
+
+data.frame(cbind(rmse, js, kl, ll, elbo), row.names = c("oracle","mle", "two-gamma_slow","two-gamma" ,"point-gamma"))
+```
+
+## Compare ELBO
+```{r}
+plot(fit_ebpmf_tg_slow$ELBO, ,col = "red", xlab = "niter", ylab = "ELBO")
+lines(fit_ebpmf_tg$ELBO, col = "blue")
+legend("bottomright", legend=c("slow", "fast"),
+       col=c("red", "blue"), lty=2:1, cex=0.8)
+```
+
