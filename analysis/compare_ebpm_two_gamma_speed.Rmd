@@ -44,7 +44,7 @@ hist(lam)
 hist(x)
 ```
 
-```{r  cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 maxiter = 100
 
 t_pg <- system.time(
