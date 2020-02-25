@@ -174,7 +174,7 @@ data.frame(cbind(rmse, js, kl, ll), row.names = c("oracle","mle", "point-gamma",
 
 Save simulations and fits for further comparison. 
 ```{r}
-out <- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg)
+out <- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg, fit_lee = fit_lee)
 saveRDS(out, "data/out_current_progress_ebpmf.Rds")
 ```
 
