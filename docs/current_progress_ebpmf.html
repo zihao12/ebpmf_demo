@@ -512,10 +512,10 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7219b4378e169d879c7fae3011497470ebd6933ftargetblank7219b43a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/7219b4378e169d879c7fae3011497470ebd6933f" target="_blank">7219b43</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee181c08efa67021e9e0a20a2e0ec89a82802ee19targetblanke181c08a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e181c08efa67021e9e0a20a2e0ec89a82802ee19" target="_blank">e181c08</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7219b4378e169d879c7fae3011497470ebd6933ftargetblank7219b43a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee181c08efa67021e9e0a20a2e0ec89a82802ee19targetblanke181c08a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -536,6 +536,7 @@ Ignored files:
     Ignored:    analysis/nmf_sparse18_cache/
 
 Untracked files:
+    Untracked:  analysis/current_progress_ebpmf_comparison.Rmd
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
     Untracked:  analysis/fast_mle_nb.Rmd
     Untracked:  analysis/fast_weighted_nb.Rmd
@@ -591,6 +592,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e181c08efa67021e9e0a20a2e0ec89a82802ee19/analysis/current_progress_ebpmf.Rmd" target="_blank">e181c08</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-25
+</td>
+<td>
+current_progress_ebpmf.Rmd save results2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/f5f967b4a69a0d3720f8116a4efbb7f693d3f75e/docs/current_progress_ebpmf.html" target="_blank">f5f967b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1136,7 +1171,7 @@ mle         0.6169912 881.0177 888.5915 -67299.33
 point-gamma 0.6140282 854.2447 863.3370 -67703.40
 two-gamma   0.4933932 553.9085 553.5759 -67907.79</code></pre>
 <p>Save simulations and fits for further comparison.</p>
-<pre class="r"><code>out &lt;- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg)
+<pre class="r"><code>out &lt;- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg, fit_lee = fit_lee)
 saveRDS(out, &quot;data/out_current_progress_ebpmf.Rds&quot;)</code></pre>
 <br>
 <p>
