@@ -172,6 +172,11 @@ ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
 data.frame(cbind(rmse, js, kl, ll), row.names = c("oracle","mle", "point-gamma", "two-gamma"))
 ```
 
+Save simulations and fits for further comparison. 
+```{r}
+out <- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg)
+saveRDS(out, "data/out_current_progress_ebpmf.Rds")
+```
 
 
 
