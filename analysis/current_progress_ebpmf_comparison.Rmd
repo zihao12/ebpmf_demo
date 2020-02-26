@@ -1,0 +1,194 @@
+---
+title: "current_progress_ebpmf_comparison"
+author: "zihao12"
+date: "2020-02-25"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I show ther current [progress](https://zihao12.github.io/ebpmf_demo/current_progress_ebpmf) here. Now I want to compare the results with existing algorithms. Here I want to show `nsNMF`
+
+
+## Non-smooth NMF. 
+Uses a modified version of Lee and Seung’s multiplicative updates for Kullback-Leibler divergence to fit a extension of the standard NMF model. It is meant to give sparser results.
+
+Reference: [Pascual-Montano2006](https://ieeexplore.ieee.org/document/1580485)
+
+The tuning parameter $\theta \in [0, 1]$ corresponds to the non-smoothness or sparseness of the solution. When $\theta = 0$, its solution should be the same as MLE.
+
+## Result
+We can get sparse solution when using big $\theta$, however the resulting $\hat{\lambda}$ is further from truth. 
+
+```{r}
+rm(list = ls())
+library(NMF)
+set.seed(123)
+```
+
+```{r}
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+log_lik <- function(X, lam){
+  return(sum(dpois(x = X, lambda = lam , log = T)))
+}
+
+show_lf <- function(fit, name, l = TRUE, f = FALSE){
+  L = fit@W 
+  F = t(fit@H)
+  k = ncol(L)
+  if(l){
+    par(mfrow = c(2,2))
+    for(i in 1:k){
+      plot(L[,i],main=sprintf("theta = %s: loading %d",name, i), ylab = "loading", pch = 16)
+    }
+  }
+  if(f){
+    par(mfrow = c(2,2))
+    for(i in 1:k){
+      plot(F[,i],main=sprintf("%s: factor %d",name, i), ylab = "factor", pch = 16)
+    }
+  }
+}
+```
+
+Load results from [progress](https://zihao12.github.io/ebpmf_demo/current_progress_ebpmf)
+```{r}
+results = readRDS("data/out_current_progress_ebpmf.Rds")
+X = results$X
+L = results$L
+F = results$F
+lambda = L %*% t(F)
+fit_tg = results$fit_tg
+fit_lee = results$fit_lee
+k = ncol(L)
+```
+
+## Fit with different $\theta$
+```{r cache=TRUE, autodep=TRUE}
+fits <- c()
+rmse <- c()
+kl <- c()
+js <- c()
+ll <- c()
+thetas = c(0, 0.2, 0.4, 0.6, 0.8)
+#thetas = c(0.2, 0.4)
+for(theta in thetas){
+  fit_ = fit_nsNMF = nmf(X,k,method = 'nsNMF', theta = theta)@fit
+  lam_ = fit_@W %*% fit_@H
+  rmse <- c(rmse, RMSE(lambda, lam_))
+  kl <- c(kl, KL(lambda, lam_))
+  js <- c(js, JS(lambda, lam_))
+  ll <- c(ll, log_lik(X, lam_))
+  fits <- c(fits, fit_)
+}
+names(fits) <- thetas
+#fit_nsNMF = nmf(X,k,method = 'nsNMF', theta = 0.9)
+```
+
+## look at loadings
+```{r}
+for(name in names(fits)){
+  print(sprintf("theta = %s", name))
+  show_lf(fits[[name]], name)
+}
+```
+Although we can get some smooth solution by using large $\theta$, it seems to give bad estimates of the non-zero parts. Let's see if the smoothness help recover the truth.
+
+## look at the divergence of $\hat{\lambda}$ from true $\lambda$
+```{r}
+par(mfrow = c(2,2))
+plot(thetas, rmse, xlab = "theta", ylab = "rmse", log = "y", pch = 16)
+plot(thetas, kl, xlab = "theta", ylab = "kl", log = "y" ,pch = 16)
+plot(thetas, js, xlab = "theta", ylab = "js", log = "y", pch = 16)
+plot(thetas, ll, xlab = "theta", ylab = "loglikelihood", pch = 16)
+```
+So the imposed sparseness does not help recover the truth.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ## Sparse NMF -->
+
+<!-- Alternating Least Square (ALS) approach. It is meant to be very fast com- pared to other approaches. -->
+
+<!-- Reference: ![KimH2007](https://www.ncbi.nlm.nih.gov/pubmed/17483501) -->
+
+<!-- ```{r} -->
+
+<!-- fit_snmfl = nmf(X,k,method = 'snmf/l',beta=20) -->
+
+<!-- fit_snmfr = nmf(X,k,method = 'snmf/r',beta=1) -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_nsNMF@fit@W[,i],main=paste0("nsNMF: estimated loadings ",i)) -->
+<!-- } -->
+
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_snmfl@fit@W[,i],main=paste0("snmfl: estimated loadings ",i)) -->
+<!-- } -->
+
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_snmfr@fit@W[,i],main=paste0("snmfr: estimated loadings ",i)) -->
+<!-- } -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_nsNMF@fit@H[i,],main=paste0("nsNMF: estimated factors ",i)) -->
+<!-- } -->
+
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_snmfl@fit@H[i,],main=paste0("snmfl: estimated factors ",i)) -->
+<!-- } -->
+
+<!-- par(mfrow=c(2,2)) -->
+<!-- for(i in 1:k){ -->
+<!--     plot(fit_snmfr@fit@H[i,],main=paste0("snmfr: estimated factors ",i)) -->
+<!-- } -->
+<!-- ``` -->
+
+
+
+
+
+
