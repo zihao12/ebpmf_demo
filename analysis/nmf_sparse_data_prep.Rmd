@@ -50,12 +50,6 @@ tol = 1e-30
 
 ### initialiazation
 init_lf = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 500, verbose = FALSE)
-
-par(mfrow = c(2,2))
-for(i in 1:4){
-  plot(init_lf$W[,i])
-}
-
 init = list(qg = initialize_qg_from_LF(L0 = init_lf$W, F0 = t(init_lf$H)))
 ```
 Seems the initialization is good. 
@@ -69,13 +63,21 @@ fit_ebpmf_tg_fast = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma_f
                                        pm_control = list(n_iter = 10), maxiter = maxiter, verbose = verbose, tol = tol)
 runtime = proc.time()- start
 fit_ebpmf_tg_fast$runtime = runtime[[3]]
+```
+Looks good. 
+
+
+```{r}
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(init_lf$W[,i])
+}
 
 par(mfrow = c(2,2))
 for(i in 1:4){
   plot(fit_ebpmf_tg_fast$qg$qls_mean[,i])
 }
 ```
-Looks good. 
 
 
 ```{r}
