@@ -1,0 +1,89 @@
+---
+title: "nmf_sparse_data_prep"
+author: "zihao12"
+date: "2020-03-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+The results of the various NMF algorithms depend on the initialization. So here I just get a "good" initialization and save it for future use. 
+
+```{r}
+rm(list = ls())
+library(ebpmf.alpha)
+devtools::load_all("../ebpm")
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+```
+
+
+
+## Fit with  MLE (lee) 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+## run ebpmf methods
+### setup
+k = 4
+maxiter = 100
+verbose = FALSE
+tol = 1e-30
+
+### initialiazation
+init_lf = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 500, verbose = FALSE)
+
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(init_lf$W[,i])
+}
+
+init = list(qg = initialize_qg_from_LF(L0 = init_lf$W, F0 = t(init_lf$H)))
+```
+Seems the initialization is good. 
+
+
+See if he initialization is good for `ebpmf_two_gamma`. 
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+### two-gamma (this is very very slow, around 60 tims slower than others)
+start = proc.time()
+fit_ebpmf_tg_fast = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma_fast5, init = init,
+                                       pm_control = list(n_iter = 10), maxiter = maxiter, verbose = verbose, tol = tol)
+runtime = proc.time()- start
+fit_ebpmf_tg_fast$runtime = runtime[[3]]
+
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(fit_ebpmf_tg_fast$qg$qls_mean[,i])
+}
+```
+Looks good. 
+
+
+```{r}
+saveRDS(list(X = X, L = L , F = F, init = init), "data/nmf_sparse_data.Rds")
+```
+
+
+
+
+
+
