@@ -518,10 +518,10 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee66c59eb40984efbfa5c3472c3e703bb4efe905ftargetblanke66c59ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e66c59eb40984efbfa5c3472c3e703bb4efe905f" target="_blank">e66c59e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeac22fefa17ec5b25fdcff93446616df16bd661c4targetblankac22fefa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/ac22fefa17ec5b25fdcff93446616df16bd661c4" target="_blank">ac22fef</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee66c59eb40984efbfa5c3472c3e703bb4efe905ftargetblanke66c59ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeac22fefa17ec5b25fdcff93446616df16bd661c4targetblankac22fefa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -553,15 +553,14 @@ Untracked files:
     Untracked:  analysis/nmf_sparse18.Rmd
     Untracked:  analysis/test_vsc.Rmd
     Untracked:  data/nmf_sparse17.Rds
-    Untracked:  data/nmf_sparse_data.Rds
     Untracked:  data/nmf_sparse_tg.Rds
     Untracked:  data/out_current_progress_ebpmf.Rds
+    Untracked:  script/.nmf_sparse_ebpm.R.swp
 
 Unstaged changes:
     Modified:   analysis/current_progress_ebpmf.Rmd
     Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
     Modified:   analysis/ebpm-gh-gamma.Rmd
-    Modified:   analysis/experiment_ebpm_gammamix3.Rmd
     Modified:   analysis/invbeta_gamma.Rmd
     Modified:   analysis/nmf_sparse13.Rmd
     Modified:   analysis/nmf_sparse14.Rmd
@@ -604,6 +603,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ac22fefa17ec5b25fdcff93446616df16bd661c4/analysis/nmf_sparse_data_prep.Rmd" target="_blank">ac22fef</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-05
+</td>
+<td>
+analysis/nmf_sparse_data_prep.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/9ec9577e1c50d14a645d4fb11722a8d17c76f5f0/docs/nmf_sparse_data_prep.html" target="_blank">9ec9577</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -859,7 +892,7 @@ zihao12
 </table>
 </div>
 </div>
-<pre class="r"><code>saveRDS(list(X = X, L = L , F = F, qg0 = init, LF0 = init_lf), &quot;data/nmf_sparse_data.Rds&quot;)</code></pre>
+<pre class="r"><code>saveRDS(list(X = X, L = L , F = F, init = init, LF0 = init_lf), &quot;data/nmf_sparse_data.Rds&quot;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
