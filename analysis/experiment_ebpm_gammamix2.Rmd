@@ -1,0 +1,126 @@
+---
+title: "experiment_ebpm_gammamix2"
+author: "zihao12"
+date: "2020-03-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r message=FALSE, warning=FALSE}
+rm(list = ls())
+devtools::load_all("../ebpm")
+source("code/misc.R")
+library(ggplot2)
+```
+
+
+
+## simulation
+```{r}
+set.seed(123)
+n = 9999
+lam = rgamma(n = n, shape = 0.5, rate = 10)
+lam[1:(n/3)] = rgamma(n = n/3, shape = 50, rate = 1)
+x = rpois(n, lambda = lam)
+#x = x + 1e-4*runif(n)
+## hist of data
+plot(density(lam))
+hist(x, breaks = 100)
+
+```
+
+
+functions for constructing grid
+```{r}
+## implement `ebpm_gamma_mixture` with my way of selecting the grids
+## k is the number of clusters
+## vars is the grids for variance of each cluster 
+ebpm_gamma_mixture_ <- function(x, s = 1, k = 2, vars = 10^seq(-5,5,0.5)){
+  mus = as.vector(kmeans(x, centers = k, nstart = 25, iter.max = 100)$centers)
+  grid = construct_grid(mus, vars)
+  fit = ebpm::ebpm_gamma_mixture2(x = x, s = 1, grid = grid)
+  ## adjust for `s`
+  fit$fitted_g$scale = (1/s) * fit$fitted_g$scale
+  return(fit)
+}
+
+## construct grid when cluster means, and variance-grids are given
+## only consider s = 1 here
+construct_grid <- function(mus, vars){
+  M = length(mus)
+  D = length(vars)
+  a = c()
+  b = c()
+  for(m in 1:M){
+    for(d in 1:D){
+      b_ = mus[m]/vars[d]
+      a = c(a, b_ * mus[m])
+      b = c(b, b_)
+    }
+  }
+  return(list(a = a, b = b))
+}
+```
+
+## fit `ebpm` methods to data
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+# runtime <- system.time(
+#   fit_gm <- ebpm_gamma_mixture_(x = x, s = 1, k = 2, vars = 10^seq(-5,5,0.5))
+# )
+# fit_gm[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_gm <- ebpm::ebpm_gamma_mixture2(x = x, s = 1)
+)
+fit_gm[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_tg <- ebpm::ebpm_two_gamma_fast5(x = x, s = 1)
+)
+fit_tg[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_pg <- ebpm::ebpm_point_gamma(x = x, s = 1)
+)
+fit_pg[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_gm0 <- ebpm::ebpm_gamma_mixture_single_scale(x = x, s = 1)
+)
+fit_gm0[["runtime"]] = runtime[[3]]
+```
+
+
+
+
+```{r}
+lam_df = data.frame(x = x, lam_true = lam, 
+                    lam_pg = fit_pg$posterior$mean, lam_tg = fit_tg$posterior$mean,
+                    lam_gm = fit_gm$posterior$mean, lam_gm0 = fit_gm0$posterior$mean)
+
+ggplot(data = lam_df)+
+  geom_point(aes(x = x, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = x, y = lam_tg, color = "lam_tg"))+
+  geom_point(aes(x = x, y = lam_gm, color = "lam_gm"))+
+  geom_point(aes(x = x, y = lam_gm0, color = "lam_gm0"))+
+  geom_point(aes(x = x, y = lam_pg, color = "lam_pg"))+
+  ylab("lambda")
+```
+
+
+```{r}
+fit_gm$runtime
+fit_tg$runtime
+fit_pg$runtime
+```
+
+
+```{r}
+list(gammamix = fit_gm$log_likelihood, gammamix0 = fit_gm0$log_likelihood, 
+     two_gamma = fit_tg$log_likelihood, point_gamma = fit_pg$log_likelihood)
+```
+
+

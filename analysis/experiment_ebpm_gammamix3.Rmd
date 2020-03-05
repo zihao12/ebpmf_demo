@@ -1,0 +1,148 @@
+---
+title: "experiment_ebpm_gammamix3"
+author: "zihao12"
+date: "2020-03-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r warning=F, message=F}
+rm(list = ls())
+library("NNLM")
+devtools::load_all("../ebpm")
+library("ebpmf.alpha")
+source("code/misc.R")
+
+## implement `ebpm_gamma_mixture` with my way of selecting the grids
+## k is the number of clusters
+## vars is the grids for variance of each cluster 
+ebpm_gamma_mixture_ <- function(x, s = 1, g_init = NULL, k = 2, vars = 10^seq(-5,5,1)){
+  # if(is.null(g_init)){
+  #   mus = as.vector(kmeans(x, centers = k, nstart = 25, iter.max = 100)$centers)
+  #   grid = construct_grid(mus, vars)
+  #   g_init = grid2gammamix(grid)
+  # }
+  mus = as.vector(kmeans(x, centers = k, nstart = 100, iter.max = 100)$centers)
+  grid = construct_grid(mus, vars)
+  g_init = grid2gammamix(grid)
+  fit = ebpm::ebpm_gamma_mixture2(x = x, s = 1, g_init = g_init)
+  ## adjust for `s`
+  fit$fitted_g$scale = (1/s) * fit$fitted_g$scale
+  return(fit)
+}
+
+## construct grid when cluster means, and variance-grids are given
+## only consider s = 1 here
+construct_grid <- function(mus, vars){
+  M = length(mus)
+  D = length(vars)
+  a = c()
+  b = c()
+  for(m in 1:M){
+    for(d in 1:D){
+      b_ = mus[m]/vars[d]
+      a = c(a, b_ * mus[m])
+      b = c(b, b_)
+    }
+  }
+  return(list(a = a, b = b))
+}
+
+grid2gammamix <- function(grid, pi = NULL){
+  n = length(grid$a)
+  if(is.null(pi)){pi = replicate(n, 1/n)}
+  return( gammamix(pi = pi, shape = grid$a, scale = 1/grid$b) ) 
+}
+```
+
+## "easy" data with "block-like structure" 
+We simulate data with 3 factors with a "block-like" structure.
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+set.seed(123)
+n = 99
+p = 300
+k= 4
+mfac = 2.5 # controls PVE of dense factor
+L = matrix(0, nrow=n, ncol=k)
+F = matrix(0, nrow=p, ncol=k)
+L[1:(n/3),1] = 1
+L[((n/3)+1):(2*n/3),2] = 1
+L[((2*n/3)+1):n,3] = 1
+L[,4] = 1+mfac*runif(n)
+F[1:(p/3),1] = 1+10*runif(p/3)
+F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
+F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
+F[,4]= 1+mfac*runif(p)
+lambda = L %*% t(F)
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+fit_mle = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 1000, verbose = FALSE)
+init = list(qg = initialize_qg_from_LF(L0 = fit_mle$W, F0 = t(fit_mle$H)))
+
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(fit_mle$W[,i])
+}
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+verbose = FALSE
+maxiter = 1000
+tol = -1e+7 ## just in case
+
+runtime <- system.time(
+ fit_gm <- ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_gamma_mixture2, init = init,
+                                  maxiter = maxiter, verbose = verbose, tol = tol)
+)
+fit_gm[["runtime"]] = runtime
+```
+
+
+
+```{r}
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(fit_gm$qg$qls_mean[,i])
+}
+```
+
+Do another 1000 iterations; note that I will re-estimate the grids ...
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+init2 = list(qg = fit_gm$qg)
+runtime <- system.time(
+  fit_gm2 <- ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_gamma_mixture2, init = init2,
+                                    maxiter = maxiter, verbose = verbose, tol = tol)
+)
+fit_gm2[["runtime"]] = runtime
+```
+
+```{r}
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(fit_gm2$qg$qls_mean[,i])
+}
+
+elbos <- c(fit_gm$ELBO, fit_gm2$ELBO)
+plot(elbos)
+
+plot(1:maxiter, fit_gm$ELBO)
+lines((maxiter + 1):2*maxiter, fit_gm2$ELBO, col = "red")
+```
+
+```{r}
+fit_gm$runtime
+
+fit_gm2$runtime
+```
+
+
+
+

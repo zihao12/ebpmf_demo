@@ -1,0 +1,192 @@
+---
+title: "experiment_ebpm_gammamix"
+author: "zihao12"
+date: "2020-03-04"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I have an idea of choosing grids for `gammamix` prior in `ebpm`:\
+
+* If we know all the cluster means: $\mu_l, l = 1:L$, then we only need to use grids to flexibly model the variance. I will try this first\
+
+* The hard part is then to estimate the cluster means. 
+
+
+
+```{r message=FALSE, warning=FALSE}
+rm(list = ls())
+devtools::load_all("../ebpm")
+source("code/misc.R")
+library(ggplot2)
+set.seed(123)
+```
+
+## simulate data (from two gamm - poisson)
+```{r}
+sim_gam_pois <- function(shape, rate, n = 10000){
+  lam = rgamma(n = n, shape = shape, rate = rate)
+  x = rpois(n = n, lambda = lam)
+  return(list(x = x, lam = lam))
+}
+
+n = 10000
+a1 = 0.5; b1 = 10
+a2 = 50; b2 = 10
+#a2 = 5; b2 = 1
+
+pi0 = 0.7
+
+idx = rbinom(n = n, size = 1, prob = pi0)
+lam = idx * sim_gam_pois(a1, b1, n)$lam + (1 - idx) * sim_gam_pois(a2, b2, n)$lam
+x = rpois(n = n, lambda = lam)
+s = replicate(n, 1)
+plot(density(lam, from = 0, to = 10))
+hist(x)
+## posterior mean
+g_true = list(pi = c(pi0,  1-pi0), shape = c(a1, a2), scale = 1/c(b1, b2))
+lam_posterior = compute.posterior.gammamix(x = x, s = s, g = g_true, L = NULL)
+```
+
+## if we know the cluster-means
+```{r}
+construct_grid <- function(mus, vars){
+  M = length(mus)
+  D = length(vars)
+  a = c()
+  b = c()
+  for(m in 1:M){
+    for(d in 1:D){
+      b_ = mus[m]/vars[d]
+      a = c(a, b_ * mus[m])
+      b = c(b, b_)
+    }
+  }
+  return(list(a = a, b = b))
+}
+
+mu1 = a1/b1
+mu2 = a2/b2
+mus = c(mu1, mu2)
+vars = 10^seq(-5,5,0.5)
+grid = construct_grid(mus, vars)
+```
+
+
+```{r }
+runtime <- system.time(
+  fit_gm <- ebpm::ebpm_gamma_mixture2(x = x, s = 1, grid = grid)
+)
+fit_gm[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_tg <- ebpm::ebpm_two_gamma_fast5(x = x, s = 1)
+)
+fit_tg[["runtime"]] = runtime[[3]]
+
+runtime <- system.time(
+  fit_pg <- ebpm::ebpm_point_gamma(x = x, s = 1)
+)
+fit_pg[["runtime"]] = runtime[[3]]
+```
+
+
+```{r}
+## runtime
+t(list(gamma_mix = fit_gm$runtime, two_gamma = fit_tg$runtime, point_gamma = fit_pg$runtime))
+
+## likelihood
+t(list(gamma_mix = fit_gm$log_likelihood, two_gamma = fit_tg$log_likelihood, point_gamma = fit_pg$log_likelihood))
+
+## compare posterior
+
+lam_df = data.frame(x = x, 
+                    lam_true = lam, lam_true_posterior = lam_posterior$mean, 
+                    lam_tg = fit_tg$posterior$mean, lam_gm = fit_gm$posterior$mean, 
+                    lam_pg = fit_pg$posterior$mean)
+
+ggplot(data = lam_df)+
+  #geom_point(aes(x = x, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = x, y = lam_true_posterior, color = "lam_true_posterior"))+
+  geom_point(aes(x = x, y = lam_tg, color = "lam_tg"))+
+  geom_point(aes(x = x, y = lam_gm, color = "lam_gm"))+
+  geom_point(aes(x = x, y = lam_pg, color = "lam_pg"))+
+  ylab("lambda")
+
+
+lam_log_df = data.frame(x = x, 
+                        lam_true_log = log(lam), lam_true_posterior_log = lam_posterior$mean_log,
+                        lam_tg_log = fit_tg$posterior$mean_log, lam_gm_log = fit_gm$posterior$mean_log,
+                        lam_pg_log = fit_pg$posterior$mean_log)
+
+ggplot(data = lam_log_df)+
+  #geom_point(aes(x = x, y = lam_true_log, color = "lam_true_log"))+
+  geom_point(aes(x = x, y = lam_true_posterior_log, color = "lam_true_posterior_log"))+
+  geom_point(aes(x = x, y = lam_tg_log, color = "lam_tg_log"))+
+  geom_point(aes(x = x, y = lam_gm_log, color = "lam_gm_log"))+
+  geom_point(aes(x = x, y = lam_pg_log, color = "lam_pg_log"))+
+  ylab("lambda_log")
+
+```
+
+
+Seems that `ebpm_gammamix` is fast and good if we know the cluster means
+
+
+## If we don't know the cluster means (but we know how many)
+```{r}
+k = 2 ## we know there are 2 clusters 
+mus0 = mus ## true mus
+
+## estimate cluster means
+mus = as.vector(kmeans(x, centers = k, nstart = 500, iter.max = 1000)$centers)
+mus0
+mus
+
+vars = 10^seq(-5,5,0.5)
+grid = construct_grid(mus, vars)
+
+fit_gm_est_mean <- ebpm::ebpm_gamma_mixture2(x = x, s = 1, grid = grid)
+
+## look at loglikelihoods
+t(list(gamma_mix = fit_gm$log_likelihood, gamma_mix_est_mean = fit_gm_est_mean$log_likelihood, two_gamma = fit_tg$log_likelihood, point_gamma = fit_pg$log_likelihood))
+
+
+## compare posterior mean
+
+lam_df[["lam_gm_est_mean"]] = fit_gm_est_mean$posterior$mean
+lam_log_df[["lam_gm_est_mean_log"]] = fit_gm_est_mean$posterior$mean_log
+
+ggplot(data = lam_df)+
+  #geom_point(aes(x = x, y = lam_true, color = "lam_true"))+
+  geom_point(aes(x = x, y = lam_true_posterior, color = "lam_true_posterior"))+
+  geom_point(aes(x = x, y = lam_tg, color = "lam_tg"))+
+  geom_point(aes(x = x, y = lam_gm, color = "lam_gm"))+
+  geom_point(aes(x = x, y = lam_gm_est_mean, color = "lam_gm_est_mean"))+
+  geom_point(aes(x = x, y = lam_pg, color = "lam_pg"))+
+  ylab("lambda")
+
+# ## only look at when x is small
+# lam_log_df_small = lam_log_df[lam_log_df$x < 2, ]
+# ggplot(data = lam_log_df_small)+
+#   #geom_point(aes(x = x, y = lam_true_log, color = "lam_true_log"))+
+#   geom_point(aes(x = x, y = lam_true_posterior_log, color = "lam_true_posterior_log"))+
+#   geom_point(aes(x = x, y = lam_tg_log, color = "lam_tg_log"))+
+#   geom_point(aes(x = x, y = lam_gm_log, color = "lam_gm_log"))+
+#   geom_point(aes(x = x, y = lam_gm_est_mean_log, color = "lam_gm_est_mean_log"))+
+#   geom_point(aes(x = x, y = lam_pg_log, color = "lam_pg_log"))+
+#   ylab("lambda_log")
+```
+
+* The loglikelihood gets worse (not sure how important it is), so does the posterior
+
+* So the accuracy of estimating the cluster mean is important!
+
+## What's next
+* See how it works when applied to `ebpmf`\
+
+* In `ebpmf` we now fix the grid after the first iteration. So this means we can use a more expensive grid-finding step; also, it may make more sense to adjust the grids a little bit every $T$ iterations. \
+
+* If we have a confidence region for the cluster means, can we still construct good grids?
