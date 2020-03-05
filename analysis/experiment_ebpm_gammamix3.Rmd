@@ -132,9 +132,6 @@ for(i in 1:4){
 
 elbos <- c(fit_gm$ELBO, fit_gm2$ELBO)
 plot(elbos)
-
-plot(1:maxiter, fit_gm$ELBO)
-lines((maxiter + 1):2*maxiter, fit_gm2$ELBO, col = "red")
 ```
 
 ```{r}
