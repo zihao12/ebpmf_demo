@@ -77,7 +77,7 @@ for(i in 1:4){
 
 
 ```{r}
-saveRDS(list(X = X, L = L , F = F, qg0 = init, LF0 = init_lf), "data/nmf_sparse_data.Rds")
+saveRDS(list(X = X, L = L , F = F, init = init, LF0 = init_lf), "data/nmf_sparse_data.Rds")
 ```
 
 
