@@ -11,9 +11,9 @@
 
 <meta name="author" content="zihao12" />
 
-<meta name="date" content="2019-10-30" />
+<meta name="date" content="2020-02-25" />
 
-<title>nmf_sparse</title>
+<title>current_progress_ebpmf</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -385,9 +385,9 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">nmf_sparse</h1>
+<h1 class="title toc-ignore">current_progress_ebpmf</h1>
 <h4 class="author">zihao12</h4>
-<h4 class="date">2019-10-30</h4>
+<h4 class="date">2020-02-25</h4>
 
 </div>
 
@@ -412,7 +412,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-02-12
+<strong>Last updated:</strong> 2020-02-25
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -487,16 +487,13 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 The following chunks had caches available:
 <ul>
 <li>
-unnamed-chunk-4
+unnamed-chunk-2
 </li>
 <li>
-unnamed-chunk-5
-</li>
-<li>
-unnamed-chunk-6
+unnamed-chunk-3
 </li>
 </ul>
-<p>To ensure reproducibility of the results, delete the cache directory <code>nmf_sparse14_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>To ensure reproducibility of the results, delete the cache directory <code>current_progress_ebpmf_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
 </div>
 </div>
 </div>
@@ -515,10 +512,10 @@ unnamed-chunk-6
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8b1a2b69b3912c10ee36770eecafd0c42683940atargetblank8b1a2b6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/8b1a2b69b3912c10ee36770eecafd0c42683940a" target="_blank">8b1a2b6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee181c08efa67021e9e0a20a2e0ec89a82802ee19targetblanke181c08a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e181c08efa67021e9e0a20a2e0ec89a82802ee19" target="_blank">e181c08</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree8b1a2b69b3912c10ee36770eecafd0c42683940atargetblank8b1a2b6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee181c08efa67021e9e0a20a2e0ec89a82802ee19targetblanke181c08a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -527,19 +524,36 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/compare_ebpm_two_gamma_speed_cache/
+    Ignored:    analysis/current_progress_ebpmf_cache/
     Ignored:    analysis/demo_sparse_ebpmf_two_gamma_cache/
     Ignored:    analysis/nmf_sparse12_cache/
     Ignored:    analysis/nmf_sparse13_cache/
     Ignored:    analysis/nmf_sparse14_cache/
+    Ignored:    analysis/nmf_sparse15_cache/
+    Ignored:    analysis/nmf_sparse16_cache/
+    Ignored:    analysis/nmf_sparse17_cache/
+    Ignored:    analysis/nmf_sparse18_cache/
 
 Untracked files:
+    Untracked:  analysis/current_progress_ebpmf_comparison.Rmd
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
+    Untracked:  analysis/fast_mle_nb.Rmd
+    Untracked:  analysis/fast_weighted_nb.Rmd
+    Untracked:  analysis/mle_two_nb.Rmd
+    Untracked:  analysis/nmf_sparse17.Rmd
+    Untracked:  analysis/nmf_sparse18.Rmd
+    Untracked:  data/nmf_sparse17.Rds
+    Untracked:  data/nmf_sparse_tg.Rds
+    Untracked:  data/out_current_progress_ebpmf.Rds
 
 Unstaged changes:
     Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
     Modified:   analysis/ebpm-gh-gamma.Rmd
     Modified:   analysis/invbeta_gamma.Rmd
     Modified:   analysis/nmf_sparse13.Rmd
+    Modified:   analysis/nmf_sparse14.Rmd
+    Modified:   analysis/nmf_sparse16.Rmd
 
 </code></pre>
 <p>
@@ -583,16 +597,16 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8b1a2b69b3912c10ee36770eecafd0c42683940a/analysis/nmf_sparse14.Rmd" target="_blank">8b1a2b6</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e181c08efa67021e9e0a20a2e0ec89a82802ee19/analysis/current_progress_ebpmf.Rmd" target="_blank">e181c08</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 <td>
-nmf_sparse14.Rmd update
+current_progress_ebpmf.Rmd save results2
 </td>
 </tr>
 <tr>
@@ -600,13 +614,13 @@ nmf_sparse14.Rmd update
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/nmf_sparse14.html" target="_blank">d32e545</a>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/f5f967b4a69a0d3720f8116a4efbb7f693d3f75e/docs/current_progress_ebpmf.html" target="_blank">f5f967b</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 <td>
 Build site.
@@ -617,16 +631,16 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/82dcc88932b60fbb19779da4e4edc07f692cb39e/analysis/nmf_sparse14.Rmd" target="_blank">82dcc88</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7219b4378e169d879c7fae3011497470ebd6933f/analysis/current_progress_ebpmf.Rmd" target="_blank">7219b43</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 <td>
-nmf_sparse14
+current_progress_ebpmf.Rmd save results
 </td>
 </tr>
 <tr>
@@ -634,13 +648,13 @@ nmf_sparse14
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/nmf_sparse14.html" target="_blank">7fe899b</a>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/current_progress_ebpmf.html" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 <td>
 Build site.
@@ -651,16 +665,16 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/621dd4dbfe32b2dc97d1aefaca0ff4ffb85c7c9d/analysis/nmf_sparse14.Rmd" target="_blank">621dd4d</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/0a53fed7ae64b5563fde6d493491897e41714c22/analysis/current_progress_ebpmf.Rmd" target="_blank">0a53fed</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 <td>
-nmf_sparse14
+current_progress_ebpmf.Rmd
 </td>
 </tr>
 </tbody>
@@ -670,163 +684,35 @@ nmf_sparse14
 </div>
 </div>
 </div>
-<p>Adapted from <a href="https://stephens999.github.io/misc/nmf_sparse.html" class="uri">https://stephens999.github.io/misc/nmf_sparse.html</a></p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Here I show one example where the <code>ebpmf</code> method (specifically the <code>two_gamma</code> version) outperforms the Poisson NMF in recovering sparse structures.</p>
+<div id="poisson-nmf-model" class="section level3">
+<h3>Poisson NMF model</h3>
+<p>The model is: <span class="math display">\[\begin{align}
+&amp; x_{ij} \sim Pois(\lambda_{ij})\\
+&amp; \lambda_{ij} = \sum_k l_{ik} f_{jk}\\
+&amp; l_{ik}, f_{jk} \geq 0
+\end{align}\]</span> The current famous methods find MLE for that model.<br />
+</p>
+</div>
+<div id="eb-approach" class="section level3">
+<h3>EB approach</h3>
+<p>Here we want to impose sparsity assumptions on <span class="math inline">\(L, F\)</span> through Emperical Bayes framework: we let <span class="math display">\[\begin{align}
+&amp; l_{ik} \sim g^l_{k}(.), g^l_{k}(.) \in \mathcal{G}^l\\
+&amp; f_{jk} \sim g^f_{k}(.), g^f_{k}(.) \in \mathcal{G}^f
+\end{align}\]</span> and we estimate <span class="math inline">\(g^l_{k}(.), g^f_{k}(.)\)</span> from data.<br />
+</p>
+<p>Currently I find the class of mixtures of two gammas for <span class="math inline">\(\mathcal{G}\)</span>s can impose sparsity assumptions on some dataset. I demonstrate this advantage through the experiments below.</p>
+</div>
+</div>
+<div id="simulate-data-and-run-experiments" class="section level2">
+<h2>simulate data and run experiments</h2>
 <pre class="r"><code>rm(list = ls())
 library(&quot;NNLM&quot;)
 library(&quot;ebpm&quot;)
-#devtools::load_all(&quot;../ebpm&quot;)
 library(&quot;ebpmf.alpha&quot;)
-#devtools::load_all(&quot;../ebpmf.alpha&quot;)
 source(&quot;code/misc.R&quot;)</code></pre>
-<div id="easy-data-with-block-like-structure" class="section level2">
-<h2>“easy” data with “block-like structure”</h2>
-<p>We simulate data with 3 factors with a “block-like” structure.</p>
-<pre class="r"><code>set.seed(123)
-n = 99
-p = 300
-k= 3
-L = matrix(0, nrow=n, ncol=k)
-F = matrix(0, nrow=p, ncol=k)
-L[1:(n/3),1] = 1
-L[((n/3)+1):(2*n/3),2] = 1
-L[((2*n/3)+1):n,3] = 1
-  
-F[1:(p/3),1] = 1+10*runif(p/3)
-F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
-F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
-lambda = L %*% t(F)
-X = matrix(rpois(n=length(lambda),lambda),nrow=n)
-image(X)</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-2-1.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Now run MLE and show L, F</p>
-<pre class="r"><code>fit_lee = NNLM::nnmf(A = X, k = 3, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 10000)
-
-par(mfrow = c(2,2))
-for(i in 1:k){
-  plot(fit_lee$W[,i],main=paste0(&quot;mle_lee:  loadings &quot;,i), ylab = &quot;loading&quot;)
-}
-
-par(mfrow = c(2,2))</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
-Past versions of unnamed-chunk-3-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-3-1.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>for(i in 1:k){
-  plot(fit_lee$H[i,],main=paste0(&quot;mle_lee:  factors &quot;,i), ylab = &quot;factor&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
-Past versions of unnamed-chunk-3-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-3-2.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="add-a-dense-fourth-factor" class="section level2">
-<h2>Add a dense fourth factor</h2>
-<p>Now I add a fourth factor that is dense. Note that we can make the problem much harder by making the 4th (dense) factor have larger PVE (increase <code>mfac</code> in the code). That may be useful for comparing methods on a harder problem…</p>
 <pre class="r"><code>set.seed(123)
 n = 99
 p = 300
@@ -843,35 +729,20 @@ F[((p/3)+1):(2*p/3),2] = 1+10*runif(p/3)
 F[((2*p/3)+1):p,3] = 1+10*runif(p/3)
 F[,4]= 1+mfac*runif(p)
 lambda = L %*% t(F)
-X = matrix(rpois(n=length(lambda),lambda),nrow=n)
-image(X)</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-<div id="fit-with-mle-lee" class="section level2">
-<h2>Fit with MLE (lee)</h2>
-<pre class="r"><code>k = 4
-fit_lee = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 500, verbose = FALSE)
-# qg_mle = ebpmf.alpha::initialize_qg_from_LF(L0 = fit_lee$W, F0 =t( fit_lee$H))
-# init_list = list(qg = qg_mle)</code></pre>
-</div>
-<div id="fit-with-ebpmf-with-different-prior-families" class="section level2">
-<h2>Fit with ebpmf with different prior families</h2>
-<pre class="r"><code>## run ebpmf methods
-### setup
+X = matrix(rpois(n=length(lambda),lambda),nrow=n)</code></pre>
+<pre class="r"><code>## Fit with  MLE (lee) 
+fit_lee = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;lee&quot;, max.iter = 10000, verbose = FALSE)
+
+## Fit with ebpmf
+### set up
 maxiter = 1000
 verbose = FALSE
-tol = 1e-30
+tol = -1
 
 ### initialiazation
 init_lf = NNLM::nnmf(A = X, k = k, loss = &quot;mkl&quot;, method = &quot;scd&quot;, max.iter = 20, verbose = FALSE)
 init = list(qg = initialize_qg_from_LF(L0 = init_lf$W, F0 = t(init_lf$H)))
 
-### two-gamma (this is very very slow, around 60 tims slower than others)
-start = proc.time()
-fit_ebpmf_tg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma, init = init,
-                                  maxiter = maxiter, verbose = verbose, tol = tol)
-runtime = proc.time()- start
-fit_ebpmf_tg$runtime = runtime[[3]]
 
 ### point-gamma
 start = proc.time()
@@ -880,46 +751,69 @@ fit_ebpmf_pg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_point_gamma, ini
 runtime = proc.time()- start
 fit_ebpmf_pg$runtime = runtime[[3]]
 
-### invBeta-gamma
+### two-gamma 
 start = proc.time()
-fit_ebpmf_bg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_invBeta_gamma, init = init,
-                                  pm_control = list(fix_g = c(FALSE, FALSE, FALSE)),
+fit_ebpmf_tg = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_two_gamma, init = init,
                                   maxiter = maxiter, verbose = verbose, tol = tol)
 runtime = proc.time()- start
-fit_ebpmf_bg$runtime = runtime[[3]]
-
-### gamma-mixture-single-scale
-start = proc.time()
-fit_ebpmf_gammamix = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_gamma_mixture_single_scale, init = init,
-                                  maxiter = maxiter, verbose = verbose, tol = tol)
-runtime = proc.time()- start
-fit_ebpmf_gammamix$runtime = runtime[[3]]
-
-# ### exp-mixture (has a bug, at least when iter = 100)
-# start = proc.time()
-# fit_ebpmf_expmix = ebpmf.alpha::ebpmf(X, K = k,pm_func = ebpm::ebpm_exponential_mixture, init = init,
-#                                   maxiter = maxiter, verbose = verbose, tol = tol)
-# # runtime = proc.time()- start
-# fit_ebpmf_expmix$runtime = runtime[[3]]</code></pre>
-<!-- ## compare runtime -->
-<!-- ```{r} -->
-<!-- t(list(lee = fit_lee$run.time[[3]], tg = fit_ebpmf_tg$runtime, pg = fit_ebpmf_pg$runtime, bg = fit_ebpmf_bg$runtime, gammamix = fit_ebpmf_gammamix$runtime)) -->
-<!-- ``` -->
+fit_ebpmf_tg$runtime = runtime[[3]]</code></pre>
 </div>
-<div id="look-at-the-loadings" class="section level2">
-<h2>Look at the loadings:</h2>
-<pre class="r"><code>## lee from truth
+<div id="what-does-the-data-look-like" class="section level2">
+<h2>what does the data look like</h2>
+<pre class="r"><code>image(X)</code></pre>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-4-1.png" target="_blank">3d85af5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="look-at-loadings" class="section level2">
+<h2>look at loadings</h2>
+<pre class="r"><code>##  truth
 par(mfrow = c(2,2))
 for(i in 1:k){
-  plot(L[,i],main=paste0(&quot;truth: loadings &quot;,i), ylab = &quot;loading&quot;)
+  plot(L[,i],main=paste0(&quot;truth: loading &quot;,i), ylab = &quot;loading&quot;)
 }</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div id="fig-unnamed-chunk-5-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -938,74 +832,31 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-1.png" target="_blank">d32e545</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-1.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<pre class="r"><code>## lee from truth
-par(mfrow = c(2,2))
-for(i in 1:k){
-  plot(fit_lee$W[,i],main=paste0(&quot;mle_lee: loadings &quot;,i), ylab = &quot;loading&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
-Past versions of unnamed-chunk-7-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-2.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_pg
+<pre class="r"><code>## fit_ebpmf_tg
 par(mfrow = c(2,2))
 for(d in 1:k){
-  plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_two_gamma: loadings %d&quot;, d), ylab = &quot;loading&quot;)
+  plot(fit_ebpmf_tg$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_two_gamma: loading %d&quot;, d), ylab = &quot;loading&quot;)
 }</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
-Past versions of unnamed-chunk-7-3.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div id="fig-unnamed-chunk-5-2" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1024,199 +875,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-3.png" target="_blank">d32e545</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-2.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_pg
-par(mfrow = c(2,2))
-for(d in 1:k){
-  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_point_gamma: loadings %d&quot;, d), ylab = &quot;loading&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-4">
-Past versions of unnamed-chunk-7-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-4.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_bg
-par(mfrow = c(2,2))
-for(d in 1:k){
-  plot(fit_ebpmf_bg$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_invBeta_gamma: loadings %d&quot;, d), ylab = &quot;loading&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-5">
-Past versions of unnamed-chunk-7-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-5.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_gammamix
-par(mfrow = c(2,2))
-for(d in 1:k){
-  plot(fit_ebpmf_gammamix$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_gammamix(single_scale): loadings %d&quot;, d), ylab = &quot;loading&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-6">
-Past versions of unnamed-chunk-7-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-7-6.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="look-at-the-factors" class="section level2">
-<h2>Look at the factors:</h2>
-<pre class="r"><code>## lee from truth
-par(mfrow = c(2,2))
-for(i in 1:k){
-  plot(F[,i],main=paste0(&quot;truth: factors &quot;,i), ylab = &quot;factors&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-1.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-1.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
+2020-02-25
 </td>
 </tr>
 </tbody>
@@ -1226,15 +891,15 @@ zihao12
 <pre class="r"><code>## lee from truth
 par(mfrow = c(2,2))
 for(i in 1:k){
-  plot(t(fit_lee$H)[,i],main=paste0(&quot;mle_lee: factors &quot;,i), ylab = &quot;factors&quot;)
+  plot(fit_lee$W[,i],main=paste0(&quot;mle_lee: loading &quot;,i), ylab = &quot;loading&quot;)
 }</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
-Past versions of unnamed-chunk-8-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-2" class="collapse">
+<div id="fig-unnamed-chunk-5-3" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1253,24 +918,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-2.png" target="_blank">d32e545</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-3.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-2.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
+2020-02-25
 </td>
 </tr>
 </tbody>
@@ -1280,15 +934,15 @@ zihao12
 <pre class="r"><code>## fit_ebpmf_pg
 par(mfrow = c(2,2))
 for(d in 1:k){
-  plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_two_gamma: factors %d&quot;, d), ylab = &quot;factors&quot;)
+  plot(fit_ebpmf_pg$qg$qls_mean[,d],main=sprintf(&quot;ebpmf_point_gamma: loading %d&quot;, d), ylab = &quot;loading&quot;)
 }</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-3">
-Past versions of unnamed-chunk-8-3.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
+Past versions of unnamed-chunk-5-4.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-3" class="collapse">
+<div id="fig-unnamed-chunk-5-4" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1307,24 +961,145 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-3.png" target="_blank">d32e545</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-5-4.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
 </td>
 </tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="look-at-factors" class="section level2">
+<h2>look at factors</h2>
+<pre class="r"><code>##  truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(F[,i],main=paste0(&quot;truth: factor &quot;,i), ylab = &quot;loading&quot;)
+}</code></pre>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-3.png" target="_blank">7fe899b</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-1.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
+2020-02-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>## fit_ebpmf_tg
+par(mfrow = c(2,2))
+for(d in 1:k){
+  plot(fit_ebpmf_tg$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_two_gamma: factor %d&quot;, d), ylab = &quot;loading&quot;)
+}</code></pre>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-2.png" target="_blank">3d85af5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>## lee from truth
+par(mfrow = c(2,2))
+for(i in 1:k){
+  plot(fit_lee$H[i,],main=paste0(&quot;mle_lee: factor &quot;,i), ylab = &quot;loading&quot;)
+}</code></pre>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-3">
+Past versions of unnamed-chunk-6-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-3.png" target="_blank">3d85af5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-25
 </td>
 </tr>
 </tbody>
@@ -1334,15 +1109,15 @@ zihao12
 <pre class="r"><code>## fit_ebpmf_pg
 par(mfrow = c(2,2))
 for(d in 1:k){
-  plot(fit_ebpmf_pg$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_point_gamma: factors %d&quot;, d), ylab = &quot;factors&quot;)
+  plot(fit_ebpmf_pg$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_point_gamma: factor %d&quot;, d), ylab = &quot;loading&quot;)
 }</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-4">
-Past versions of unnamed-chunk-8-4.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-4">
+Past versions of unnamed-chunk-6-4.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-4" class="collapse">
+<div id="fig-unnamed-chunk-6-4" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1361,132 +1136,13 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-4.png" target="_blank">d32e545</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3d85af58f83cd0ed7fb594c9b7e2cf3081c9cdd3/docs/figure/current_progress_ebpmf.Rmd/unnamed-chunk-6-4.png" target="_blank">3d85af5</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-02-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-4.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_bg
-par(mfrow = c(2,2))
-for(d in 1:k){
-  plot(fit_ebpmf_bg$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_invBeta_gamma: factors %d&quot;, d), ylab = &quot;factors&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-5">
-Past versions of unnamed-chunk-8-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-5.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-5.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>## fit_ebpmf_gammamix
-par(mfrow = c(2,2))
-for(d in 1:k){
-  plot(fit_ebpmf_gammamix$qg$qfs_mean[,d],main=sprintf(&quot;ebpmf_gammamix(single_scale): factors %d&quot;, d), ylab = &quot;factors&quot;)
-}</code></pre>
-<p><img src="figure/nmf_sparse14.Rmd/unnamed-chunk-8-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-6">
-Past versions of unnamed-chunk-8-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/d32e545a6d96c4369c57940730e99274fd7a3d3d/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-6.png" target="_blank">d32e545</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/7fe899b35b992a5c6df0d1557bd5f554ba285f83/docs/figure/nmf_sparse14.Rmd/unnamed-chunk-8-6.png" target="_blank">7fe899b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-02-12
+2020-02-25
 </td>
 </tr>
 </tbody>
@@ -1494,43 +1150,29 @@ zihao12
 </div>
 </div>
 </div>
-<div id="compare-divergence-from-truth" class="section level2">
-<h2>compare divergence from truth</h2>
-<pre class="r"><code>source(&quot;code/misc.R&quot;)
-lam_mle = fit_lee$W %*% fit_lee$H
-lam_ebpmf_tg = fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean)
+<div id="compare-fitted-hatlambda" class="section level2">
+<h2>compare fitted <span class="math inline">\(\hat{\lambda}\)</span></h2>
+<pre class="r"><code>lam_mle = fit_lee$W %*% fit_lee$H
 lam_ebpmf_pg = fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean)
-lam_ebpmf_bg = fit_ebpmf_bg$qg$qls_mean %*% t(fit_ebpmf_bg$qg$qfs_mean)
-lam_ebpmf_gammamix = fit_ebpmf_gammamix$qg$qls_mean %*% t(fit_ebpmf_gammamix$qg$qfs_mean)
+lam_ebpmf_tg = fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean)
 
-rmse = c(0, RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_tg), RMSE(lambda, lam_ebpmf_pg),
-         RMSE(lambda, lam_ebpmf_bg), RMSE(lambda, lam_ebpmf_gammamix))
-js = c(0, JS(lambda, lam_mle), JS(lambda, lam_ebpmf_tg), JS(lambda, lam_ebpmf_pg),
-         JS(lambda, lam_ebpmf_bg), JS(lambda, lam_ebpmf_gammamix))
-kl = c(0, KL(lambda, lam_mle), KL(lambda, lam_ebpmf_tg), KL(lambda, lam_ebpmf_pg),
-         KL(lambda, lam_ebpmf_bg), KL(lambda, lam_ebpmf_gammamix))
+rmse = c(0, RMSE(lambda, lam_mle), RMSE(lambda, lam_ebpmf_pg), RMSE(lambda, lam_ebpmf_tg))
+js = c(0, JS(lambda, lam_mle), JS(lambda, lam_ebpmf_pg), JS(lambda, lam_ebpmf_tg))
+kl = c(0, KL(lambda, lam_mle), KL(lambda, lam_ebpmf_pg), KL(lambda, lam_ebpmf_tg))
 ll = c(sum(dpois(X, L %*% t(F),log=TRUE)),
        sum(dpois(X, fit_lee$W %*% fit_lee$H,log=TRUE)),
-       sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE)),
        sum(dpois(X, fit_ebpmf_pg$qg$qls_mean %*% t(fit_ebpmf_pg$qg$qfs_mean),log=TRUE)),
-       sum(dpois(X, fit_ebpmf_bg$qg$qls_mean %*% t(fit_ebpmf_bg$qg$qfs_mean),log=TRUE)),
-       sum(dpois(X, fit_ebpmf_gammamix$qg$qls_mean %*% t(fit_ebpmf_gammamix$qg$qfs_mean),log=TRUE)))
+       sum(dpois(X, fit_ebpmf_tg$qg$qls_mean %*% t(fit_ebpmf_tg$qg$qfs_mean),log=TRUE)))
 
-elbo = c(NA, NA, fit_ebpmf_tg$ELBO[length(fit_ebpmf_tg$ELBO)],  fit_ebpmf_pg$ELBO[length(fit_ebpmf_pg$ELBO)],
-          fit_ebpmf_bg$ELBO[length(fit_ebpmf_bg$ELBO)],  fit_ebpmf_gammamix$ELBO[length(fit_ebpmf_gammamix$ELBO)])
-
-runtime = c(NA, fit_lee$run.time[[3]], fit_ebpmf_tg$runtime, fit_ebpmf_pg$runtime, 
-            fit_ebpmf_bg$runtime, fit_ebpmf_gammamix$runtime)
-
-dist = data.frame(cbind(rmse, js, kl, ll, elbo, runtime), row.names = c(&quot;oracle&quot;,&quot;mle&quot;, &quot;two-gamma&quot; ,&quot;point-gamma&quot;, &quot;invBeta-gamma&quot;, &quot;gammamix&quot;))
-dist</code></pre>
-<pre><code>                   rmse        js        kl        ll     elbo  runtime
-oracle        0.0000000    0.0000    0.0000 -68107.81       NA       NA
-mle           0.6770959 1006.6527 1014.4885 -67424.56       NA    0.623
-two-gamma     0.4935635  554.5210  554.1718 -67908.53 228359.6 1821.777
-point-gamma   0.6140282  854.2447  863.3370 -67703.40 227070.6   97.003
-invBeta-gamma 0.5879410  720.3076  720.8049 -67434.38 227242.6  130.432
-gammamix      0.6058388  843.1682  848.2655 -67309.70 226506.9   82.313</code></pre>
+data.frame(cbind(rmse, js, kl, ll), row.names = c(&quot;oracle&quot;,&quot;mle&quot;, &quot;point-gamma&quot;, &quot;two-gamma&quot;))</code></pre>
+<pre><code>                 rmse       js       kl        ll
+oracle      0.0000000   0.0000   0.0000 -68107.81
+mle         0.6169912 881.0177 888.5915 -67299.33
+point-gamma 0.6140282 854.2447 863.3370 -67703.40
+two-gamma   0.4933932 553.9085 553.5759 -67907.79</code></pre>
+<p>Save simulations and fits for further comparison.</p>
+<pre class="r"><code>out &lt;- list(X = X, L = L, F = F, fit_tg = fit_ebpmf_pg, fit_lee = fit_lee)
+saveRDS(out, &quot;data/out_current_progress_ebpmf.Rds&quot;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1559,20 +1201,21 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ebpmf.alpha_0.1.9 ebpm_0.0.0.9015   NNLM_0.4.4        workflowr_1.6.0  
+[1] ebpmf.alpha_0.1.9 ebpm_0.0.0.9017   NNLM_0.4.4        workflowr_1.6.0  
 
 loaded via a namespace (and not attached):
  [1] Rcpp_1.0.3          knitr_1.28          whisker_0.4        
  [4] magrittr_1.5        lattice_0.20-38     R6_2.4.1           
  [7] rlang_0.4.4         stringr_1.4.0       tools_3.6.2        
-[10] grid_3.6.2          xfun_0.12           irlba_2.3.3        
-[13] git2r_0.26.1        htmltools_0.4.0     gtools_3.8.1       
-[16] yaml_2.2.1          digest_0.6.23       rprojroot_1.3-2    
-[19] numDeriv_2016.8-1.1 Matrix_1.2-18       mixsqp_0.3-17      
-[22] later_1.0.0         promises_1.1.0      fs_1.3.1           
-[25] glue_1.3.1          evaluate_0.14       rmarkdown_2.1      
-[28] stringi_1.4.5       compiler_3.6.2      backports_1.1.5    
-[31] gsl_2.1-6           httpuv_1.5.2       </code></pre>
+[10] grid_3.6.2          parallel_3.6.2      Rfast_1.9.8        
+[13] xfun_0.12           irlba_2.3.3         git2r_0.26.1       
+[16] gtools_3.8.1        htmltools_0.4.0     yaml_2.2.1         
+[19] digest_0.6.23       rprojroot_1.3-2     numDeriv_2016.8-1.1
+[22] Matrix_1.2-18       mixsqp_0.3-17       later_1.0.0        
+[25] promises_1.1.0      fs_1.3.1            glue_1.3.1         
+[28] evaluate_0.14       rmarkdown_2.1       stringi_1.4.5      
+[31] compiler_3.6.2      backports_1.1.5     gsl_2.1-6          
+[34] RcppZiggurat_0.1.5  httpuv_1.5.2       </code></pre>
 </div>
 </div>
 

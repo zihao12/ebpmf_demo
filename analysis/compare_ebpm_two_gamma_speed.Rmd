@@ -1,0 +1,120 @@
+---
+title: "compare_ebpm_two_gamma_speed"
+author: "zihao12"
+date: "2020-02-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+
+```{r}
+rm(list = ls())
+library(ebpm)
+set.seed(123)
+```
+
+## Small experiment 
+```{r }
+simulate_tg_poisson <- function(s, pi0, shape1, scale1, shape2, scale2,
+                                                                n = 1000, seed = 123){
+        set.seed(seed)
+        #browser()
+        idx = rbinom(n = n, size = 1, prob = pi0)
+        lam = idx * rgamma(n = n, shape = shape1, scale = scale1) + (1 - idx) * rgamma(n = n, shape = shape2, scale = scale2)
+        x = rpois(n = n, lambda = s*lam)
+        return(list(x = x, lam = lam))
+}
+
+n = 20000
+s = 1
+pi0 = 0.3
+shape1 = 0.1
+scale1 = 10
+shape2 = 10
+scale2 = 5
+
+sim = simulate_tg_poisson(s, pi0, shape1, scale1, shape2, scale2, n)
+x = sim$x
+lam = sim$lam
+
+hist(lam)
+hist(x)
+```
+
+```{r message=FALSE, warning=FALSE}
+maxiter = 100
+
+t_pg <- system.time(
+  fit_pg <- ebpm_point_gamma(x, s)
+)
+
+t_tg <- system.time(
+  fit_tg <- ebpm_two_gamma(x, s, n_iter = maxiter, rel_tol = -1)
+)
+
+t_tg_fast <- system.time(
+  fit_tg_fast <- ebpm_two_gamma_fast3(x, s, n_iter = maxiter, control = list(tol_in = 1e-2), verbose = FALSE)
+)
+```
+
+<!-- ## compare fit -->
+<!-- ```{r} -->
+<!-- library(ggplot2) -->
+
+<!-- res_df = data.frame(x = x, lam_true = lam,  -->
+<!--                     lam_pg = fit_pg$posterior$mean, lam_tg = fit_tg$posterior$mean, lam_tg_fast = fit_tg_fast$posterior$mean) -->
+
+<!-- ggplot(res_df)+ -->
+<!--   geom_point(aes(x = lam_true, y = lam_true, color = "lam_true")) +  -->
+<!--   geom_point(aes(x = lam_true, y = lam_pg, color = "lam_pg")) +  -->
+<!--   geom_point(aes(x = lam_true, y = lam_tg, color = "lam_tg")) + -->
+<!--   geom_point(aes(x = lam_true, y = lam_tg_fast, color = "lam_tg_fast"))  -->
+<!-- ``` -->
+
+## Result summary
+```{r}
+KL <- function(true,est){
+  sum(ifelse(true==0,0,true * log(true/est)) + est - true)
+}
+JS  <- function(true,est){
+  0.5*(KL(true, est) + KL(est, true))
+}
+RMSE <- function(true, est){
+  sqrt(mean((true - est)^2))
+}
+
+KLs <- c(KL(lam, fit_pg$posterior$mean), KL(lam, fit_tg$posterior$mean), KL(lam, fit_tg_fast$posterior$mean))
+JSs <- c(JS(lam, fit_pg$posterior$mean), JS(lam, fit_tg$posterior$mean), JS(lam, fit_tg_fast$posterior$mean))
+RMSEs <- c(RMSE(lam, fit_pg$posterior$mean), RMSE(lam, fit_tg$posterior$mean), RMSE(lam, fit_tg_fast$posterior$mean))
+lls <- c(fit_pg$log_likelihood, fit_tg$log_likelihood, fit_tg_fast$log_likelihood)
+niter <- c(NA, maxiter, maxiter)
+runtime <- c(t_pg[[3]], t_tg[[3]], t_tg_fast[[3]])
+data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, lls = lls, runtime = runtime, niter = niter, 
+           row.names = c("point_gamma", "two_gamma", "two_gamma_fast"))
+```
+
+## compare progress
+```{r}
+plot(1:maxiter, fit_tg$progress, col = "red", xlab = "niter", ylab = "log-likelihood")
+lines(1:maxiter,fit_tg$progress, col = "blue")
+```
+
+## look at g
+```{r}
+show_g <- function(g){data.frame(param = names(g),value = as.numeric(g))}
+g_truth = two_gamma(pi0 = pi0, shape1 = shape1, scale1 = scale1, shape2 = shape2, scale2 = scale2)
+
+show_g(g_truth)
+show_g(fit_tg$fitted_g)
+show_g(fit_tg_fast$fitted_g)
+```
+
+
+
+
+
+
+
