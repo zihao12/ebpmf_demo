@@ -84,11 +84,6 @@ X = matrix(rpois(n=length(lambda),lambda),nrow=n)
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 fit_mle = NNLM::nnmf(A = X, k = k, loss = "mkl", method = "scd", max.iter = 1000, verbose = FALSE)
 init = list(qg = initialize_qg_from_LF(L0 = fit_mle$W, F0 = t(fit_mle$H)))
-
-par(mfrow = c(2,2))
-for(i in 1:4){
-  plot(fit_mle$W[,i])
-}
 ```
 
 
@@ -107,6 +102,11 @@ fit_gm[["runtime"]] = runtime
 
 
 ```{r}
+par(mfrow = c(2,2))
+for(i in 1:4){
+  plot(fit_mle$W[,i])
+}
+
 par(mfrow = c(2,2))
 for(i in 1:4){
   plot(fit_gm$qg$qls_mean[,i])
@@ -132,9 +132,6 @@ for(i in 1:4){
 
 elbos <- c(fit_gm$ELBO, fit_gm2$ELBO)
 plot(elbos)
-
-plot(1:maxiter, fit_gm$ELBO)
-lines((maxiter + 1):2*maxiter, fit_gm2$ELBO, col = "red")
 ```
 
 ```{r}
