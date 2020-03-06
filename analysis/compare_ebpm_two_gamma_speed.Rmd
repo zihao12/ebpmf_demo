@@ -12,7 +12,8 @@ editor_options:
 
 ```{r}
 rm(list = ls())
-library(ebpm)
+#library(ebpm)
+devtools::load_all("../ebpm")
 set.seed(123)
 ```
 
@@ -51,13 +52,14 @@ t_pg <- system.time(
   fit_pg <- ebpm_point_gamma(x, s)
 )
 
+t_tg_fast <- system.time(
+  fit_tg_fast <- ebpm_two_gamma_fast5(x, s, n_iter = maxiter, verbose = FALSE)
+)
+
 t_tg <- system.time(
   fit_tg <- ebpm_two_gamma(x, s, n_iter = maxiter, rel_tol = -1)
 )
 
-t_tg_fast <- system.time(
-  fit_tg_fast <- ebpm_two_gamma_fast3(x, s, n_iter = maxiter, control = list(tol_in = 1e-2), verbose = FALSE)
-)
 ```
 
 <!-- ## compare fit -->
