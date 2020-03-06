@@ -18,13 +18,40 @@ editor_options:
     & l(x; a, p) = \sum_{i = 1}^n [log \Gamma(x_i + a) + x_i log(1-p)] - n (log \Gamma(a) - a log p) - \sum_i log \Gamma(x_i + 1) 
 \end{align*}
 
-It is easy to see $p^{*}(a) = \frac{a}{a + \hat{x}}$. Then we optimize $J(a) : = l(x; a , p^{*}(a))$. Let's look at the shape of the objective function.
+It is easy to see $p^{*}(a) = \frac{a}{a + \hat{x}}$. Then we optimize: 
+\begin{align*}
+    J(a) & := l(x; a , p^{*}(a))\\
+    & = \sum_{i = 1}^n (log(x_i + a) - log(a)) + (n ( log a - log (a + \hat{x}))) a + const 
+\end{align*}
 
-## summary
-* Although the objective is non-convex, it seems we can always land in optimal if we start from very small `log(a)` (from the limited examples below); on the other hand, if we start from big `log(a)`, we might not get to even the local optimal, as the gradient is 0. 
+## shapes of the objective function
 
-* But still, the "good" optimal is data dependent. Look at `shape = 0.01, scale = 1000`. Starting from a number between `-2` and `10` would get optimal very fast, whereas starting from `log(a)` either too big or too small could be a long long journey. 
+### Second part
+Note that if $x$ is a long and sparse sequence, the objective is close to trhe second part, $(n ( log a - log (a + \hat{x}))) a$, which looks like (let the variable be $r = log(a)$, and I will plot the negative of the approximate objective):
+```{r}
+## lat x_hat = 1, as it is just a matter of scaling
+approx_obj <- function(a, xhat = 1){a*(log(a) - log(a + xhat))}
+r_ = seq(-15, 15, 0.1)
+plot(r_, - approx_obj(exp(r_)), type = "l")
+```
+It is convex on the right half of the support. So the initialization seems to matter a lot.  
 
+### First part
+Let's plot the negative of the first part of the objective
+```{r}
+first_obj <- function(a, x = 1){lgamma(a + x) - lgamma(a)}
+r_ = seq(-15, 15, 0.1)
+
+## x is almost constant
+plot(r_, - first_obj(exp(r_)), type = "l")
+
+## x has huge variance
+plot(r_, - first_obj(exp(r_), x= 1) - first_obj(exp(r_), x= 1e+4), type = "l")
+```
+So the objective would be a combination of those shapes ... which can be quite non-convex and dependent on initialization. 
+
+
+## some objective functions
 ```{r}
 rm(list = ls())
 library(Rfast)
@@ -50,7 +77,6 @@ show_obj <- function(shape, scale, s = 1, n = 1000, seed = 123, table_x = FALSE)
   grad = replicate(M, NaN)
   hess = replicate(M, NaN)
   for(i in 1:M){
-    #browser()
     tmp = obj.wnb.loga(r = r_[i], x = x, s = s, w = w, gradient = TRUE, hessian = TRUE)
     obj[i] = tmp
     grad[i] = attr(tmp, "gradient")
