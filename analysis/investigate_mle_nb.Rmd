@@ -18,7 +18,7 @@ editor_options:
     & l(x; a, p) = \sum_{i = 1}^n [log \Gamma(x_i + a) + x_i log(1-p)] - n (log \Gamma(a) - a log p) - \sum_i log \Gamma(x_i + 1) 
 \end{align*}
 
-It is easy to see $p^{*}(a) = \frac{a}{a + \hat{x}}$. Then we optimize $J(a) : = l(\bm{x}; a , p^{*}(a))$. Let's look at the shape of the objective function.
+It is easy to see $p^{*}(a) = \frac{a}{a + \hat{x}}$. Then we optimize $J(a) : = l(x; a , p^{*}(a))$. Let's look at the shape of the objective function.
 
 ## summary
 * Although the objective is non-convex, it seems we can always land in optimal if we start from very small `log(a)` (from the limited examples below); on the other hand, if we start from big `log(a)`, we might not get to even the local optimal, as the gradient is 0. 
