@@ -23,7 +23,7 @@ verbose = TRUE
 tol = -1e+10
 
 ## load data
-data = readRDS("../data/nmf_sparse_data.Rds")
+data = readRDS("../data/nmf_sparse14_fitted.Rds")
 X = data$X
 k = ncol(data$L)
 init = data$init
