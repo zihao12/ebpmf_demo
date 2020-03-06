@@ -1,0 +1,84 @@
+---
+title: "investigate_mle_nb"
+author: "zihao12"
+date: "2020-03-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+* I want to investigate the optimization of the MLE for the negative binomial model. 
+
+* The model is  
+
+\begin{align*}
+    & x \sim NB(\text{size} = a, \text{prob} = p)\\
+    & p(x) = \frac{\Gamma(x + a)}{\Gamma(x + 1) \Gamma(a)} p^a (1-p)^x\\
+    & l(x; a, p) = \sum_{i = 1}^n [log \Gamma(x_i + a) + x_i log(1-p)] - n (log \Gamma(a) - a log p) - \sum_i log \Gamma(x_i + 1) 
+\end{align*}
+
+It is easy to see $p^{*}(a) = \frac{a}{a + \hat{x}}$. Then we optimize $J(a) : = l(\bm{x}; a , p^{*}(a))$. Let's look at the shape of the objective function.
+
+## summary
+* Although the objective is non-convex, it seems we can always land in optimal if we start from very small `log(a)` (from the limited examples below); on the other hand, if we start from big `log(a)`, we might not get to even the local optimal, as the gradient is 0. 
+
+* But still, the "good" optimal is data dependent. Look at `shape = 0.01, scale = 1000`. Starting from a number between `-2` and `10` would get optimal very fast, whereas starting from `log(a)` either too big or too small could be a long long journey. 
+
+```{r}
+rm(list = ls())
+library(Rfast)
+library(stats)
+source("~/Desktop/git/ebpm/R/mle_two_gamma5.R")
+set.seed(123)
+```
+
+```{r}
+simulate_gamma_poisson <- function(shape, scale, s = 1, n = 1000, seed = 123){
+	set.seed(seed)
+	lam = rgamma(n = n, shape = shape, scale = scale)
+	x = rpois(n = n, lambda = s*lam)
+	return(x)
+}
+
+show_obj <- function(shape, scale, s = 1, n = 1000, seed = 123, table_x = FALSE){
+  x = simulate_gamma_poisson(shape, scale, s = s, n = n, seed = seed)
+  w = replicate(n, 1/n)
+  r_ = seq(-25, 25, 0.1)
+  M = length(r_)
+  obj = replicate(M, NaN)
+  grad = replicate(M, NaN)
+  hess = replicate(M, NaN)
+  for(i in 1:M){
+    #browser()
+    tmp = obj.wnb.loga(r = r_[i], x = x, s = s, w = w, gradient = TRUE, hessian = TRUE)
+    obj[i] = tmp
+    grad[i] = attr(tmp, "gradient")
+    hess[i] = attr(tmp, "hessian")
+  }
+  if(table_x){print(table(x))}
+  par(mfrow = c(2,2))
+  hist(log10(x + 1), breaks = 100)
+  plot(r_,obj, xlab = "log(a)", ylab = "negative loglikelihood", type = "l")
+  plot(r_,grad, xlab = "log(a)", ylab = "grad", type = "l")
+  plot(r_,hess, xlab = "log(a)", ylab = "hess", type = "l")
+}
+```
+
+
+```{r}
+
+show_obj(shape = 50, scale = 0.1)
+show_obj(shape = 50, scale = 1)
+show_obj(shape = 50, scale = 10)
+show_obj(shape = 0.5, scale = 1)
+show_obj(shape = 0.5, scale = 10)
+
+show_obj(shape = 0.5, scale = 0.1, table_x = TRUE)
+show_obj(shape = 1e-2, scale = 1e+3, table_x = TRUE)
+show_obj(shape = 1e-3, scale = 1e+4, table_x = TRUE)
+show_obj(shape = 1e-4, scale = 1e+5, table_x = TRUE)
+show_obj(shape = 1e-6, scale = 1e+7, table_x = TRUE)
+```
+
+
