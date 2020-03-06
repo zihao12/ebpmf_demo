@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="zihao12" />
@@ -90,6 +90,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -238,7 +239,6 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
-  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -251,9 +251,48 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -267,12 +306,6 @@ $(document).ready(function () {
 }
 }
 
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
 
 .toc-content {
   padding-left: 30px;
@@ -422,7 +455,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -503,63 +536,109 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree99c84b7f919e4e23d562bf540a60e6754490921btargetblank99c84b7a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/99c84b7f919e4e23d562bf540a60e6754490921b" target="_blank">99c84b7</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9e36e0d3f58f17c1616f0249847c9810fad4b0b0targetblank9e36e0da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/9e36e0d3f58f17c1616f0249847c9810fad4b0b0" target="_blank">9e36e0d</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree99c84b7f919e4e23d562bf540a60e6754490921btargetblank99c84b7a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9e36e0d3f58f17c1616f0249847c9810fad4b0b0targetblank9e36e0da" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/compare_ebpm_two_gamma_speed_cache/
-    Ignored:    analysis/current_progress_ebpmf_cache/
-    Ignored:    analysis/current_progress_ebpmf_comparison_cache/
-    Ignored:    analysis/demo_sparse_ebpmf_two_gamma_cache/
+    Ignored:    analysis/anchor_word_model_swimmer_cache/
+    Ignored:    analysis/compare_GH_cache/
+    Ignored:    analysis/compare_speeds_ebpmf_cache/
+    Ignored:    analysis/ebpm_two_gamma_debug2_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix2_cache/
     Ignored:    analysis/experiment_ebpm_gammamix3_cache/
-    Ignored:    analysis/nmf_sparse12_cache/
-    Ignored:    analysis/nmf_sparse13_cache/
-    Ignored:    analysis/nmf_sparse14_cache/
-    Ignored:    analysis/nmf_sparse15_cache/
-    Ignored:    analysis/nmf_sparse16_cache/
-    Ignored:    analysis/nmf_sparse17_cache/
-    Ignored:    analysis/nmf_sparse18_cache/
-    Ignored:    analysis/nmf_sparse_data_prep_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix_cache/
+    Ignored:    analysis/investigate_gamma_poisson_cache/
+    Ignored:    analysis/nmf_anchor_word3_cache/
+    Ignored:    analysis/nmf_anchor_word4_cache/
+    Ignored:    analysis/nmf_sparse10_cache/
+    Ignored:    analysis/nmf_sparse11_cache/
+    Ignored:    analysis/nmf_sparse8_cache/
+    Ignored:    analysis/nmf_sparse9_cache/
+    Ignored:    analysis/test_ebpmf_two_gamma_fast_cache/
 
 Untracked files:
-    Untracked:  analysis/ebpm_two_gamma_speed.Rmd
-    Untracked:  analysis/fast_mle_nb.Rmd
-    Untracked:  analysis/fast_weighted_nb.Rmd
-    Untracked:  analysis/mle_two_nb.Rmd
-    Untracked:  analysis/nmf_sparse17.Rmd
-    Untracked:  analysis/nmf_sparse18.Rmd
-    Untracked:  analysis/test_vsc.Rmd
-    Untracked:  data/nmf_sparse17.Rds
-    Untracked:  data/nmf_sparse_ebpm_point_gamma.Rds
-    Untracked:  data/nmf_sparse_ebpm_tg_slow.Rds
-    Untracked:  data/nmf_sparse_ebpm_two_gamma.Rds
-    Untracked:  data/nmf_sparse_ebpm_two_gamma_fast5.Rds
-    Untracked:  data/nmf_sparse_tg.Rds
-    Untracked:  data/out_current_progress_ebpmf.Rds
-    Untracked:  script/nmf_sparse_ebpm.R
-    Untracked:  script/nmf_sparse_ebpm_point_gamma.out
-    Untracked:  script/nmf_sparse_ebpm_tg_slow.R
-    Untracked:  script/nmf_sparse_ebpm_tg_slow.out
-    Untracked:  script/nmf_sparse_ebpm_two_gamma.out
-    Untracked:  script/nmf_sparse_ebpm_two_gamma_fast5.out
-    Untracked:  script/test.out
+    Untracked:  Rplot.png
+    Untracked:  Untitled.Rmd
+    Untracked:  Untitled.html
+    Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
+    Untracked:  analysis/anchor_word_model1.Rmd
+    Untracked:  analysis/anchor_word_model2.Rmd
+    Untracked:  analysis/anchor_word_model3.Rmd
+    Untracked:  analysis/compare_speeds_ebpmf.Rmd
+    Untracked:  analysis/debug_ebpmf_two_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
+    Untracked:  analysis/draft.Rmd
+    Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
+    Untracked:  analysis/ebpm_gh_gamma.Rmd
+    Untracked:  analysis/ebpm_two_gamma_test.R
+    Untracked:  analysis/ebpm_two_gamma_test.Rmd
+    Untracked:  analysis/ebpmf.Rmd
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/ebpmf_two_gamma_debug.Rmd
+    Untracked:  analysis/investigate_gamma_poisson.Rmd
+    Untracked:  analysis/investigate_nmf_sparse.Rmd
+    Untracked:  analysis/nmf_anchor_word4.Rmd
+    Untracked:  analysis/nmf_sparse11.Rmd
+    Untracked:  analysis/nmf_symm.Rmd
+    Untracked:  analysis/play_prior.Rmd
+    Untracked:  analysis/play_shrinkage_methods.Rmd
+    Untracked:  analysis/plot_g.Rmd
+    Untracked:  analysis/rebayes_vignette.Rmd
+    Untracked:  analysis/softmax_experiments.ipynb
+    Untracked:  analysis/test_ebpmf_two_gamma_fast.Rmd
+    Untracked:  cache/
+    Untracked:  code/anchor-word-recovery/
+    Untracked:  data/anchor_word_model1.csv
+    Untracked:  data/nmf_anchor_word3_A.csv
+    Untracked:  data/nmf_anchor_word3_W.csv
+    Untracked:  data/nmf_anchor_word3_X.csv
+    Untracked:  data/nmf_anchor_word4_A.csv
+    Untracked:  data/nmf_anchor_word4_W.csv
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
+    Untracked:  data/swimmer.mat
+    Untracked:  figure/
+    Untracked:  verbose_log_1571583163.21966.txt
+    Untracked:  verbose_log_1571583324.71036.txt
+    Untracked:  verbose_log_1571583741.94199.txt
+    Untracked:  verbose_log_1571588102.40356.txt
 
 Unstaged changes:
-    Modified:   analysis/current_progress_ebpmf.Rmd
-    Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
-    Modified:   analysis/ebpm-gh-gamma.Rmd
-    Modified:   analysis/invbeta_gamma.Rmd
-    Modified:   analysis/nmf_sparse13.Rmd
-    Modified:   analysis/nmf_sparse14.Rmd
-    Modified:   analysis/nmf_sparse16.Rmd
+    Modified:   .gitignore
+    Modified:   analysis/Compare_ebpmf_nmf.Rmd
+    Modified:   analysis/Compare_ebvaepm_ebpm.Rmd
+    Modified:   analysis/Experiment_ebpmf_rank1.Rmd
+    Modified:   analysis/demo_ebpm_beta_gamma2.Rmd
+    Modified:   analysis/dnbinom.Rmd
+    Modified:   analysis/ebpm_demo.Rmd
+    Modified:   analysis/nmf_anchor_word2.Rmd
+    Modified:   analysis/nmf_anchor_word3.Rmd
+    Modified:   analysis/nmf_sparse.Rmd
+    Modified:   analysis/nmf_sparse2.Rmd
+    Modified:   analysis/nmf_sparse3.Rmd
+    Modified:   analysis/nmf_sparse6.Rmd
+    Modified:   analysis/nmf_sparse7.Rmd
+    Modified:   analysis/nmf_sparse8.Rmd
+    Modified:   analysis/nmf_sparse9.Rmd
+    Modified:   analysis/nmf_sparse_experiment.Rmd
+    Modified:   analysis/numerical_lgamma.Rmd
+    Modified:   analysis/softmax_experiments.Rmd
+    Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
+    Modified:   code/misc.R
+    Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
 
 </code></pre>
 <p>
@@ -603,13 +682,47 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/9e36e0d3f58f17c1616f0249847c9810fad4b0b0/analysis/investigate_mle_nb.Rmd" target="_blank">9e36e0d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-06
+</td>
+<td>
+add some shape analysis to investigate_mle_nb.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/03dcaf5b637e8f382fc9db7a37b3065d558ed62a/docs/investigate_mle_nb.html" target="_blank">03dcaf5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/99c84b7f919e4e23d562bf540a60e6754490921b/analysis/investigate_mle_nb.Rmd" target="_blank">99c84b7</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-03-05
+2020-03-06
 </td>
 <td>
 investigate_mle_nb.Rmd
@@ -626,7 +739,7 @@ html
 zihao12
 </td>
 <td>
-2020-03-05
+2020-03-06
 </td>
 <td>
 Build site.
@@ -643,7 +756,7 @@ Rmd
 zihao12
 </td>
 <td>
-2020-03-05
+2020-03-06
 </td>
 <td>
 investigate_mle_nb.Rmd
@@ -662,22 +775,49 @@ investigate_mle_nb.Rmd
 <li><p>I want to investigate the optimization of the MLE for the negative binomial model.</p></li>
 <li><p>The model is</p></li>
 </ul>
-<p><span class="math display">\[\begin{align*}
+<span class="math display">\[\begin{align*}
     &amp; x \sim NB(\text{size} = a, \text{prob} = p)\\
     &amp; p(x) = \frac{\Gamma(x + a)}{\Gamma(x + 1) \Gamma(a)} p^a (1-p)^x\\
     &amp; l(x; a, p) = \sum_{i = 1}^n [log \Gamma(x_i + a) + x_i log(1-p)] - n (log \Gamma(a) - a log p) - \sum_i log \Gamma(x_i + 1) 
-\end{align*}\]</span></p>
-<p>It is easy to see <span class="math inline">\(p^{*}(a) = \frac{a}{a + \hat{x}}\)</span>. Then we optimize <span class="math inline">\(J(a) : = l(x; a , p^{*}(a))\)</span>. Let’s look at the shape of the objective function.</p>
+\end{align*}\]</span>
+It is easy to see <span class="math inline">\(p^{*}(a) = \frac{a}{a + \hat{x}}\)</span>. Then we optimize:
+<span class="math display">\[\begin{align*}
+    J(a) &amp; := l(x; a , p^{*}(a))\\
+    &amp; = \sum_{i = 1}^n (log(x_i + a) - log(a)) + (n ( log a - log (a + \hat{x}))) a + const 
+\end{align*}\]</span>
 </div>
-<div id="summary" class="section level2">
-<h2>summary</h2>
-<ul>
-<li><p>Although the objective is non-convex, it seems we can always land in optimal if we start from very small <code>log(a)</code> (from the limited examples below); on the other hand, if we start from big <code>log(a)</code>, we might not get to even the local optimal, as the gradient is 0.</p></li>
-<li><p>But still, the “good” optimal is data dependent. Look at <code>shape = 0.01, scale = 1000</code>. Starting from a number between <code>-2</code> and <code>10</code> would get optimal very fast, whereas starting from <code>log(a)</code> either too big or too small could be a long long journey.</p></li>
-</ul>
+<div id="shapes-of-the-objective-function" class="section level2">
+<h2>shapes of the objective function</h2>
+<div id="second-part" class="section level3">
+<h3>Second part</h3>
+<p>Note that if <span class="math inline">\(x\)</span> is a long and sparse sequence, the objective is close to trhe second part, <span class="math inline">\((n ( log a - log (a + \hat{x}))) a\)</span>, which looks like (let the variable be <span class="math inline">\(r = log(a)\)</span>, and I will plot the negative of the approximate objective):</p>
+<pre class="r"><code>## lat x_hat = 1, as it is just a matter of scaling
+approx_obj &lt;- function(a, xhat = 1){a*(log(a) - log(a + xhat))}
+r_ = seq(-15, 15, 0.1)
+plot(r_, - approx_obj(exp(r_)), type = &quot;l&quot;)</code></pre>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /> It is convex on the right half of the support. So the initialization seems to matter a lot.</p>
+</div>
+<div id="first-part" class="section level3">
+<h3>First part</h3>
+<p>Let’s plot the negative of the first part of the objective</p>
+<pre class="r"><code>first_obj &lt;- function(a, x = 1){lgamma(a + x) - lgamma(a)}
+r_ = seq(-15, 15, 0.1)
+
+## x is almost constant
+plot(r_, - first_obj(exp(r_)), type = &quot;l&quot;)</code></pre>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## x has huge variance
+plot(r_, - first_obj(exp(r_), x= 1) - first_obj(exp(r_), x= 1e+4), type = &quot;l&quot;)</code></pre>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /> So the objective would be a combination of those shapes … which can be quite non-convex and dependent on initialization.</p>
+</div>
+</div>
+<div id="some-objective-functions" class="section level2">
+<h2>some objective functions</h2>
 <pre class="r"><code>rm(list = ls())
 library(Rfast)</code></pre>
+<pre><code>Warning: package &#39;Rfast&#39; was built under R version 3.5.2</code></pre>
 <pre><code>Loading required package: Rcpp</code></pre>
+<pre><code>Warning: package &#39;Rcpp&#39; was built under R version 3.5.2</code></pre>
 <pre><code>Loading required package: RcppZiggurat</code></pre>
 <pre class="r"><code>library(stats)
 source(&quot;~/Desktop/git/ebpm/R/mle_two_gamma5.R&quot;)
@@ -698,7 +838,6 @@ show_obj &lt;- function(shape, scale, s = 1, n = 1000, seed = 123, table_x = FAL
   grad = replicate(M, NaN)
   hess = replicate(M, NaN)
   for(i in 1:M){
-    #browser()
     tmp = obj.wnb.loga(r = r_[i], x = x, s = s, w = w, gradient = TRUE, hessian = TRUE)
     obj[i] = tmp
     grad[i] = attr(tmp, &quot;gradient&quot;)
@@ -712,414 +851,46 @@ show_obj &lt;- function(shape, scale, s = 1, n = 1000, seed = 123, table_x = FAL
   plot(r_,hess, xlab = &quot;log(a)&quot;, ylab = &quot;hess&quot;, type = &quot;l&quot;)
 }</code></pre>
 <pre class="r"><code>show_obj(shape = 50, scale = 0.1)</code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
-Past versions of unnamed-chunk-3-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-1.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 50, scale = 1)</code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
-Past versions of unnamed-chunk-3-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-2.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 50, scale = 10)</code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-3">
-Past versions of unnamed-chunk-3-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-3.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 0.5, scale = 1)</code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-4">
-Past versions of unnamed-chunk-3-4.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-4.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 0.5, scale = 10)</code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-5">
-Past versions of unnamed-chunk-3-5.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-5.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 0.5, scale = 0.1, table_x = TRUE)</code></pre>
 <pre><code>x
   0   1   2 
 952  44   4 </code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-6">
-Past versions of unnamed-chunk-3-6.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-6.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 1e-2, scale = 1e+3, table_x = TRUE)</code></pre>
 <pre><code>x
-   0    1    2    3    4    5    6    7    9   10   12   13   17   19   21   22 
- 945    6    1    1    1    1    2    1    2    1    4    1    1    1    2    1 
-  28   29   36   39   53   54   55   63   67   80   83   84   88  126  144  149 
-   1    1    1    1    1    1    1    1    2    1    1    1    1    1    1    1 
- 171  195  259  368  533  618  633  695  778 1015 1039 1093 
-   1    1    1    1    1    1    1    1    1    1    1    1 </code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-7">
-Past versions of unnamed-chunk-3-7.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-7.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+   0    1    2    3    4    5    6    7    9   10   12   13   17   19   21 
+ 945    6    1    1    1    1    2    1    2    1    4    1    1    1    2 
+  22   28   29   36   39   53   54   55   63   67   80   83   84   88  126 
+   1    1    1    1    1    1    1    1    1    2    1    1    1    1    1 
+ 144  149  171  195  259  368  533  618  633  695  778 1015 1039 1093 
+   1    1    1    1    1    1    1    1    1    1    1    1    1    1 </code></pre>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-7.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 1e-3, scale = 1e+4, table_x = TRUE)</code></pre>
 <pre><code>x
-    0     1     2     3     4    11    30    55   408   425   501  4760 10447 
-  987     1     2     1     1     1     1     1     1     1     1     1     1 </code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-8">
-Past versions of unnamed-chunk-3-8.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-8.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+    0     1     2     3     4    11    30    55   408   425   501  4760 
+  987     1     2     1     1     1     1     1     1     1     1     1 
+10447 
+    1 </code></pre>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-8.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 1e-4, scale = 1e+5, table_x = TRUE)</code></pre>
 <pre><code>x
    0    6 1207 4344 
  997    1    1    1 </code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-9.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-9">
-Past versions of unnamed-chunk-3-9.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-9" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-9.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-9.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>show_obj(shape = 1e-6, scale = 1e+7, table_x = TRUE)</code></pre>
 <pre><code>x
    0 
 1000 </code></pre>
-<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-3-10.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-10">
-Past versions of unnamed-chunk-3-10.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-3-10" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/5b02657c63a9a2e77465bc8d81da6d1dc5d031ef/docs/figure/investigate_mle_nb.Rmd/unnamed-chunk-3-10.png" target="_blank">5b02657</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-03-05
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/investigate_mle_nb.Rmd/unnamed-chunk-5-10.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1128,35 +899,30 @@ zihao12
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.2 (2019-12-12)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 18.04.1 LTS
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] Rfast_1.9.8        RcppZiggurat_0.1.5 Rcpp_1.0.3         workflowr_1.6.0   
+[1] Rfast_1.9.8        RcppZiggurat_0.1.5 Rcpp_1.0.2        
 
 loaded via a namespace (and not attached):
- [1] rprojroot_1.3-2 digest_0.6.23   later_1.0.0     R6_2.4.1       
- [5] backports_1.1.5 git2r_0.26.1    magrittr_1.5    evaluate_0.14  
- [9] stringi_1.4.5   rlang_0.4.4     fs_1.3.1        promises_1.1.0 
-[13] whisker_0.4     rmarkdown_2.1   tools_3.6.2     stringr_1.4.0  
-[17] glue_1.3.1      parallel_3.6.2  httpuv_1.5.2    xfun_0.12      
-[21] yaml_2.2.1      compiler_3.6.2  htmltools_0.4.0 knitr_1.28     </code></pre>
+ [1] workflowr_1.5.0 rprojroot_1.3-2 digest_0.6.22   later_0.8.0    
+ [5] R6_2.4.0        backports_1.1.5 git2r_0.26.1    magrittr_1.5   
+ [9] evaluate_0.14   stringi_1.4.3   fs_1.3.1        promises_1.0.1 
+[13] whisker_0.3-2   rmarkdown_1.13  tools_3.5.1     stringr_1.4.0  
+[17] glue_1.3.1      parallel_3.5.1  httpuv_1.5.1    xfun_0.8       
+[21] yaml_2.2.0      compiler_3.5.1  htmltools_0.3.6 knitr_1.25     </code></pre>
 </div>
 </div>
 
@@ -1190,49 +956,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
