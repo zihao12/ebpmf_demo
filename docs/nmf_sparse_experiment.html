@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="zihao12" />
@@ -90,6 +90,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -238,7 +239,6 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
-  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -251,9 +251,48 @@ $(document).ready(function () {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -267,12 +306,6 @@ $(document).ready(function () {
 }
 }
 
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
 
 .toc-content {
   padding-left: 30px;
@@ -422,7 +455,7 @@ div.section {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -503,52 +536,112 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree2c0bc764602d010ddda8a2d7521570e8c09346f0targetblank2c0bc76a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/2c0bc764602d010ddda8a2d7521570e8c09346f0" target="_blank">2c0bc76</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreecd0a7610e61c16e9e047889f1093b7a787b4443dtargetblankcd0a761a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/cd0a7610e61c16e9e047889f1093b7a787b4443d" target="_blank">cd0a761</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree2c0bc764602d010ddda8a2d7521570e8c09346f0targetblank2c0bc76a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreecd0a7610e61c16e9e047889f1093b7a787b4443dtargetblankcd0a761a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/compare_ebpm_two_gamma_speed_cache/
-    Ignored:    analysis/current_progress_ebpmf_cache/
-    Ignored:    analysis/current_progress_ebpmf_comparison_cache/
-    Ignored:    analysis/demo_sparse_ebpmf_two_gamma_cache/
+    Ignored:    analysis/anchor_word_model_swimmer_cache/
+    Ignored:    analysis/compare_GH_cache/
+    Ignored:    analysis/compare_speeds_ebpmf_cache/
+    Ignored:    analysis/ebpm_two_gamma_debug2_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix2_cache/
     Ignored:    analysis/experiment_ebpm_gammamix3_cache/
-    Ignored:    analysis/nmf_sparse12_cache/
-    Ignored:    analysis/nmf_sparse13_cache/
-    Ignored:    analysis/nmf_sparse14_cache/
-    Ignored:    analysis/nmf_sparse15_cache/
-    Ignored:    analysis/nmf_sparse16_cache/
-    Ignored:    analysis/nmf_sparse17_cache/
-    Ignored:    analysis/nmf_sparse18_cache/
-    Ignored:    analysis/nmf_sparse_data_prep_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix_cache/
+    Ignored:    analysis/investigate_gamma_poisson_cache/
+    Ignored:    analysis/nmf_anchor_word3_cache/
+    Ignored:    analysis/nmf_anchor_word4_cache/
+    Ignored:    analysis/nmf_sparse10_cache/
+    Ignored:    analysis/nmf_sparse11_cache/
+    Ignored:    analysis/nmf_sparse8_cache/
+    Ignored:    analysis/nmf_sparse9_cache/
+    Ignored:    analysis/test_ebpmf_two_gamma_fast_cache/
 
 Untracked files:
-    Untracked:  analysis/ebpm_two_gamma_speed.Rmd
-    Untracked:  analysis/fast_mle_nb.Rmd
-    Untracked:  analysis/fast_weighted_nb.Rmd
-    Untracked:  analysis/mle_two_nb.Rmd
-    Untracked:  analysis/nmf_sparse17.Rmd
-    Untracked:  analysis/nmf_sparse18.Rmd
-    Untracked:  analysis/test_vsc.Rmd
-    Untracked:  data/nmf_sparse17.Rds
-    Untracked:  data/nmf_sparse_tg.Rds
-    Untracked:  data/out_current_progress_ebpmf.Rds
+    Untracked:  Rplot.png
+    Untracked:  Untitled.Rmd
+    Untracked:  Untitled.html
+    Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
+    Untracked:  analysis/anchor_word_model1.Rmd
+    Untracked:  analysis/anchor_word_model2.Rmd
+    Untracked:  analysis/anchor_word_model3.Rmd
+    Untracked:  analysis/compare_speeds_ebpmf.Rmd
+    Untracked:  analysis/debug_ebpmf_two_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
+    Untracked:  analysis/draft.Rmd
+    Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
+    Untracked:  analysis/ebpm_gh_gamma.Rmd
+    Untracked:  analysis/ebpm_two_gamma_test.R
+    Untracked:  analysis/ebpm_two_gamma_test.Rmd
+    Untracked:  analysis/ebpmf.Rmd
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/ebpmf_two_gamma_debug.Rmd
+    Untracked:  analysis/investigate_gamma_poisson.Rmd
+    Untracked:  analysis/investigate_nmf_sparse.Rmd
+    Untracked:  analysis/nmf_anchor_word4.Rmd
+    Untracked:  analysis/nmf_sparse11.Rmd
+    Untracked:  analysis/nmf_symm.Rmd
+    Untracked:  analysis/play_prior.Rmd
+    Untracked:  analysis/play_shrinkage_methods.Rmd
+    Untracked:  analysis/plot_g.Rmd
+    Untracked:  analysis/rebayes_vignette.Rmd
+    Untracked:  analysis/softmax_experiments.ipynb
+    Untracked:  analysis/test_ebpmf_two_gamma_fast.Rmd
+    Untracked:  cache/
+    Untracked:  code/anchor-word-recovery/
+    Untracked:  data/anchor_word_model1.csv
+    Untracked:  data/nmf_anchor_word3_A.csv
+    Untracked:  data/nmf_anchor_word3_W.csv
+    Untracked:  data/nmf_anchor_word3_X.csv
+    Untracked:  data/nmf_anchor_word4_A.csv
+    Untracked:  data/nmf_anchor_word4_W.csv
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
+    Untracked:  data/nmf_sparse_ebpm_gamma_mixture2.Rds
+    Untracked:  data/nmf_sparse_ebpm_gamma_mixture2_change_grids_per_10_iter.Rds
+    Untracked:  data/nmf_sparse_ebpm_gamma_mixture2_change_grids_per_5000_iter.Rds
+    Untracked:  data/swimmer.mat
+    Untracked:  figure/
+    Untracked:  script/nmf_sparse_ebpm_gammamix2_change_grids.R
+    Untracked:  verbose_log_1571583163.21966.txt
+    Untracked:  verbose_log_1571583324.71036.txt
+    Untracked:  verbose_log_1571583741.94199.txt
+    Untracked:  verbose_log_1571588102.40356.txt
 
 Unstaged changes:
-    Modified:   analysis/current_progress_ebpmf.Rmd
-    Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
-    Modified:   analysis/ebpm-gh-gamma.Rmd
-    Modified:   analysis/invbeta_gamma.Rmd
-    Modified:   analysis/nmf_sparse13.Rmd
-    Modified:   analysis/nmf_sparse14.Rmd
-    Modified:   analysis/nmf_sparse16.Rmd
+    Modified:   .gitignore
+    Modified:   analysis/Compare_ebpmf_nmf.Rmd
+    Modified:   analysis/Compare_ebvaepm_ebpm.Rmd
+    Modified:   analysis/Experiment_ebpmf_rank1.Rmd
+    Modified:   analysis/demo_ebpm_beta_gamma2.Rmd
+    Modified:   analysis/dnbinom.Rmd
+    Modified:   analysis/ebpm_demo.Rmd
+    Modified:   analysis/nmf_anchor_word2.Rmd
+    Modified:   analysis/nmf_anchor_word3.Rmd
+    Modified:   analysis/nmf_sparse.Rmd
+    Modified:   analysis/nmf_sparse2.Rmd
+    Modified:   analysis/nmf_sparse3.Rmd
+    Modified:   analysis/nmf_sparse6.Rmd
+    Modified:   analysis/nmf_sparse7.Rmd
+    Modified:   analysis/nmf_sparse8.Rmd
+    Modified:   analysis/nmf_sparse9.Rmd
+    Modified:   analysis/numerical_lgamma.Rmd
+    Modified:   analysis/softmax_experiments.Rmd
+    Modified:   analysis/test_ebpm_gamma_mixture_single_scale.Rmd
+    Modified:   code/misc.R
+    Modified:   data/nmf_sparse8_fit_ebpmf_gm.Rds
 
 </code></pre>
 <p>
@@ -592,13 +685,47 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/cd0a7610e61c16e9e047889f1093b7a787b4443d/analysis/nmf_sparse_experiment.Rmd" target="_blank">cd0a761</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-06
+</td>
+<td>
+nmf_sparse_experiment.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/14d6139e4f2888f48778f7feb681fb62881e8d31/docs/nmf_sparse_experiment.html" target="_blank">14d6139</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/2c0bc764602d010ddda8a2d7521570e8c09346f0/analysis/nmf_sparse_experiment.Rmd" target="_blank">2c0bc76</a>
 </td>
 <td>
 zihao12
 </td>
 <td>
-2020-03-05
+2020-03-06
 </td>
 <td>
 nmf_sparse_experiment.Rmd
@@ -617,25 +744,146 @@ nmf_sparse_experiment.Rmd
 </div>
 <div id="show-results" class="section level2">
 <h2>show results</h2>
-<p>I ran into numerical issue when running <code>ebpm_two_gamma_fast5</code>, so I only ran 950 iterations.</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
+<ul>
+<li>I ran into numerical issue when running <code>ebpm_two_gamma_fast5</code>, so I only ran 950 iterations.<br />
+</li>
+<li>There seems to be an issue with intialization … I am getting some really weird results: ELBO no longer agrees with divergence from truth!!!</li>
+</ul>
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)</code></pre>
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 3.5.2</code></pre>
+<pre class="r"><code>source(&quot;code/misc.R&quot;)</code></pre>
 <pre class="r"><code>data = readRDS(&quot;data/nmf_sparse_data.Rds&quot;)
 fit_tg_slow = readRDS(&quot;data/nmf_sparse_ebpm_tg_slow.Rds&quot;)
 fit_tg = readRDS(&quot;data/nmf_sparse_ebpm_two_gamma.Rds&quot;)
 fit_tg_fast5 = readRDS(&quot;data/nmf_sparse_ebpm_two_gamma_fast5.Rds&quot;)
-fit_pg = readRDS(&quot;data/nmf_sparse_ebpm_point_gamma.Rds&quot;)</code></pre>
-<pre class="r"><code>## since `ebpm_two_gamma_fast5` is 50 iterations short, I just assume it makes no progress at all in the last 50 iterations
-fit_tg_fast5$ELBO = c(fit_tg_fast5$ELBO, replicate(50, fit_tg_fast5$ELBO[950]))
+fit_pg = readRDS(&quot;data/nmf_sparse_ebpm_point_gamma.Rds&quot;)
+fit_gm = readRDS(&quot;data/nmf_sparse_ebpm_gamma_mixture2.Rds&quot;)
+fit_gm_change_grid = readRDS(&quot;data/nmf_sparse_ebpm_gamma_mixture2_change_grids_per_10_iter.Rds&quot;)
+## since `ebpm_two_gamma_fast5` is 50 iterations short, I just assume it makes no progress at all in the last 50 iterations
+fit_tg_fast5$ELBO = c(fit_tg_fast5$ELBO, replicate(50, fit_tg_fast5$ELBO[950]))</code></pre>
+<pre class="r"><code>lam = data$L %*% t(data$F)
+lam_tg_slow = fit_tg_slow$qg$qls_mean %*% t(fit_tg_slow$qg$qfs_mean)
+lam_tg = fit_tg$qg$qls_mean %*% t(fit_tg$qg$qfs_mean)
+lam_tg_fast = fit_tg_fast5$qg$qls_mean %*% t(fit_tg_fast5$qg$qfs_mean)
+lam_pg = fit_pg$qg$qls_mean %*% t(fit_pg$qg$qfs_mean)
+lam_gm = fit_gm$qg$qls_mean %*% t(fit_gm$qg$qfs_mean)
 
-elbos &lt;- data.frame(x = seq(1,1000), tg_slow = fit_tg_slow$ELBO, tg = fit_tg$ELBO, tg_fast5 = fit_tg_fast5$ELBO, pg = fit_pg$ELBO)
+rmse = c(RMSE(lam, lam_tg_slow), RMSE(lam, lam_tg), 
+         RMSE(lam, lam_tg_fast), RMSE(lam, lam_pg), RMSE(lam, lam_gm))
+
+kl = c(KL(lam, lam_tg_slow), KL(lam, lam_tg), 
+         KL(lam, lam_tg_fast), KL(lam, lam_pg), KL(lam, lam_gm))
+
+js = c(JS(lam, lam_tg_slow), JS(lam, lam_tg), 
+       JS(lam, lam_tg_fast), JS(lam, lam_pg), JS(lam, lam_gm))
+
+maxiter = 1000
+elbo = c(fit_tg_slow$ELBO[maxiter], fit_tg$ELBO[maxiter], 
+         fit_tg_fast5$ELBO[maxiter], fit_pg$ELBO[maxiter], fit_gm$ELBO[maxiter])
+
+runtime = c(fit_tg_slow$runtime[[3]], fit_tg$runtime[[3]], 
+         fit_tg_fast5$runtime[[3]], fit_pg$runtime[[3]], fit_gm$runtime[[3]])
+
+data.frame(rmse = rmse, kl = kl, js = js, elbo = elbo, runtime = runtime,
+           row.names = c(&quot;tg_slow&quot;, &quot;tg&quot;, &quot;tg_fast5&quot;, &quot;pg&quot;, &quot;gm&quot;))</code></pre>
+<pre><code>              rmse       kl       js     elbo  runtime
+tg_slow  0.6099528 830.8184 829.9983 227965.1 1368.306
+tg       0.6033905 807.3533 807.1104 227973.9  616.843
+tg_fast5 0.6072468 817.3836 817.0905 227991.1  247.744
+pg       0.5942127 836.8397 818.1980 227192.2  100.909
+gm       0.5424297 646.1591 641.0427 225623.0   89.690</code></pre>
+</div>
+<div id="show-progress" class="section level2">
+<h2>show progress</h2>
+<pre class="r"><code>elbos &lt;- data.frame(x = seq(1,1000), tg_slow = fit_tg_slow$ELBO, tg = fit_tg$ELBO, tg_fast5 = fit_tg_fast5$ELBO, pg = fit_pg$ELBO, gm = fit_gm$ELBO)
 ggplot(data = elbos)+
   geom_line(aes(x = x, y = tg_slow, color = &quot;tg_slow&quot;))+
   geom_line(aes(x = x, y = tg, color = &quot;tg&quot;))+
   geom_line(aes(x = x, y = tg_fast5, color = &quot;tg_fast5&quot;))+
   geom_line(aes(x = x, y = pg, color = &quot;pg&quot;))+
+  geom_line(aes(x = x, y = gm, color = &quot;gm&quot;))+
   xlab(&quot;iter&quot;)+
   ylab(&quot;ELBO&quot;)</code></pre>
-<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="look-at-loadings-and-factors" class="section level2">
+<h2>look at loadings and factors</h2>
+<div id="loading" class="section level3">
+<h3>loading</h3>
+<pre class="r"><code>par(mfrow = c(2,2))
+## truth
+for(i in 1:4){plot(data$L[,i])}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## initialization
+for(i in 1:4){plot(data$LF0$W[,i], log = &quot;y&quot;)}</code></pre>
+<pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 4 y values &lt;= 0 omitted
+from logarithmic plot</code></pre>
+<pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 1 y value &lt;= 0 omitted
+from logarithmic plot</code></pre>
+<pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 3 y values &lt;= 0 omitted
+from logarithmic plot</code></pre>
+<pre><code>Warning in xy.coords(x, y, xlabel, ylabel, log): 4 y values &lt;= 0 omitted
+from logarithmic plot</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg_slow
+for(i in 1:4){plot(fit_tg_slow$qg$qls_mean[,i], ylab = &quot;loading&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg
+for(i in 1:4){plot(fit_tg$qg$qls_mean[,i], ylab = &quot;loading&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg_fast5
+for(i in 1:4){plot(fit_tg_fast5$qg$qls_mean[,i], ylab = &quot;loading&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_pg
+for(i in 1:4){plot(fit_pg$qg$qls_mean[,i], ylab = &quot;loading&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_gm
+for(i in 1:4){plot(fit_gm$qg$qls_mean[,i], ylab = &quot;loading&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-5-7.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="factor" class="section level3">
+<h3>factor</h3>
+<pre class="r"><code>par(mfrow = c(2,2))
+## truth
+for(i in 1:4){plot(data$F[,i])}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>## initialization
+for(i in 1:4){plot(data$LF0$H[i,])}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg_slow
+for(i in 1:4){plot(fit_tg_slow$qg$qfs_mean[,i], ylab = &quot;factor&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg
+for(i in 1:4){plot(fit_tg$qg$qfs_mean[,i], ylab = &quot;factor&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_tg_fast5
+for(i in 1:4){plot(fit_tg_fast5$qg$qfs_mean[,i], ylab = &quot;factor&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_pg
+for(i in 1:4){plot(fit_pg$qg$qfs_mean[,i], ylab = &quot;factor&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##fit_gm
+for(i in 1:4){plot(fit_gm$qg$qfs_mean[,i], ylab = &quot;factor&quot;, log = &quot;y&quot;)}</code></pre>
+<p><img src="figure/nmf_sparse_experiment.Rmd/unnamed-chunk-6-7.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="what-else-have-i-tried" class="section level2">
+<h2>what else have I tried</h2>
+<ul>
+<li><p>I tried re-estimating grids every <span class="math inline">\(D\)</span> iterations. However, the ELBO drops a lot each time I change the grid. (Say in the <span class="math inline">\(l*D + 1\)</span> th <code>ebpmf</code> iteration, I remove the grids for all <span class="math inline">\(g\)</span>s. So probably in the coordinate-wise update, such a sudden change to all <span class="math inline">\(g\)</span> might be hard to deal with. May only change grids for one <span class="math inline">\(g\)</span> at a time?) Also, this often results in <code>empty-cluster</code> error.</p></li>
+<li><p>I run the <code>ebpmf</code> with <code>ebpm_gamma_mixture2</code>for 5000 iterations. The ELBO gets <code>25820</code>, still far lower than the other methods.</p></li>
+</ul>
+</div>
+<div id="other-issues" class="section level2">
+<h2>other issues</h2>
+<p>I compute <code>ebpm_gamma_mixture2</code> on my macbook (with <code>mixsqp_0.2-3</code>). So it should be even faster running on the more powerful ubuntu machine, as does the other methods. However, in ubuntu machine I used <code>mixsqp_0.3-17</code>, which reports error messages:</p>
+<pre class="txt"><code>Error in verify.likelihood.matrix(L) : 
+  Input argument &quot;L&quot; should be a numeric matrix with &gt;= 2 columns, &gt;= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive
+Calls: system.time ... do.call -&gt; &lt;Anonymous&gt; -&gt; mixsqp -&gt; verify.likelihood.matrix
+In addition: Warning message:
+In mixsqp(L, x0 = g_init$pi, control = control) :
+  One or more columns of &quot;L&quot; are all zeros; solution entries associated with these columns are trivially zero</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -644,40 +892,35 @@ ggplot(data = elbos)+
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.2 (2019-12-12)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 18.04.1 LTS
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.2.1   workflowr_1.6.0
+[1] ggplot2_3.2.1
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.3       compiler_3.6.2   pillar_1.4.3     later_1.0.0     
- [5] git2r_0.26.1     tools_3.6.2      digest_0.6.23    evaluate_0.14   
- [9] lifecycle_0.1.0  tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.3 
-[13] rlang_0.4.4      yaml_2.2.1       xfun_0.12        withr_2.1.2     
-[17] stringr_1.4.0    dplyr_0.8.4      knitr_1.28       fs_1.3.1        
-[21] rprojroot_1.3-2  grid_3.6.2       tidyselect_1.0.0 glue_1.3.1      
-[25] R6_2.4.1         rmarkdown_2.1    farver_2.0.3     purrr_0.3.3     
-[29] magrittr_1.5     whisker_0.4      backports_1.1.5  scales_1.1.0    
-[33] promises_1.1.0   htmltools_0.4.0  assertthat_0.2.1 colorspace_1.4-1
-[37] httpuv_1.5.2     labeling_0.3     stringi_1.4.5    lazyeval_0.2.2  
-[41] munsell_0.5.0    crayon_1.3.4    </code></pre>
+ [1] Rcpp_1.0.2       compiler_3.5.1   pillar_1.4.2     later_0.8.0     
+ [5] git2r_0.26.1     workflowr_1.5.0  tools_3.5.1      digest_0.6.22   
+ [9] evaluate_0.14    tibble_2.1.3     gtable_0.3.0     pkgconfig_2.0.3 
+[13] rlang_0.4.1      yaml_2.2.0       xfun_0.8         withr_2.1.2     
+[17] stringr_1.4.0    dplyr_0.8.1      knitr_1.25       fs_1.3.1        
+[21] rprojroot_1.3-2  grid_3.5.1       tidyselect_0.2.5 glue_1.3.1      
+[25] R6_2.4.0         rmarkdown_1.13   purrr_0.3.2      magrittr_1.5    
+[29] whisker_0.3-2    backports_1.1.5  scales_1.0.0     promises_1.0.1  
+[33] htmltools_0.3.6  assertthat_0.2.1 colorspace_1.4-1 httpuv_1.5.1    
+[37] labeling_0.3     stringi_1.4.3    lazyeval_0.2.2   munsell_0.5.0   
+[41] crayon_1.3.4    </code></pre>
 </div>
 </div>
 
@@ -711,49 +954,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
