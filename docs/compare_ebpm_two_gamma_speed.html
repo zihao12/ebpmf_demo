@@ -394,7 +394,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -403,7 +403,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -412,10 +412,10 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-02-18
+<strong>Last updated:</strong> 2020-03-06
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -479,18 +479,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
-<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-The following chunks had caches available:
-<ul>
-<li>
-unnamed-chunk-3
-</li>
-</ul>
-<p>To ensure reproducibility of the results, delete the cache directory <code>compare_ebpm_two_gamma_speed_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
 </div>
 </div>
 </div>
@@ -509,10 +503,10 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9d498c9d53fa1c49b6d9111fc8d350ad1952dd08targetblank9d498c9a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/9d498c9d53fa1c49b6d9111fc8d350ad1952dd08" target="_blank">9d498c9</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree10652ea6bec498249fecc1b4ccf473dd7a8c5ab8targetblank10652eaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/10652ea6bec498249fecc1b4ccf473dd7a8c5ab8" target="_blank">10652ea</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree9d498c9d53fa1c49b6d9111fc8d350ad1952dd08targetblank9d498c9a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree10652ea6bec498249fecc1b4ccf473dd7a8c5ab8targetblank10652eaa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -521,27 +515,46 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/compare_ebpm_two_gamma_speed_cache/
+    Ignored:    analysis/current_progress_ebpmf_cache/
+    Ignored:    analysis/current_progress_ebpmf_comparison_cache/
     Ignored:    analysis/demo_sparse_ebpmf_two_gamma_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix3_cache/
+    Ignored:    analysis/figure/
     Ignored:    analysis/nmf_sparse12_cache/
     Ignored:    analysis/nmf_sparse13_cache/
-    Ignored:    analysis/nmf_sparse14_cache/
     Ignored:    analysis/nmf_sparse15_cache/
+    Ignored:    analysis/nmf_sparse16_cache/
+    Ignored:    analysis/nmf_sparse17_cache/
+    Ignored:    analysis/nmf_sparse18_cache/
+    Ignored:    analysis/nmf_sparse_data_prep_cache/
 
 Untracked files:
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
     Untracked:  analysis/fast_mle_nb.Rmd
     Untracked:  analysis/fast_weighted_nb.Rmd
+    Untracked:  analysis/investigate_nbmf.Rmd
     Untracked:  analysis/mle_two_nb.Rmd
-    Untracked:  analysis/nmf_sparse15.Rmd
+    Untracked:  analysis/nmf_sparse17.Rmd
+    Untracked:  analysis/nmf_sparse18.Rmd
+    Untracked:  analysis/nmf_sparse_experiment2.Rmd
+    Untracked:  analysis/test_vsc.Rmd
+    Untracked:  data/nmf_sparse17.Rds
     Untracked:  data/nmf_sparse_tg.Rds
+    Untracked:  data/out_current_progress_ebpmf.Rds
+    Untracked:  script/nmf_sparse1_out/nmf_sparse_ebpm.R
+    Untracked:  script/nmf_sparse1_out/nmf_sparse_ebpm_gammamix2_change_grids.R
+    Untracked:  script/nmf_sparse1_out/nmf_sparse_ebpm_tg_slow.R
 
 Unstaged changes:
+    Modified:   analysis/current_progress_ebpmf.Rmd
     Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
     Modified:   analysis/ebpm-gh-gamma.Rmd
     Modified:   analysis/invbeta_gamma.Rmd
     Modified:   analysis/nmf_sparse13.Rmd
     Modified:   analysis/nmf_sparse14.Rmd
+    Modified:   analysis/nmf_sparse16.Rmd
+    Modified:   data/nmf_sparse_ebpm_two_gamma_fast5.Rds
+    Modified:   script/nmf_sparse_ebpm.R
 
 </code></pre>
 <p>
@@ -580,6 +593,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/10652ea6bec498249fecc1b4ccf473dd7a8c5ab8/analysis/compare_ebpm_two_gamma_speed.Rmd" target="_blank">10652ea</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-06
+</td>
+<td>
+compare_ebpm_two_gamma_speed.Rmd
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/7ef096c306dc1b2d0a199eb8a5c1e0e083e58d68/docs/compare_ebpm_two_gamma_speed.html" target="_blank">7ef096c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-02-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -641,8 +688,10 @@ compare speed ebpm two gamma
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <pre class="r"><code>rm(list = ls())
-library(ebpm)
-set.seed(123)</code></pre>
+#library(ebpm)
+devtools::load_all(&quot;../ebpm&quot;)</code></pre>
+<pre><code>Loading ebpm</code></pre>
+<pre class="r"><code>set.seed(123)</code></pre>
 </div>
 <div id="small-experiment" class="section level2">
 <h2>Small experiment</h2>
@@ -752,12 +801,12 @@ t_pg &lt;- system.time(
   fit_pg &lt;- ebpm_point_gamma(x, s)
 )
 
-t_tg &lt;- system.time(
-  fit_tg &lt;- ebpm_two_gamma(x, s, n_iter = maxiter, rel_tol = -1)
+t_tg_fast &lt;- system.time(
+  fit_tg_fast &lt;- ebpm_two_gamma_fast5(x, s, n_iter = maxiter, verbose = FALSE)
 )
 
-t_tg_fast &lt;- system.time(
-  fit_tg_fast &lt;- ebpm_two_gamma_fast3(x, s, n_iter = maxiter, control = list(tol_in = 1e-2), verbose = FALSE)
+t_tg &lt;- system.time(
+  fit_tg &lt;- ebpm_two_gamma(x, s, n_iter = maxiter, rel_tol = -1)
 )</code></pre>
 <!-- ## compare fit -->
 <!-- ```{r} -->
@@ -792,9 +841,9 @@ runtime &lt;- c(t_pg[[3]], t_tg[[3]], t_tg_fast[[3]])
 data.frame(KL = KLs, JS = JSs, RMSE = RMSEs, lls = lls, runtime = runtime, niter = niter, 
            row.names = c(&quot;point_gamma&quot;, &quot;two_gamma&quot;, &quot;two_gamma_fast&quot;))</code></pre>
 <pre><code>                      KL        JS     RMSE       lls runtime niter
-point_gamma    10208.409 10185.520 5.681439 -81665.67   1.035    NA
-two_gamma       7353.508  8748.655 5.490645 -77460.33 106.519   100
-two_gamma_fast  7353.508  8748.683 5.490645 -77460.33  11.052   100</code></pre>
+point_gamma    10208.409 10185.520 5.681439 -81665.67   1.043    NA
+two_gamma       7353.508  8748.655 5.490645 -77460.33  94.983   100
+two_gamma_fast  7353.508  8748.672 5.490645 -77460.33  18.080   100</code></pre>
 </div>
 <div id="compare-progress" class="section level2">
 <h2>compare progress</h2>
@@ -860,11 +909,11 @@ show_g(g_truth)</code></pre>
 5 scale2 10.88964490</code></pre>
 <pre class="r"><code>show_g(fit_tg_fast$fitted_g)</code></pre>
 <pre><code>   param       value
-1    pi0  0.70368581
-2 shape1 10.09643905
-3 scale1  4.98717295
-4 shape2  0.09644553
-5 scale2 10.88866311</code></pre>
+1    pi0  0.70368549
+2 shape1 10.09650009
+3 scale1  4.98714400
+4 shape2  0.09644457
+5 scale2 10.88902320</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -893,21 +942,32 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ebpm_0.0.0.9017 workflowr_1.6.0
+[1] ebpm_0.0.0.9021 testthat_2.3.1  workflowr_1.6.0
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.3          knitr_1.28          whisker_0.4        
- [4] magrittr_1.5        lattice_0.20-38     R6_2.4.1           
- [7] rlang_0.4.4         stringr_1.4.0       tools_3.6.2        
-[10] grid_3.6.2          parallel_3.6.2      Rfast_1.9.8        
-[13] xfun_0.12           irlba_2.3.3         git2r_0.26.1       
-[16] gtools_3.8.1        htmltools_0.4.0     yaml_2.2.1         
-[19] digest_0.6.23       rprojroot_1.3-2     numDeriv_2016.8-1.1
-[22] Matrix_1.2-18       mixsqp_0.3-17       later_1.0.0        
-[25] promises_1.1.0      fs_1.3.1            glue_1.3.1         
-[28] evaluate_0.14       rmarkdown_2.1       stringi_1.4.5      
-[31] compiler_3.6.2      backports_1.1.5     gsl_2.1-6          
-[34] RcppZiggurat_0.1.5  httpuv_1.5.2       </code></pre>
+ [1] gtools_3.8.1        tidyselect_1.0.0    xfun_0.12          
+ [4] remotes_2.1.0       purrr_0.3.3         lattice_0.20-38    
+ [7] colorspace_1.4-1    htmltools_0.4.0     usethis_1.5.1      
+[10] yaml_2.2.1          rlang_0.4.4         pkgbuild_1.0.6     
+[13] mixsqp_0.3-17       later_1.0.0         pillar_1.4.3       
+[16] glue_1.3.1          withr_2.1.2         RcppZiggurat_0.1.5 
+[19] sessioninfo_1.1.1   lifecycle_0.1.0     stringr_1.4.0      
+[22] munsell_0.5.0       gtable_0.3.0        devtools_2.2.1     
+[25] memoise_1.1.0       evaluate_0.14       knitr_1.28         
+[28] callr_3.4.1         httpuv_1.5.2        ps_1.3.0           
+[31] parallel_3.6.2      irlba_2.3.3         fansi_0.4.1        
+[34] Rfast_1.9.8         Rcpp_1.0.3          promises_1.1.0     
+[37] backports_1.1.5     scales_1.1.0        desc_1.2.0         
+[40] pkgload_1.0.2       fs_1.3.1            ggplot2_3.2.1      
+[43] digest_0.6.23       stringi_1.4.5       dplyr_0.8.4        
+[46] processx_3.4.1      numDeriv_2016.8-1.1 gsl_2.1-6          
+[49] rprojroot_1.3-2     grid_3.6.2          cli_2.0.1          
+[52] tools_3.6.2         magrittr_1.5        lazyeval_0.2.2     
+[55] tibble_2.1.3        pkgconfig_2.0.3     crayon_1.3.4       
+[58] whisker_0.4         ellipsis_0.3.0      Matrix_1.2-18      
+[61] prettyunits_1.1.1   assertthat_0.2.1    rmarkdown_2.1      
+[64] rstudioapi_0.10     R6_2.4.1            git2r_0.26.1       
+[67] compiler_3.6.2     </code></pre>
 </div>
 </div>
 
