@@ -85,9 +85,9 @@ show_obj <- function(shape, scale, s = 1, n = 1000, seed = 123, table_x = FALSE)
   if(table_x){print(table(x))}
   par(mfrow = c(2,2))
   hist(log10(x + 1), breaks = 100)
-  plot(r_,obj, xlab = "log(a)", ylab = "negative loglikelihood", type = "l")
-  plot(r_,grad, xlab = "log(a)", ylab = "grad", type = "l")
-  plot(r_,hess, xlab = "log(a)", ylab = "hess", type = "l")
+  plot(r_,obj, xlab = "r = log(a)", ylab = "loss(r)", type = "l")
+  plot(r_,grad, xlab = "r = log(a)", ylab = "grad(r)", type = "l")
+  plot(r_,hess, xlab = "r = log(a)", ylab = "hess(r)", type = "l")
 }
 ```
 
