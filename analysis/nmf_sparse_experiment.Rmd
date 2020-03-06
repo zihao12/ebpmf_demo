@@ -1,0 +1,47 @@
+---
+title: "nmf_sparse_experiment"
+author: "zihao12"
+date: "2020-03-05"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## data preparation
+See https://zihao12.github.io/ebpmf_demo/nmf_sparse_data_prep
+
+## show results
+I ran into numerical issue when running `ebpm_two_gamma_fast5`, so I only ran 950 iterations.
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+data = readRDS("data/nmf_sparse_data.Rds")
+fit_tg_slow = readRDS("data/nmf_sparse_ebpm_tg_slow.Rds")
+fit_tg = readRDS("data/nmf_sparse_ebpm_two_gamma.Rds")
+fit_tg_fast5 = readRDS("data/nmf_sparse_ebpm_two_gamma_fast5.Rds")
+fit_pg = readRDS("data/nmf_sparse_ebpm_point_gamma.Rds")
+```
+
+
+```{r}
+## since `ebpm_two_gamma_fast5` is 50 iterations short, I just assume it makes no progress at all in the last 50 iterations
+fit_tg_fast5$ELBO = c(fit_tg_fast5$ELBO, replicate(50, fit_tg_fast5$ELBO[950]))
+
+elbos <- data.frame(x = seq(1,1000), tg_slow = fit_tg_slow$ELBO, tg = fit_tg$ELBO, tg_fast5 = fit_tg_fast5$ELBO, pg = fit_pg$ELBO)
+ggplot(data = elbos)+
+  geom_line(aes(x = x, y = tg_slow, color = "tg_slow"))+
+  geom_line(aes(x = x, y = tg, color = "tg"))+
+  geom_line(aes(x = x, y = tg_fast5, color = "tg_fast5"))+
+  geom_line(aes(x = x, y = pg, color = "pg"))+
+  xlab("iter")+
+  ylab("ELBO")
+```
+
+
+
+
+
+
