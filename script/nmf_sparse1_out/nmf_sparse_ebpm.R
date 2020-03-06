@@ -30,11 +30,11 @@ print(sprintf("%d cpus available", ncpu))
 
 ## setup for fitting
 verbose = TRUE
-maxiter = 5000
+maxiter = 1000
 tol = -1e+10
 
 ## load data
-data = readRDS("../data/nmf_sparse14_fitted.Rds")
+data = readRDS("../data/nmf_sparse_data.Rds")
 X = data$X
 k = ncol(data$L)
 init = data$init

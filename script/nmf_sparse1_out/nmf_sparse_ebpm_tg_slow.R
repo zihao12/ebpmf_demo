@@ -7,22 +7,10 @@ library("ebpmf.alpha")
 library(parallel)
 
 ## specify function used
-args = commandArgs(trailingOnly=TRUE)
-func_name = args[1]
-#func_name = "ebpm_two_gamma_fast5"
 
+func_name = "ebpm_two_gamma"
+ebpm_func = ebpm::ebpm_two_gamma
 pm_control = NULL
-if(func_name == "ebpm_two_gamma"){
-	ebpm_func = ebpm::ebpm_two_gamma
-	pm_control = list(n_iter = 10)
-}
-if(func_name == "ebpm_two_gamma_fast5"){
-	ebpm_func = ebpm::ebpm_two_gamma_fast5
-	pm_control = list(n_iter = 10)
-}
-if(func_name == "ebpm_gamma_mixture2"){ebpm_func = ebpm::ebpm_gamma_mixture2}
-if(func_name == "ebpm_point_gamma"){ebpm_func = ebpm::ebpm_point_gamma}
-
 
 print(func_name)
 ncpu = parallel::detectCores()
@@ -30,11 +18,11 @@ print(sprintf("%d cpus available", ncpu))
 
 ## setup for fitting
 verbose = TRUE
-maxiter = 5000
+maxiter = 10
 tol = -1e+10
 
 ## load data
-data = readRDS("../data/nmf_sparse14_fitted.Rds")
+data = readRDS("../data/nmf_sparse_data.Rds")
 X = data$X
 k = ncol(data$L)
 init = data$init
@@ -50,6 +38,6 @@ t1 <- system.time(
 fit[["runtime"]] = t1
 
 ## save results
-saveRDS(fit, sprintf("../data/nmf_sparse_%s.Rds", func_name))
+saveRDS(fit, "../data/nmf_sparse_ebpm_tg_slow.Rds")
 
 print(sessionInfo())
