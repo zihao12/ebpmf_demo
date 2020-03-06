@@ -11,10 +11,14 @@ editor_options:
 See https://zihao12.github.io/ebpmf_demo/nmf_sparse_data_prep
 
 ## show results
-I ran into numerical issue when running `ebpm_two_gamma_fast5`, so I only ran 950 iterations.
+* I ran into numerical issue when running `ebpm_two_gamma_fast5`, so I only ran 950 iterations.\
+
+* There seems to be an issue with intialization ... I am getting some really weird results: ELBO no longer agrees with divergence from truth!!!
 
 ```{r}
+rm(list = ls())
 library(ggplot2)
+source("code/misc.R")
 ```
 
 ```{r}
@@ -23,25 +27,116 @@ fit_tg_slow = readRDS("data/nmf_sparse_ebpm_tg_slow.Rds")
 fit_tg = readRDS("data/nmf_sparse_ebpm_two_gamma.Rds")
 fit_tg_fast5 = readRDS("data/nmf_sparse_ebpm_two_gamma_fast5.Rds")
 fit_pg = readRDS("data/nmf_sparse_ebpm_point_gamma.Rds")
+fit_gm = readRDS("data/nmf_sparse_ebpm_gamma_mixture2.Rds")
+fit_gm_change_grid = readRDS("data/nmf_sparse_ebpm_gamma_mixture2_change_grids_per_10_iter.Rds")
+## since `ebpm_two_gamma_fast5` is 50 iterations short, I just assume it makes no progress at all in the last 50 iterations
+fit_tg_fast5$ELBO = c(fit_tg_fast5$ELBO, replicate(50, fit_tg_fast5$ELBO[950]))
+```
+
+```{r}
+lam = data$L %*% t(data$F)
+lam_tg_slow = fit_tg_slow$qg$qls_mean %*% t(fit_tg_slow$qg$qfs_mean)
+lam_tg = fit_tg$qg$qls_mean %*% t(fit_tg$qg$qfs_mean)
+lam_tg_fast = fit_tg_fast5$qg$qls_mean %*% t(fit_tg_fast5$qg$qfs_mean)
+lam_pg = fit_pg$qg$qls_mean %*% t(fit_pg$qg$qfs_mean)
+lam_gm = fit_gm$qg$qls_mean %*% t(fit_gm$qg$qfs_mean)
+
+rmse = c(RMSE(lam, lam_tg_slow), RMSE(lam, lam_tg), 
+         RMSE(lam, lam_tg_fast), RMSE(lam, lam_pg), RMSE(lam, lam_gm))
+
+kl = c(KL(lam, lam_tg_slow), KL(lam, lam_tg), 
+         KL(lam, lam_tg_fast), KL(lam, lam_pg), KL(lam, lam_gm))
+
+js = c(JS(lam, lam_tg_slow), JS(lam, lam_tg), 
+       JS(lam, lam_tg_fast), JS(lam, lam_pg), JS(lam, lam_gm))
+
+maxiter = 1000
+elbo = c(fit_tg_slow$ELBO[maxiter], fit_tg$ELBO[maxiter], 
+         fit_tg_fast5$ELBO[maxiter], fit_pg$ELBO[maxiter], fit_gm$ELBO[maxiter])
+
+runtime = c(fit_tg_slow$runtime[[3]], fit_tg$runtime[[3]], 
+         fit_tg_fast5$runtime[[3]], fit_pg$runtime[[3]], fit_gm$runtime[[3]])
+
+data.frame(rmse = rmse, kl = kl, js = js, elbo = elbo, runtime = runtime,
+           row.names = c("tg_slow", "tg", "tg_fast5", "pg", "gm"))
 ```
 
 
+## show progress
 ```{r}
-## since `ebpm_two_gamma_fast5` is 50 iterations short, I just assume it makes no progress at all in the last 50 iterations
-fit_tg_fast5$ELBO = c(fit_tg_fast5$ELBO, replicate(50, fit_tg_fast5$ELBO[950]))
 
-elbos <- data.frame(x = seq(1,1000), tg_slow = fit_tg_slow$ELBO, tg = fit_tg$ELBO, tg_fast5 = fit_tg_fast5$ELBO, pg = fit_pg$ELBO)
+
+elbos <- data.frame(x = seq(1,1000), tg_slow = fit_tg_slow$ELBO, tg = fit_tg$ELBO, tg_fast5 = fit_tg_fast5$ELBO, pg = fit_pg$ELBO, gm = fit_gm$ELBO)
 ggplot(data = elbos)+
   geom_line(aes(x = x, y = tg_slow, color = "tg_slow"))+
   geom_line(aes(x = x, y = tg, color = "tg"))+
   geom_line(aes(x = x, y = tg_fast5, color = "tg_fast5"))+
   geom_line(aes(x = x, y = pg, color = "pg"))+
+  geom_line(aes(x = x, y = gm, color = "gm"))+
   xlab("iter")+
   ylab("ELBO")
 ```
 
 
+## look at loadings and factors
 
+### loading
+```{r}
 
+par(mfrow = c(2,2))
+## truth
+for(i in 1:4){plot(data$L[,i])}
 
+## initialization
+for(i in 1:4){plot(data$LF0$W[,i], log = "y")}
+
+##fit_tg_slow
+for(i in 1:4){plot(fit_tg_slow$qg$qls_mean[,i], ylab = "loading", log = "y")}
+##fit_tg
+for(i in 1:4){plot(fit_tg$qg$qls_mean[,i], ylab = "loading", log = "y")}
+##fit_tg_fast5
+for(i in 1:4){plot(fit_tg_fast5$qg$qls_mean[,i], ylab = "loading", log = "y")}
+##fit_pg
+for(i in 1:4){plot(fit_pg$qg$qls_mean[,i], ylab = "loading", log = "y")}
+##fit_gm
+for(i in 1:4){plot(fit_gm$qg$qls_mean[,i], ylab = "loading", log = "y")}
+```
+
+### factor
+```{r}
+par(mfrow = c(2,2))
+## truth
+for(i in 1:4){plot(data$F[,i])}
+
+## initialization
+for(i in 1:4){plot(data$LF0$H[i,])}
+
+##fit_tg_slow
+for(i in 1:4){plot(fit_tg_slow$qg$qfs_mean[,i], ylab = "factor", log = "y")}
+##fit_tg
+for(i in 1:4){plot(fit_tg$qg$qfs_mean[,i], ylab = "factor", log = "y")}
+##fit_tg_fast5
+for(i in 1:4){plot(fit_tg_fast5$qg$qfs_mean[,i], ylab = "factor", log = "y")}
+##fit_pg
+for(i in 1:4){plot(fit_pg$qg$qfs_mean[,i], ylab = "factor", log = "y")}
+##fit_gm
+for(i in 1:4){plot(fit_gm$qg$qfs_mean[,i], ylab = "factor", log = "y")}
+```
+
+## what else have I tried
+* I tried re-estimating grids every $D$ iterations. However, the ELBO drops a lot each time I change the grid. (Say in the $l*D + 1$ th `ebpmf` iteration, I remove the grids for all $g$s. So probably in the coordinate-wise update, such a sudden change to all $g$ might be hard to deal with. May only change grids for one $g$ at a time?) Also, this often results in `empty-cluster` error. 
+
+* I run the `ebpmf` with `ebpm_gamma_mixture2`for 5000 iterations. The ELBO gets `25820`, still far lower than the other methods. 
+
+## other issues
+I compute `ebpm_gamma_mixture2` on my macbook (with `mixsqp_0.2-3`). So it should be even faster running on the more powerful ubuntu machine, as does the other methods. However, in ubuntu machine I used `mixsqp_0.3-17`, which reports error messages:
+
+```{txt}
+Error in verify.likelihood.matrix(L) : 
+  Input argument "L" should be a numeric matrix with >= 2 columns, >= 1 rows, all its entries should be non-negative, finite and not NA, and some entries should be positive
+Calls: system.time ... do.call -> <Anonymous> -> mixsqp -> verify.likelihood.matrix
+In addition: Warning message:
+In mixsqp(L, x0 = g_init$pi, control = control) :
+  One or more columns of "L" are all zeros; solution entries associated with these columns are trivially zero
+```
 
