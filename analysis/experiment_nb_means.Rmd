@@ -26,7 +26,7 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
   Phi[1:(p/3),1] = 1 + signal * runif(p/3)
   Phi[((p/3)+1):(2*p/3), 2] = 1 + signal * runif(p/3)
   Phi[((2*p/3)+1):p,3] = 1 + signal * runif(p/3)
-  A = 1/Phis
+  A = 1/Phi
   
   ## simulate data from the model
   V = matrix(rgamma(n = p*K, shape = A, rate = A), nrow = p)
