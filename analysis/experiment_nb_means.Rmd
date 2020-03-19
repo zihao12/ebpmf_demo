@@ -68,32 +68,29 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 exper <- exper_nb_means(K = 3, p = 999, maxiter = 100)
 ```
-<!-- 
+
+
+
 ## comparee loglikelihood
 ```{r}
-plot(exper$fit_init_random$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l")
+plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l")
+lines(exper$fit_init_random1$progress, col = "green")
 lines(exper$fit_init_truth$progress, col = "blue")
 abline(h = exper$ll_oracle, col = "black")
 ```
 
 ## compare $\Phi$
+
 ```{r}
 K = 3
 for(k in 1:K){
   par(mfrow = c(2,2))
   plot(exper$Phi[,k], ylab = sprintf("truth Phi[,%d]", k))
-  plot(1/exper$fit_init_random$A[,k], ylab = sprintf("init from random Phi[,%d]", k))
+  plot(1/exper$fit_init_random1$A[,k], ylab = sprintf("init from random1 Phi[,%d]", k))
+  plot(1/exper$fit_init_random2$A[,k], ylab = sprintf("init from random2 Phi[,%d]", k))
   plot(1/exper$fit_init_truth$A[,k], ylab = sprintf("init from truth Phi[,%d]", k))
 }
-``` -->
-
-
-<!-- ## compare $\mu$ -->
-<!-- ```{r} -->
-<!-- plot(exper$mu, exper$fit_init_truth$mu, col = "red") -->
-<!-- points(exper$mu, exper$fit_init_random$mu, col = "blue") -->
-<!-- ``` -->
-
+```
 
 
 
