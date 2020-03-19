@@ -503,10 +503,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefde1c5d85a4907d78b4c4db8360ddeaf264ef3d6targetblankfde1c5da"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/fde1c5d85a4907d78b4c4db8360ddeaf264ef3d6" target="_blank">fde1c5d</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree61be19c46f9c7623f9d49b73c64af73653ecde4etargetblank61be19ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/61be19c46f9c7623f9d49b73c64af73653ecde4e" target="_blank">61be19c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefde1c5d85a4907d78b4c4db8360ddeaf264ef3d6targetblankfde1c5da" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree61be19c46f9c7623f9d49b73c64af73653ecde4etargetblank61be19ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -519,7 +519,6 @@ Ignored files:
     Ignored:    analysis/current_progress_ebpmf_comparison_cache/
     Ignored:    analysis/demo_sparse_ebpmf_two_gamma_cache/
     Ignored:    analysis/experiment_ebpm_gammamix3_cache/
-    Ignored:    analysis/experiment_nb_means_cache/
     Ignored:    analysis/nmf_sparse12_cache/
     Ignored:    analysis/nmf_sparse13_cache/
     Ignored:    analysis/nmf_sparse15_cache/
@@ -592,6 +591,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/61be19c46f9c7623f9d49b73c64af73653ecde4e/analysis/experiment_nb_means.Rmd" target="_blank">61be19c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-18
+</td>
+<td>
+analyse nb_means 2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/986523ca2f06d86b99e4b0a991388865e9bea2fc/docs/experiment_nb_means.html" target="_blank">986523c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-18
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/fde1c5d85a4907d78b4c4db8360ddeaf264ef3d6/analysis/experiment_nb_means.Rmd" target="_blank">fde1c5d</a>
 </td>
 <td>
@@ -651,7 +684,7 @@ set.seed(123)</code></pre>
   Y = matrix(rpois(n = p * K, lambda = Theta), nrow = p)
   
   ll_oracle = loglikelihood.nb_means(Y, s, mu, A)
-  print(sprintf(&quot;ll_oracle : %f&quot;, ll_oracle))
+  #print(sprintf(&quot;ll_oracle : %f&quot;, ll_oracle))
   
   mu0 = runif(p) 
   A0 = matrix(runif(p * K), nrow = p, ncol = K)
@@ -670,8 +703,7 @@ set.seed(123)</code></pre>
   
   return(list(Y = Y, mu = mu, Phi = Phi, ll_oracle = ll_oracle, fit_init_random = fit_init_random, fit_init_truth = fit_init_truth))
 }</code></pre>
-<pre class="r"><code>exper &lt;- exper_nb_means()</code></pre>
-<pre><code>[1] &quot;ll_oracle : -197.970598&quot;</code></pre>
+<pre class="r"><code>exper &lt;- exper_nb_means(K = 3, p = 999, maxiter = 100)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
