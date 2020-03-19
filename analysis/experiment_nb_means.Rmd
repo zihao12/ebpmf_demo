@@ -38,12 +38,19 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
   
   mu0 = runif(p) 
   A0 = matrix(runif(p * K), nrow = p, ncol = K)
-  
   runtime <- system.time(
-    fit_init_random <- mle.nb_means.workhorse(Y, s, mu0, A0, maxiter = maxiter, verbose = FALSE,
+    fit_init_random1 <- mle.nb_means.workhorse(Y, s, mu0, A0, maxiter = maxiter, verbose = FALSE,
                               control = list(gradient = TRUE, hessian = FALSE))
   )
-  fit_init_random[["runtime"]] = runtime[[3]]
+  fit_init_random1[["runtime"]] = runtime[[3]]
+
+  mu0 = runif(p) 
+  A0 = matrix(runif(p * K), nrow = p, ncol = K)
+  runtime <- system.time(
+    fit_init_random2 <- mle.nb_means.workhorse(Y, s, mu0, A0, maxiter = maxiter, verbose = FALSE,
+                              control = list(gradient = TRUE, hessian = FALSE))
+  )
+  fit_init_random2[["runtime"]] = runtime[[3]]
   
   runtime <- system.time(
     fit_init_truth <- mle.nb_means.workhorse(Y, s, mu, A, maxiter = maxiter, verbose = FALSE,
@@ -51,7 +58,8 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
   )
   fit_init_truth[["runtime"]] = runtime[[3]]
   
-  return(list(Y = Y, mu = mu, Phi = Phi, ll_oracle = ll_oracle, fit_init_random = fit_init_random, fit_init_truth = fit_init_truth))
+  return(list(Y = Y, mu = mu, Phi = Phi, ll_oracle = ll_oracle, 
+  fit_init_random1 = fit_init_random1, fit_init_random2 = fit_init_random2, fit_init_truth = fit_init_truth))
 }
 
 ```
@@ -60,7 +68,7 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 exper <- exper_nb_means(K = 3, p = 999, maxiter = 100)
 ```
-
+<!-- 
 ## comparee loglikelihood
 ```{r}
 plot(exper$fit_init_random$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l")
@@ -77,7 +85,7 @@ for(k in 1:K){
   plot(1/exper$fit_init_random$A[,k], ylab = sprintf("init from random Phi[,%d]", k))
   plot(1/exper$fit_init_truth$A[,k], ylab = sprintf("init from truth Phi[,%d]", k))
 }
-```
+``` -->
 
 
 <!-- ## compare $\mu$ -->
