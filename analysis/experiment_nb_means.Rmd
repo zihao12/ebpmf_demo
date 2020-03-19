@@ -1,0 +1,63 @@
+---
+title: "experiment_nb_means"
+author: "zihao12"
+date: "2020-03-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+rm(list = ls())
+source("script/nb_means.R")
+set.seed(123)
+```
+
+```{r}
+exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
+  set.seed(seed)
+  eps = 1e-3
+  signal = 10
+  s = replicate(K, 1)
+  mu = runif(p) 
+  Phi = matrix(eps * runif(p * K), nrow = p, ncol = K)
+  Phi[1:(p/3),1] = 1 + signal * runif(p/3)
+  Phi[((p/3)+1):(2*p/3), 2] = 1 + signal * runif(p/3)
+  Phi[((2*p/3)+1):p,3] = 1 + signal * runif(p/3)
+  A = 1/Phis
+  
+  ## simulate data from the model
+  V = matrix(rgamma(n = p*K, shape = A, rate = A), nrow = p)
+  Theta = (mu %o% s) * V
+  Y = matrix(rpois(n = p * K, lambda = Theta), nrow = p)
+  
+  ll_oracle = loglikelihood.nb_means(Y, s, mu, A)
+  print(sprintf("ll_oracle : %f", ll_oracle))
+  
+  mu0 = runif(p) 
+  A0 = matrix(runif(p * K), nrow = p, ncol = K)
+  
+  runtime <- system.time(
+    fit_init_random <- mle.nb_means.workhorse(Y, s, mu0, A0, maxiter = maxiter, verbose = FALSE,
+                              control = list(gradient = TRUE, hessian = FALSE))
+  )
+  fit_init_random[["runtime"]] = runtime[[3]]
+  
+  runtime <- system.time(
+    fit_init_truth <- mle.nb_means.workhorse(Y, s, mu, A, maxiter = maxiter, verbose = FALSE,
+                              control = list(gradient = TRUE, hessian = FALSE))
+  )
+  fit_init_truth[["runtime"]] = runtime[[3]]
+  
+  return(list(Y = Y, mu = mu, Phi = Phi, ll_oracle = ll_oracle, fit_init_random = fit_init_random, fit_init_truth = fit_init_truth))
+}
+
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+exper <- exper_nb_means()
+```
+
