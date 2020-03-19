@@ -22,7 +22,7 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
   J = nrow(Y)
   K = ncol(Y)
   Y_rsum = rowSums(Y)
-  progress = c()
+  progress = c(loglikelihood.nb_means(Y = Y, s = s, mu = mu, A = A))
   if(verbose){print("iter 			loglik\n")}
 
   for(iter in 1:maxiter){
@@ -57,7 +57,6 @@ update_a <- function(a, c, gradient, hessian){
 }
 
 loglikelihood.nb_means <- function(Y, s, mu, A){
-  
   Phi = 1 / A
   ll = lgamma(Y + A) - lgamma(A) - (Y  + A) * log(1 + (mu %o% s)*Phi ) + Y * (mu + log(Phi))
   return(sum(ll))
