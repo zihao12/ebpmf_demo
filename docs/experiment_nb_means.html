@@ -509,10 +509,10 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb78956b1b936bc99a57e412d811de8e73d5861a2targetblankb78956ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b78956b1b936bc99a57e412d811de8e73d5861a2" target="_blank">b78956b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree77cfecbdd702d270fdd73a3ab370c2aa69a74007targetblank77cfecba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/77cfecbdd702d270fdd73a3ab370c2aa69a74007" target="_blank">77cfecb</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb78956b1b936bc99a57e412d811de8e73d5861a2targetblankb78956ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree77cfecbdd702d270fdd73a3ab370c2aa69a74007targetblank77cfecba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -655,6 +655,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/77cfecbdd702d270fdd73a3ab370c2aa69a74007/analysis/experiment_nb_means.Rmd" target="_blank">77cfecb</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+<td>
+nb means write up
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/e55a5ce148d6bbf768ff2449c38e5b0364495ece/docs/experiment_nb_means.html" target="_blank">e55a5ce</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -832,11 +866,18 @@ start analysing nb_means
 </div>
 </div>
 </div>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
+<div id="model" class="section level2">
+<h2>Model</h2>
+<span class="math display">\[\begin{align}
+    &amp; y_{jk} \sim Pois(s_k \mu_j v_{jk})\\
+    &amp; v_{jk} \sim  Ga(1/\phi_{jk}, 1/\phi_{jk})\\
+\end{align}\]</span>
+<p>The assumption is that <span class="math inline">\(\phi_{jk}\)</span> is sparse. \</p>
+<p>The model and implementation details are in <embed src="https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf" />. The code is in <embed src="https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R" /></p>
 <pre class="r"><code>rm(list = ls())
 source(&quot;script/nb_means.R&quot;)
 set.seed(123)</code></pre>
+<p>Below I simulate <span class="math inline">\(y_{jk}\)</span> from the model above. I run my algorithm 3 times: random initialization twice, and initialization from truth once.</p>
 <pre class="r"><code>exper_nb_means &lt;- function(K = 3, p = 999, maxiter = 10, seed = 123){
   set.seed(seed)
   eps = 1e-3
@@ -915,6 +956,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e55a5ce148d6bbf768ff2449c38e5b0364495ece/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-4-1.png" target="_blank">e55a5ce</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/648e32f9a55ac2aad44d42818adbfcd6e12b2aae/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-4-1.png" target="_blank">648e32f</a>
 </td>
 <td>
@@ -975,6 +1027,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e55a5ce148d6bbf768ff2449c38e5b0364495ece/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-1.png" target="_blank">e55a5ce</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/648e32f9a55ac2aad44d42818adbfcd6e12b2aae/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-1.png" target="_blank">648e32f</a>
 </td>
 <td>
@@ -1022,6 +1085,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e55a5ce148d6bbf768ff2449c38e5b0364495ece/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-2.png" target="_blank">e55a5ce</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/648e32f9a55ac2aad44d42818adbfcd6e12b2aae/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-2.png" target="_blank">648e32f</a>
@@ -1073,6 +1147,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e55a5ce148d6bbf768ff2449c38e5b0364495ece/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-3.png" target="_blank">e55a5ce</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-03-19
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/648e32f9a55ac2aad44d42818adbfcd6e12b2aae/docs/figure/experiment_nb_means.Rmd/unnamed-chunk-5-3.png" target="_blank">648e32f</a>
 </td>
 <td>
@@ -1097,6 +1182,14 @@ zihao12
 </table>
 </div>
 </div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<ul>
+<li>The result is very dependent on initiailization.<br />
+</li>
+<li>The algorithm does not recover the true structure in <span class="math inline">\(\Phi\)</span> well.</li>
+</ul>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
