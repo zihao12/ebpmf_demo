@@ -34,7 +34,7 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
   Y = matrix(rpois(n = p * K, lambda = Theta), nrow = p)
   
   ll_oracle = loglikelihood.nb_means(Y, s, mu, A)
-  print(sprintf("ll_oracle : %f", ll_oracle))
+  #print(sprintf("ll_oracle : %f", ll_oracle))
   
   mu0 = runif(p) 
   A0 = matrix(runif(p * K), nrow = p, ncol = K)
@@ -58,6 +58,6 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123){
 
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
-exper <- exper_nb_means()
+exper <- exper_nb_means(K = 3, p = 999, maxiter = 100)
 ```
 
