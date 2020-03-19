@@ -14,9 +14,9 @@ editor_options:
     & v_{jk} \sim  Ga(1/\phi_{jk}, 1/\phi_{jk})\\
 \end{align}
 
-The assumption is that $\phi_{jk}$ is sparse. \\
+The assumption is that $\Phi$ is sparse. \
 
-The model and implementation details are in ![another poisson means](https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf). The code is in ![code](https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R)
+The model and implementation details are in [another poisson means](https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf). The code is in [code](https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R)
 
 ```{r}
 rm(list = ls())
@@ -88,6 +88,8 @@ plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "logl
 lines(exper$fit_init_random1$progress, col = "green")
 lines(exper$fit_init_truth$progress, col = "blue")
 abline(h = exper$ll_oracle, col = "black")
+legend("bottomright", legend=c("init from random2", "init from random1", "init from truth", "truth"),
+       col=c("red","green" ,"blue", "black"), lty=c(1,1,1,1), cex=0.8)
 ```
 
 ## compare $\Phi$
@@ -102,6 +104,12 @@ for(k in 1:K){
   plot(1/exper$fit_init_truth$A[,k], ylab = sprintf("init from truth Phi[,%d]", k))
 }
 ```
+
+## runtime
+```{r}
+exper$fit_init_random1$runtime
+```
+So around 1 second/iteration, for $p = 999, K = 3$ (note that I restrict `nlm` steps to be $5$). 
 
 
 ## Conclusion
