@@ -21,7 +21,7 @@ nb_means <- function(Y, s, mu = NULL, A = NULL, maxiter = 10, verbose = FALSE,
   fit = mle.nb_means.workhorse(Y = Y, s = s, mu = mu, A  = A, maxiter = maxiter, verbose = verbose, control = control)
   ## compute posterior
   posterior = posterior_nb_means(Y = Y, s = s, g = fit$g)
-  return( list(fitted_g = fitted_g, posterior = posterior, log_likelihood = fit$log_likelihood, progress = fit$progress) )
+  return( list(fitted_g = fit$g, posterior = posterior, log_likelihood = fit$log_likelihood, progress = fit$progress) )
 }
 
 init_nb_means <- function(Y, s, mu, A, seed = 123){
@@ -45,7 +45,7 @@ posterior_nb_means <- function(Y, s, g){
   V_log.pos = psigamma(A + Y) - log(A + mu %o% s)
   lam_pm = mu * V.pos
   lam_log_pm =  log(mu) + V_log.pos
-  posterior = data.frame(mean = lam_pm, mean_log = lam_log_pm)
+  posterior = list(mean = lam_pm, mean_log = lam_log_pm)
   return(posterior)
 }
 
