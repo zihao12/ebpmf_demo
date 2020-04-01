@@ -1,0 +1,128 @@
+---
+title: "experiment_nb_means"
+author: "zihao12"
+date: "2020-03-18"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Model
+
+\begin{align}
+    & y_{jk} \sim Pois(s_k \mu_j v_{jk})\\
+    & v_{jk} \sim  Ga(1/\phi_{jk}, 1/\phi_{jk})\\
+\end{align}
+
+The assumption is that $\Phi$ is sparse. \
+
+The model and implementation details are in [another poisson means](https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf). The code is in [code](https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R)
+
+```{r}
+rm(list = ls())
+source("script/nb_means.R")
+set.seed(123)
+```
+
+Below I simulate $y_{jk}$ from the model above. I run my algorithm 3 times: random initialization twice, and initialization from truth once. 
+
+```{r}
+
+
+
+
+exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  FALSE){
+  set.seed(seed)
+  eps = 1e-3
+  signal = 10
+  s = replicate(K, 1)
+  mu = 10 + 100*runif(p) 
+  
+  Phi = runif(n = p*K) ## now Phi is just index
+  mask_small = Phi < 0.9
+  Phi[mask_small] = 1e-4
+  #id_tmp = rbinom(sum(!mask_small),1, 0.2)
+  Phi[!mask_small] = 1e+4
+  Phi = matrix(Phi, nrow = p)
+  A = 1/Phi
+  
+  ## simulate data from the model
+  V = matrix(rgamma(n = p*K, shape = A, rate = A), nrow = p)
+  Theta = (mu %o% s) * V
+  Y = matrix(rpois(n = p * K, lambda = Theta), nrow = p)
+  
+  ll_oracle = loglikelihood.nb_means(Y, s, mu, A)
+  #print(sprintf("ll_oracle : %f", ll_oracle))
+  
+  mu0 = runif(p) 
+  A0 = matrix(runif(p * K), nrow = p, ncol = K)
+  runtime <- system.time(
+    fit_init_random1 <- nb_means(Y, s, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(gradient = TRUE, hessian = FALSE), seed = 123)
+  )
+  fit_init_random1[["runtime"]] = runtime[[3]]
+
+  
+  runtime <- system.time(
+    fit_init_random2 <- nb_means(Y, s, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(gradient = TRUE, hessian = FALSE), seed = 1234)
+  )
+  fit_init_random2[["runtime"]] = runtime[[3]]
+  
+  # runtime <- system.time(
+  #   fit_init_truth <- nb_means(Y, s, mu, A, maxiter = maxiter, verbose = verbose,
+  #                             control = list(gradient = TRUE, hessian = FALSE))
+  # )
+  # fit_init_truth[["runtime"]] = runtime[[3]]
+  fit_init_truth = NULL
+  
+  return(list(Y = Y, Theta = Theta, mu = mu, Phi = Phi, ll_oracle = ll_oracle, 
+              fit_init_random1 = fit_init_random1, fit_init_random2 = fit_init_random2, fit_init_truth = fit_init_truth))
+}
+
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE)
+```
+
+There is optimization issue when initializing from truth ...
+
+## comparee loglikelihood
+```{r}
+plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l", ylim = c(min(exper$fit_init_random2$progress), max(c(exper$fit_init_random2$progress, exper$ll_oracle))))
+lines(exper$fit_init_random1$progress, col = "green")
+#lines(exper$fit_init_truth$progress, col = "blue")
+abline(h = exper$ll_oracle, col = "black")
+# legend("bottomright", legend=c("init from random2", "init from random1", "init from truth", "truth"),
+#        col=c("red","green" ,"blue", "black"), lty=c(1,1,1,1), cex=0.8)
+legend("bottomright", legend=c("init from random2", "init from random1", "truth"),
+       col=c("red","green" , "black"), lty=c(1,1,1), cex=0.8)
+```
+Though we don't get to very good log-likelihood from random initialization, let's not worry too much about that. We care more about the posterior of $\lambda_{jk}$, $\mu_j$, and the the pattern of $\Phi_{jk}$ (qualitatively). 
+
+## look at $\mu_{jk}$
+```{r}
+mu_1 = exper$fit_init_random1$fitted_g$mu
+plot(exper$mu, mu_1, xlab = "mu_true", ylab = "mu_fit")
+```
+
+## look at $\Phi_{jk}$
+```{r}
+Phi_1 = 1 / exper$fit_init_random1$fitted_g$A
+plot(exper$Phi, Phi_1, log = "y", xlab = "phi_true", ylab = "phi_fit")
+```
+
+
+<!-- ## look at $\lambda_{jk}$ -->
+<!-- ```{r} -->
+
+<!-- ``` -->
+
+
+
+
+
+
+
