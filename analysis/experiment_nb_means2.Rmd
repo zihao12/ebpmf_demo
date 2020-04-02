@@ -19,7 +19,10 @@ The assumption is that $\Phi$ is sparse. \
 The model and implementation details are in [another poisson means](https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf). The code is in [code](https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R)
 
 ## result
-* 
+
+* The algorithm cannot beat oracle likelihood, probably due to optimization issue. \
+
+* The algorithm recovers $\mu_j$ well. But it has problem with $\Phi_{jk}$ even qualitatively. 
 
 ```{r}
 rm(list = ls())
