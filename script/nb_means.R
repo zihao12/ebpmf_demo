@@ -68,7 +68,6 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
   if(verbose){print("iter 			loglik\n")}
 
   for(iter in 1:maxiter){
-    #if(iter == 2){browser()}
     ## E-step
     V.pos = (A + Y)/(A + mu %o% s)
     V_log.pos = psigamma(A + Y) - log(A + mu %o% s)
@@ -78,8 +77,14 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
     mu[Y_rsum == 0] = 0
     ### update A
     for(k in 1:K){
-      A[, k] = update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
-                        gradient = control$gradient, hessian = control$hessian)
+      #if(iter == 153 && k == 6){browser()}
+      tmp = try(update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
+                        gradient = control$gradient, hessian = control$hessian))
+      if(class(tmp) == "try-error"){
+        A[, k] = update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
+                        gradient = FALSE, hessian = FALSE)
+      }
+      else{A[, k] = tmp}
     }
     ll = loglikelihood.nb_means(Y = Y, s = s, mu = mu, A = A)
     progress <- c(progress, ll)
