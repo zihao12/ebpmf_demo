@@ -27,10 +27,6 @@ set.seed(123)
 Below I simulate $y_{jk}$ from the model above. I run my algorithm 3 times: random initialization twice, and initialization from truth once. 
 
 ```{r}
-
-
-
-
 exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  FALSE){
   set.seed(seed)
   eps = 1e-3
@@ -39,10 +35,10 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
   mu = 10 + 100*runif(p) 
   
   Phi = runif(n = p*K) ## now Phi is just index
-  mask_small = Phi < 0.9
+  mask_small = Phi < 0.8
   Phi[mask_small] = 1e-4
-  #id_tmp = rbinom(sum(!mask_small),1, 0.2)
-  Phi[!mask_small] = 1e+4
+  id_tmp = rbinom(sum(!mask_small),1, 0.5)
+  Phi[!mask_small] = id_tmp * 1e+4 + (1- id_tmp) * 1e+8
   Phi = matrix(Phi, nrow = p)
   A = 1/Phi
   
@@ -83,7 +79,11 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
 ```
 
 
-```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+<!-- ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE} -->
+<!-- exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE) -->
+<!-- ``` -->
+
+```{r message=FALSE, warning=FALSE}
 exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE)
 ```
 
@@ -91,7 +91,11 @@ There is optimization issue when initializing from truth ...
 
 ## comparee loglikelihood
 ```{r}
-plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l", ylim = c(min(exper$fit_init_random2$progress), max(c(exper$fit_init_random2$progress, exper$ll_oracle))))
+ylim = c(min(c(exper$fit_init_random2$progress, exper$fit_init_random1$progress)),
+         max( c(exper$fit_init_random2$progress, exper$fit_init_random2$progress, exper$ll_oracle)   ))
+print(exper$ll_oracle)
+
+plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l", ylim = ylim)
 lines(exper$fit_init_random1$progress, col = "green")
 #lines(exper$fit_init_truth$progress, col = "blue")
 abline(h = exper$ll_oracle, col = "black")
@@ -111,8 +115,9 @@ plot(exper$mu, mu_1, xlab = "mu_true", ylab = "mu_fit")
 ## look at $\Phi_{jk}$
 ```{r}
 Phi_1 = 1 / exper$fit_init_random1$fitted_g$A
-plot(exper$Phi, Phi_1, log = "y", xlab = "phi_true", ylab = "phi_fit")
+plot(exper$Phi, Phi_1, log = "xy", xlab = "phi_true", ylab = "phi_fit")
 ```
+
 
 
 <!-- ## look at $\lambda_{jk}$ -->
