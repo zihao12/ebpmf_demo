@@ -18,6 +18,9 @@ The assumption is that $\Phi$ is sparse. \
 
 The model and implementation details are in [another poisson means](https://zihao12.github.io/ebpmf_demo/another_poisson_means.pdf). The code is in [code](https://github.com/zihao12/ebpmf_demo/blob/master/script/nb_means.R)
 
+## result
+* 
+
 ```{r}
 rm(list = ls())
 source("script/nb_means.R")
@@ -84,10 +87,10 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
 <!-- ``` -->
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
-exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE)
+exper <- exper_nb_means(K = 10, p = 99, maxiter = 200, verbose = FALSE)
 ```
 
-There is optimization issue when initializing from truth ...
+* There are optimization issues when initializing from truth, or running too many iterations ...
 
 ## comparee loglikelihood
 ```{r}
