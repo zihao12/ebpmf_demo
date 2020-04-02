@@ -394,7 +394,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -403,7 +403,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -412,17 +412,17 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-04-01
+<strong>Last updated:</strong> 2020-04-02
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -479,18 +479,12 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
-<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-The following chunks had caches available:
-<ul>
-<li>
-unnamed-chunk-3
-</li>
-</ul>
-<p>To ensure reproducibility of the results, delete the cache directory <code>experiment_nb_means2_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
 </div>
 </div>
 </div>
@@ -509,94 +503,53 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb7892bc99f5c481ee6f7202de9ed79562c2d5f1ftargetblankb7892bca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b7892bc99f5c481ee6f7202de9ed79562c2d5f1f" target="_blank">b7892bc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec26d8836517a41312885ff9f0b365289c74850bdtargetblankc26d883a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/c26d8836517a41312885ff9f0b365289c74850bd" target="_blank">c26d883</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb7892bc99f5c481ee6f7202de9ed79562c2d5f1ftargetblankb7892bca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreec26d8836517a41312885ff9f0b365289c74850bdtargetblankc26d883a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/anchor_word_model_swimmer_cache/
-    Ignored:    analysis/compare_GH_cache/
-    Ignored:    analysis/compare_speeds_ebpmf_cache/
-    Ignored:    analysis/ebpm_two_gamma_debug2_cache/
-    Ignored:    analysis/experiment_ebpm_gammamix2_cache/
-    Ignored:    analysis/experiment_ebpm_gammamix3_cache/
-    Ignored:    analysis/experiment_ebpm_gammamix_cache/
-    Ignored:    analysis/experiment_nb_means2_cache/
-    Ignored:    analysis/investigate_gamma_poisson_cache/
-    Ignored:    analysis/nmf_anchor_word3_cache/
-    Ignored:    analysis/nmf_anchor_word4_cache/
-    Ignored:    analysis/nmf_sparse10_cache/
-    Ignored:    analysis/nmf_sparse11_cache/
-    Ignored:    analysis/nmf_sparse8_cache/
-    Ignored:    analysis/nmf_sparse9_cache/
-    Ignored:    analysis/test_ebpmf_two_gamma_fast_cache/
 
 Untracked files:
-    Untracked:  Rplot.png
-    Untracked:  Untitled.Rmd
-    Untracked:  Untitled.html
-    Untracked:  analysis/.ipynb_checkpoints/
-    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
-    Untracked:  analysis/anchor_word_model1.Rmd
-    Untracked:  analysis/anchor_word_model2.Rmd
-    Untracked:  analysis/anchor_word_model3.Rmd
-    Untracked:  analysis/compare_speeds_ebpmf.Rmd
-    Untracked:  analysis/debug_ebpmf_two_gamma.Rmd
-    Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
-    Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
-    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
-    Untracked:  analysis/draft.Rmd
-    Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
-    Untracked:  analysis/ebpm_gh_gamma.Rmd
-    Untracked:  analysis/ebpm_two_gamma_test.R
-    Untracked:  analysis/ebpm_two_gamma_test.Rmd
-    Untracked:  analysis/ebpmf.Rmd
-    Untracked:  analysis/ebpmf_demo.Rmd
-    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
-    Untracked:  analysis/ebpmf_two_gamma_debug.Rmd
-    Untracked:  analysis/experiment_nb_means_old.Rmd
-    Untracked:  analysis/investigate_gamma_poisson.Rmd
-    Untracked:  analysis/investigate_nmf_sparse.Rmd
-    Untracked:  analysis/nmf_anchor_word4.Rmd
-    Untracked:  analysis/nmf_sparse11.Rmd
-    Untracked:  analysis/nmf_symm.Rmd
-    Untracked:  analysis/play_prior.Rmd
-    Untracked:  analysis/play_shrinkage_methods.Rmd
-    Untracked:  analysis/plot_g.Rmd
-    Untracked:  analysis/rebayes_vignette.Rmd
-    Untracked:  analysis/softmax_experiments.ipynb
-    Untracked:  analysis/test_ebpmf_two_gamma_fast.Rmd
-    Untracked:  analysis/try_CVXR.Rmd
-    Untracked:  cache/
-    Untracked:  code/anchor-word-recovery/
-    Untracked:  data/anchor_word_model1.csv
-    Untracked:  data/nmf_anchor_word3_A.csv
-    Untracked:  data/nmf_anchor_word3_W.csv
-    Untracked:  data/nmf_anchor_word3_X.csv
-    Untracked:  data/nmf_anchor_word4_A.csv
-    Untracked:  data/nmf_anchor_word4_W.csv
-    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
-    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
-    Untracked:  data/nmf_sparse_ebpm_tg_slow.Rds
-    Untracked:  data/swimmer.mat
-    Untracked:  figure/
-    Untracked:  script/nb_means_old.R
-    Untracked:  script/nmf_sparse_ebpm_old.R
-    Untracked:  verbose_log_1571583163.21966.txt
-    Untracked:  verbose_log_1571583324.71036.txt
-    Untracked:  verbose_log_1571583741.94199.txt
-    Untracked:  verbose_log_1571588102.40356.txt
+    Untracked:  analysis/current_progress_ebpmf_cache/
+    Untracked:  analysis/current_progress_ebpmf_comparison_cache/
+    Untracked:  analysis/demo_sparse_ebpmf_two_gamma_cache/
+    Untracked:  analysis/ebpm_two_gamma_speed.Rmd
+    Untracked:  analysis/experiment_ebpm_gammamix3_cache/
+    Untracked:  analysis/experiment_nb_means_cache_0/
+    Untracked:  analysis/fast_mle_nb.Rmd
+    Untracked:  analysis/fast_weighted_nb.Rmd
+    Untracked:  analysis/investigate_nbmf.Rmd
+    Untracked:  analysis/mle_two_nb.Rmd
+    Untracked:  analysis/nmf_sparse12_cache/
+    Untracked:  analysis/nmf_sparse13_cache/
+    Untracked:  analysis/nmf_sparse15_cache/
+    Untracked:  analysis/nmf_sparse16_cache/
+    Untracked:  analysis/nmf_sparse17.Rmd
+    Untracked:  analysis/nmf_sparse17_cache/
+    Untracked:  analysis/nmf_sparse18.Rmd
+    Untracked:  analysis/nmf_sparse18_cache/
+    Untracked:  analysis/nmf_sparse_data_prep_cache/
+    Untracked:  analysis/test_vsc.Rmd
+    Untracked:  data/nmf_sparse17.Rds
+    Untracked:  data/nmf_sparse_tg.Rds
+    Untracked:  data/out_current_progress_ebpmf.Rds
 
 Unstaged changes:
-    Modified:   analysis/experiment_nb_means.Rmd
+    Modified:   .gitignore
+    Modified:   analysis/current_progress_ebpmf.Rmd
+    Modified:   analysis/demo_sparse_ebpmf_two_gamma.Rmd
+    Modified:   analysis/ebpm-gh-gamma.Rmd
+    Modified:   analysis/invbeta_gamma.Rmd
+    Modified:   analysis/nmf_sparse13.Rmd
+    Modified:   analysis/nmf_sparse14.Rmd
+    Modified:   analysis/nmf_sparse16.Rmd
 
 </code></pre>
 <p>
@@ -635,6 +588,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/c26d8836517a41312885ff9f0b365289c74850bd/analysis/experiment_nb_means2.Rmd" target="_blank">c26d883</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-02
+</td>
+<td>
+experiment_nb_means2.Rmd harder data
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/be203583336c13ed2618fb89e281b66c846da0b9/analysis/experiment_nb_means2.Rmd" target="_blank">be20358</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-02
+</td>
+<td>
+update nb_means
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/30c6039b61e90b4b2a77da4579f86bf286d99c50/docs/experiment_nb_means2.html" target="_blank">30c6039</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -679,10 +683,10 @@ set.seed(123)</code></pre>
   mu = 10 + 100*runif(p) 
   
   Phi = runif(n = p*K) ## now Phi is just index
-  mask_small = Phi &lt; 0.9
+  mask_small = Phi &lt; 0.8
   Phi[mask_small] = 1e-4
-  #id_tmp = rbinom(sum(!mask_small),1, 0.2)
-  Phi[!mask_small] = 1e+4
+  id_tmp = rbinom(sum(!mask_small),1, 0.5)
+  Phi[!mask_small] = id_tmp * 1e+4 + (1- id_tmp) * 1e+8
   Phi = matrix(Phi, nrow = p)
   A = 1/Phi
   
@@ -719,12 +723,19 @@ set.seed(123)</code></pre>
   return(list(Y = Y, Theta = Theta, mu = mu, Phi = Phi, ll_oracle = ll_oracle, 
               fit_init_random1 = fit_init_random1, fit_init_random2 = fit_init_random2, fit_init_truth = fit_init_truth))
 }</code></pre>
+<!-- ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE} -->
+<!-- exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE) -->
+<!-- ``` -->
 <pre class="r"><code>exper &lt;- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE)</code></pre>
 <p>There is optimization issue when initializing from truth …</p>
 </div>
 <div id="comparee-loglikelihood" class="section level2">
 <h2>comparee loglikelihood</h2>
-<pre class="r"><code>plot(exper$fit_init_random2$progress, col = &quot;red&quot;, xlab  = &quot;niter&quot;, ylab = &quot;loglikelihood&quot;, type = &quot;l&quot;, ylim = c(min(exper$fit_init_random2$progress), max(c(exper$fit_init_random2$progress, exper$ll_oracle))))
+<pre class="r"><code>ylim = c(min(c(exper$fit_init_random2$progress, exper$fit_init_random1$progress)),
+         max( c(exper$fit_init_random2$progress, exper$fit_init_random2$progress, exper$ll_oracle)   ))
+print(exper$ll_oracle)</code></pre>
+<pre><code>[1] 3384084</code></pre>
+<pre class="r"><code>plot(exper$fit_init_random2$progress, col = &quot;red&quot;, xlab  = &quot;niter&quot;, ylab = &quot;loglikelihood&quot;, type = &quot;l&quot;, ylim = ylim)
 lines(exper$fit_init_random1$progress, col = &quot;green&quot;)
 #lines(exper$fit_init_truth$progress, col = &quot;blue&quot;)
 abline(h = exper$ll_oracle, col = &quot;black&quot;)
@@ -732,19 +743,131 @@ abline(h = exper$ll_oracle, col = &quot;black&quot;)
 #        col=c(&quot;red&quot;,&quot;green&quot; ,&quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1,1), cex=0.8)
 legend(&quot;bottomright&quot;, legend=c(&quot;init from random2&quot;, &quot;init from random1&quot;, &quot;truth&quot;),
        col=c(&quot;red&quot;,&quot;green&quot; , &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
-<p><img src="figure/experiment_nb_means2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> Though we don’t get to very good log-likelihood from random initialization, let’s not worry too much about that. We care more about the posterior of <span class="math inline">\(\lambda_{jk}\)</span>, <span class="math inline">\(\mu_j\)</span>, and the the pattern of <span class="math inline">\(\Phi_{jk}\)</span> (qualitatively).</p>
+<p><img src="figure/experiment_nb_means2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/30c6039b61e90b4b2a77da4579f86bf286d99c50/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-4-1.png" target="_blank">30c6039</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Though we don’t get to very good log-likelihood from random initialization, let’s not worry too much about that. We care more about the posterior of <span class="math inline">\(\lambda_{jk}\)</span>, <span class="math inline">\(\mu_j\)</span>, and the the pattern of <span class="math inline">\(\Phi_{jk}\)</span> (qualitatively).</p>
 </div>
 <div id="look-at-mu_jk" class="section level2">
 <h2>look at <span class="math inline">\(\mu_{jk}\)</span></h2>
 <pre class="r"><code>mu_1 = exper$fit_init_random1$fitted_g$mu
 plot(exper$mu, mu_1, xlab = &quot;mu_true&quot;, ylab = &quot;mu_fit&quot;)</code></pre>
 <p><img src="figure/experiment_nb_means2.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/30c6039b61e90b4b2a77da4579f86bf286d99c50/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-5-1.png" target="_blank">30c6039</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="look-at-phi_jk" class="section level2">
 <h2>look at <span class="math inline">\(\Phi_{jk}\)</span></h2>
 <pre class="r"><code>Phi_1 = 1 / exper$fit_init_random1$fitted_g$A
-plot(exper$Phi, Phi_1, log = &quot;y&quot;, xlab = &quot;phi_true&quot;, ylab = &quot;phi_fit&quot;)</code></pre>
+plot(exper$Phi, Phi_1, log = &quot;xy&quot;, xlab = &quot;phi_true&quot;, ylab = &quot;phi_fit&quot;)</code></pre>
 <p><img src="figure/experiment_nb_means2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/30c6039b61e90b4b2a77da4579f86bf286d99c50/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-6-1.png" target="_blank">30c6039</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <!-- ## look at $\lambda_{jk}$ -->
 <!-- ```{r} -->
 <!-- ``` -->
@@ -756,27 +879,36 @@ plot(exper$Phi, Phi_1, log = &quot;y&quot;, xlab = &quot;phi_true&quot;, ylab = 
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.1 (2018-07-02)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS  10.14
+<pre><code>R version 3.6.3 (2020-02-29)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 18.04.4 LTS
 
 Matrix products: default
-BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
 
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
+other attached packages:
+[1] workflowr_1.6.0
+
 loaded via a namespace (and not attached):
- [1] workflowr_1.5.0 Rcpp_1.0.2      rprojroot_1.3-2 digest_0.6.22  
- [5] later_0.8.0     R6_2.4.0        backports_1.1.5 git2r_0.26.1   
- [9] magrittr_1.5    evaluate_0.14   stringi_1.4.3   fs_1.3.1       
-[13] promises_1.0.1  whisker_0.3-2   rmarkdown_2.1   tools_3.5.1    
-[17] stringr_1.4.0   glue_1.3.1      httpuv_1.5.1    xfun_0.8       
-[21] yaml_2.2.0      compiler_3.5.1  htmltools_0.3.6 knitr_1.28     </code></pre>
+ [1] Rcpp_1.0.3       codetools_0.2-16 rprojroot_1.3-2  digest_0.6.23   
+ [5] later_1.0.0      R6_2.4.1         backports_1.1.5  git2r_0.26.1    
+ [9] magrittr_1.5     evaluate_0.14    stringi_1.4.5    rlang_0.4.4     
+[13] fs_1.3.1         promises_1.1.0   whisker_0.4      rmarkdown_2.1   
+[17] tools_3.6.3      stringr_1.4.0    glue_1.3.1       httpuv_1.5.2    
+[21] xfun_0.12        yaml_2.2.1       compiler_3.6.3   htmltools_0.4.0 
+[25] knitr_1.28      </code></pre>
 </div>
 </div>
 
