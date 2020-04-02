@@ -83,7 +83,7 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
 <!-- exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE) -->
 <!-- ``` -->
 
-```{r message=FALSE, warning=FALSE}
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 exper <- exper_nb_means(K = 10, p = 99, maxiter = 100, verbose = FALSE)
 ```
 
