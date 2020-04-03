@@ -100,7 +100,7 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
 
 update_a <- function(a, c, gradient, hessian){
   fn_params = list(c = c, gradient = gradient, hessian = hessian)
-  opt = do.call(nlm, c(list(obj.nb_means, a),fn_params, iterlim = 5))
+  opt = do.call(nlm, c(list(obj.nb_means, a),fn_params, iterlim = 5, check.analyticals = FALSE))
   return(opt$estimate)
 }
 
