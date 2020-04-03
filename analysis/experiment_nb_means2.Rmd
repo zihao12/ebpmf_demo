@@ -85,12 +85,10 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
   )
   fit_init_random2[["runtime"]] = runtime[[3]]
   
-  # runtime <- system.time(
-  #   fit_init_truth <- nb_means(Y, s, mu, A, maxiter = maxiter, verbose = verbose,
-  #                             control = list(gradient = TRUE, hessian = FALSE))
-  # )
-  # fit_init_truth[["runtime"]] = runtime[[3]]
-  fit_init_truth = NULL
+  runtime <- system.time(
+    fit_init_truth <- nb_means(Y, s, mu, A, maxiter = 100, verbose = verbose,
+                              control = list(gradient = TRUE, hessian = FALSE)))
+  fit_init_truth[["runtime"]] = runtime[[3]]
   
   return(list(Y = Y, Theta = Theta, mu = mu, Phi = Phi, ll_oracle = ll_oracle, 
               fit_init_random1 = fit_init_random1, fit_init_random2 = fit_init_random2, fit_init_truth = fit_init_truth))
@@ -104,12 +102,13 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
 <!-- ``` -->
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
-exper <- exper_nb_means(K = 10, p = 999, maxiter = 10000, verbose = FALSE)
+exper <- exper_nb_means(K = 10, p = 999, maxiter = 100, verbose = FALSE)
 ```
 
 * There are optimization issues when initializing from truth, or running too many iterations ...
 
 ## comparee loglikelihood
+
 ```{r}
 ylim = c(min(c(exper$fit_init_random2$progress, exper$fit_init_random1$progress)),
          max( c(exper$fit_init_random2$progress, exper$fit_init_random2$progress, exper$ll_oracle)   ))
