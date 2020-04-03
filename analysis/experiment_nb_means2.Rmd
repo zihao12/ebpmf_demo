@@ -104,7 +104,7 @@ exper_nb_means <- function(K = 3, p = 999, maxiter = 10, seed = 123, verbose =  
 <!-- ``` -->
 
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
-exper <- exper_nb_means(K = 10, p = 999, maxiter = 5000, verbose = FALSE)
+exper <- exper_nb_means(K = 10, p = 999, maxiter = 10000, verbose = FALSE)
 ```
 
 * There are optimization issues when initializing from truth, or running too many iterations ...
