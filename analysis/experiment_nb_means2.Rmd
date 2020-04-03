@@ -127,13 +127,18 @@ Though we don't get to very good log-likelihood from random initialization, let'
 ## look at $\mu_{jk}$
 ```{r}
 mu_2 = exper$fit_init_random2$fitted_g$mu
+mu_from_truth = exper$fit_init_truth$fitted_g$mu
 plot(exper$mu, mu_2, xlab = "mu_true", ylab = "mu_fit")
+points(exper$mu, mu_from_truth, col = "blue")
+
 ```
 
 ## look at $\Phi_{jk}$
 ```{r}
 Phi_2 = 1 / exper$fit_init_random2$fitted_g$A
+Phi_from_true = 1 / exper$fit_init_truth$fitted_g$A
 plot(exper$Phi, Phi_2, log = "xy", xlab = "phi_true", ylab = "phi_fit")
+points(exper$Phi, Phi_from_true, col = "blue")
 ```
 
 
