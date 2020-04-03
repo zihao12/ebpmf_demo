@@ -116,12 +116,11 @@ print(exper$ll_oracle)
 
 plot(exper$fit_init_random2$progress, col = "red", xlab  = "niter", ylab = "loglikelihood", type = "l", ylim = ylim)
 lines(exper$fit_init_random1$progress, col = "green")
-#lines(exper$fit_init_truth$progress, col = "blue")
+lines(exper$fit_init_truth$progress, col = "blue")
 abline(h = exper$ll_oracle, col = "black")
-# legend("bottomright", legend=c("init from random2", "init from random1", "init from truth", "truth"),
-#        col=c("red","green" ,"blue", "black"), lty=c(1,1,1,1), cex=0.8)
-legend("bottomright", legend=c("init from random2", "init from random1", "truth"),
-       col=c("red","green" , "black"), lty=c(1,1,1), cex=0.8)
+legend("bottomright", legend=c("init from random2", "init from random1", "init from truth", "truth"),
+       col=c("red","green" ,"blue", "black"), lty=c(1,1,1,1), cex=0.8)
+
 ```
 Though we don't get to very good log-likelihood from random initialization, let's not worry too much about that. We care more about the posterior of $\lambda_{jk}$, $\mu_j$, and the the pattern of $\Phi_{jk}$ (qualitatively). 
 
