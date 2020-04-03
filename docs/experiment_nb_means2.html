@@ -509,10 +509,10 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree49bdd58414341abf7a5027f70bf17a941744f157targetblank49bdd58a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/49bdd58414341abf7a5027f70bf17a941744f157" target="_blank">49bdd58</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea0839eeae43f53efd46aa9c0da46663e862759b4targetblanka0839eea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/a0839eeae43f53efd46aa9c0da46663e862759b4" target="_blank">a0839ee</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree49bdd58414341abf7a5027f70bf17a941744f157targetblank49bdd58a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea0839eeae43f53efd46aa9c0da46663e862759b4targetblanka0839eea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -598,6 +598,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/a0839eeae43f53efd46aa9c0da46663e862759b4/analysis/experiment_nb_means2.Rmd" target="_blank">a0839ee</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-03
+</td>
+<td>
+add starting from truth
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/1a31c20af7195f39023cf5bd7dd1720999251b0b/docs/experiment_nb_means2.html" target="_blank">1a31c20</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1407,6 +1441,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1a31c20af7195f39023cf5bd7dd1720999251b0b/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-5-1.png" target="_blank">1a31c20</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-03
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/972e127aaa193524022da5522bbd955135ded4a4/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-5-1.png" target="_blank">972e127</a>
 </td>
 <td>
@@ -1535,8 +1580,9 @@ zihao12
 <h2>look at <span class="math inline">\(\Phi_{jk}\)</span></h2>
 <pre class="r"><code>Phi_2 = 1 / exper$fit_init_random2$fitted_g$A
 Phi_from_true = 1 / exper$fit_init_truth$fitted_g$A
-plot(exper$Phi, Phi_2, log = &quot;xy&quot;, xlab = &quot;phi_true&quot;, ylab = &quot;phi_fit&quot;)
-points(exper$Phi, Phi_from_true, col = &quot;blue&quot;)</code></pre>
+plot(exper$Phi, Phi_2, log = &quot;xy&quot;, xlab = &quot;phi_true&quot;, ylab = &quot;phi_fit&quot;, ylim = c(0, 1e+8))</code></pre>
+<pre><code>Warning in plot.window(...): nonfinite axis limits [GScale(-inf,8,2, .); log=1]</code></pre>
+<pre class="r"><code>points(exper$Phi, Phi_from_true, col = &quot;blue&quot;)</code></pre>
 <p><img src="figure/experiment_nb_means2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -1560,6 +1606,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1a31c20af7195f39023cf5bd7dd1720999251b0b/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-6-1.png" target="_blank">1a31c20</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-03
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/972e127aaa193524022da5522bbd955135ded4a4/docs/figure/experiment_nb_means2.Rmd/unnamed-chunk-6-1.png" target="_blank">972e127</a>
