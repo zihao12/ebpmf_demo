@@ -138,7 +138,7 @@ points(exper$mu, mu_from_truth, col = "blue")
 Phi_2 = 1 / exper$fit_init_random2$fitted_g$A
 Phi_from_true = 1 / exper$fit_init_truth$fitted_g$A
 plot(exper$Phi, Phi_from_true, log = "xy", xlab = "phi_true", ylab = "phi_fit", col = "blue")
-points(exper$Phi, Phi_2, col = "blue")
+points(exper$Phi, Phi_2)
 ```
 
 
