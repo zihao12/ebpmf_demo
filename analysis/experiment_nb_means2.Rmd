@@ -130,7 +130,7 @@ mu_2 = exper$fit_init_random2$fitted_g$mu
 mu_from_truth = exper$fit_init_truth$fitted_g$mu
 plot(exper$mu, mu_2, xlab = "mu_true", ylab = "mu_fit")
 points(exper$mu, mu_from_truth, col = "blue")
-
+abline(0,1,lwd=0.5,col="red")
 ```
 
 ## look at $\Phi_{jk}$
@@ -138,7 +138,7 @@ points(exper$mu, mu_from_truth, col = "blue")
 Phi_2 = 1 / exper$fit_init_random2$fitted_g$A
 Phi_from_true = 1 / exper$fit_init_truth$fitted_g$A
 plot(exper$Phi, Phi_from_true, log = "xy", xlab = "phi_true", ylab = "phi_fit", col = "blue")
-abline(0,1,lwd=0.5,col="blue")
+abline(0,1,lwd=0.5,col="red")
 points(exper$Phi, Phi_2)
 ```
 
