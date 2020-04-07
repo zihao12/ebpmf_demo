@@ -22,6 +22,7 @@ rm(list = ls())
 load("data/cytokines_data_fit.RData")
 source("script/nb_means.R")
 set.seed(123)
+fit.F[fit.F < 1e-14] = 0 ## they should be 0 (only set to 1e-15 for numerical issue)
 ```
 
 
