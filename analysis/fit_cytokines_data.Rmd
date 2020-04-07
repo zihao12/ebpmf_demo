@@ -1,0 +1,71 @@
+---
+title: "fit_cytokines_data"
+author: "zihao12"
+date: "2020-04-07"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## experiment setup
+
+The idea is to simulate realistic data from fitted `F`, `s` on `cytokines` data. (`F` becomes $\lambda$ in the model below)
+
+\begin{align}
+  & Y_{jk} \sim Po(s_k \lambda_{jk})\\
+  & \lambda_{jk} = \mu_j v_{jk}\\
+  & v_{jk} \sim Ga(1/\phi_{jk}, 1/\phi_{jk})
+\end{align}
+
+```{r}
+rm(list = ls())
+load("data/cytokines_data_fit.RData")
+source("script/nb_means.R")
+set.seed(123)
+```
+
+
+take a look at the fitted `F`. 
+One question is: how siginificant the difference is, between $10^{-15}$ and $10^{-5}$ (also, is $10^{-15}$ seems to be the minimum set for smaller values )
+```{r}
+hist(log10(fit.F),breaks = 100)
+quantile(as.vector(fit.F))
+quantile(as.vector(fit.F), probs = seq(0.99, 1, 0.001))
+```
+
+
+```{r}
+p = 5000
+k = length(s_k)
+idx = sample(x = 1:nrow(fit.F), size = p, replace = FALSE)
+Lambda = fit.F[idx,]
+Theta = Lambda %*% diag(s_k)
+Y = matrix(rpois(n = p * k, lambda = Theta), ncol = k)
+hist(log10(Lambda), breaks = 100)
+hist(log10(Y), breaks = 100)
+```
+
+Fit with NB-means algorithm (with fast grid search)
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+verbose = FALSE
+maxiter = 100
+fit = nb_means(Y = Y, s = s_k, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = "grid"), seed = 123)
+```
+
+## Compared with MLE result $\lambda^{mle}_{jk} = Y_{jk}/s_k$
+```{r}
+Lambda_mle = Y %*% diag(1/s_k)
+Lambda_eb_pm = fit$posterior$mean ## use posterior mean of the EB result
+plot(Lambda, Lambda_eb_pm, log = "xy", xlab = "lambda true", ylab = "lambda fit", col = "blue")
+points(Lambda, Lambda_mle, log = "xy", col = "red")
+abline(0,1,lwd=0.5,col="black")
+
+legend("bottomright", legend=c("posterior mean (EB)", "MLE"),
+       col=c("blue", "red"), lty=c(1,1), cex=0.8)
+```
+
+For practical use (like looking at driver genes, there seems to be little difference)
+
+
+
