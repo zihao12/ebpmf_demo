@@ -11,12 +11,14 @@ editor_options:
 
 * The idea is to simulate realistic data from fitted `F`, `s` on `cytokines` data (provided by Yusha). (`F` becomes $\lambda$ in the model below)\
 
-* I simulate data using the model below:
+* I simulate and fit data using the model below:
 \begin{align}
   & Y_{jk} \sim Po(s_k \lambda_{jk})\\
   & \lambda_{jk} = \mu_j v_{jk}\\
   & v_{jk} \sim Ga(1/\phi_{jk}, 1/\phi_{jk})
 \end{align}
+I use the $\lambda_{jk}$ from fitted $F$ to simulate data; obtain $\mu_j, \phi_{jk}$  and posterior mean of $\lambda$ from the fit. 
+
 
 ```{r}
 rm(list = ls())
