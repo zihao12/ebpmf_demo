@@ -64,6 +64,7 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
   J = nrow(Y)
   K = ncol(Y)
   Y_rsum = rowSums(Y)
+  mask_zero = Y_rsum == 0
   progress = c(loglikelihood.nb_means(Y = Y, s = s, mu = mu, A = A))
   if(verbose){print("iter 			loglik\n")}
 
@@ -74,7 +75,8 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
     ## M-step
     ### update mu
     mu = Y_rsum/rowSums(t(s * t(V.pos))) ## TODO: fix the NAN issue
-    mu[Y_rsum == 0] = 0
+    #mu = Y_rsum / rowSums(V.pos %*% diag(s))
+    mu[mask_zero] = 0
     ### update A
     A = update_A(A, V_log.pos, V.pos, control = control)
     ll = loglikelihood.nb_means(Y = Y, s = s, mu = mu, A = A)
@@ -117,7 +119,7 @@ update_A <- function(A, V_log.pos, V.pos, control){
       lls <- - Ja.val.element(a = grids, c = V_log.pos[,k] - V.pos[,k])
       #idx = max.col(lls) ## this function is buggy???
       idx = apply(lls, 1, which.max)
-      A[,k] = t(grids)[t(col(grids) == idx)] ## careful with masks!!!
+      A[,k] = grid_range[idx]
     }
   }
   return(A)
