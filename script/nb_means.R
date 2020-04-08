@@ -12,7 +12,7 @@ library(stats)
 
 
 nb_means <- function(Y, s, mu = NULL, A = NULL, maxiter = 10, verbose = FALSE,
-                     control = list(gradient = TRUE, hessian = FALSE), seed = 123){
+                     control = list(method = "descend", gradient = TRUE, hessian = FALSE), seed = 123){
   ## initialization
   init = init_nb_means(Y = Y,s = s,mu = mu, A = A, seed = seed)
   mu = init$mu
@@ -60,7 +60,7 @@ posterior_nb_means <- function(Y, s, g){
 
 
 mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
-                                  control = list(gradient = TRUE, hessian = FALSE)){
+                                  control = list(method = "descend", gradient = TRUE, hessian = FALSE)){
   J = nrow(Y)
   K = ncol(Y)
   Y_rsum = rowSums(Y)
@@ -76,16 +76,7 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
     mu = Y_rsum/rowSums(t(s * t(V.pos))) ## TODO: fix the NAN issue
     mu[Y_rsum == 0] = 0
     ### update A
-    for(k in 1:K){
-      #if(iter == 153 && k == 6){browser()}
-      tmp = try(update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
-                        gradient = control$gradient, hessian = control$hessian))
-      if(class(tmp) == "try-error"){
-        A[, k] = update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
-                        gradient = FALSE, hessian = FALSE)
-      }
-      else{A[, k] = tmp}
-    }
+    A = update_A(A, V_log.pos, V.pos, control = control)
     ll = loglikelihood.nb_means(Y = Y, s = s, mu = mu, A = A)
     progress <- c(progress, ll)
     if(verbose){print(sprintf("%d 		%f\n", iter, ll))}
@@ -97,6 +88,41 @@ mle.nb_means.workhorse <- function(Y, s, mu, A, maxiter = 10, verbose = FALSE,
 
 
 ## maximize J(a) = sum( c*a + a*log(a) - lgamma(a) )
+
+update_A <- function(A, V_log.pos, V.pos, control){
+  K = ncol(A)
+  J = nrow(A)
+  if(control$method == "descend"){
+    for(k in 1:K){
+      #if(iter == 153 && k == 6){browser()}
+      tmp = try(update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
+                         gradient = control$gradient, hessian = control$hessian))
+      if(class(tmp) == "try-error"){
+        A[, k] = update_a(a = A[,k], c = V_log.pos[,k] - V.pos[,k],
+                          gradient = FALSE, hessian = FALSE)
+      }
+      else{A[, k] = tmp}
+    }
+  }
+
+  if(control$method == "grid"){
+    #browser()
+    ## for each a_jk, I use a grid search. Parallelize over J
+    ## TODO: parallelize over J*K elements (vectorize them...)
+    grid_range = 10^seq(-10, 10)
+    grids = t(matrix(replicate(J, grid_range), nrow = length(grid_range)))
+    for(k in 1:K){
+      # vals = Ja.val(a = grids, c = V_log.pos[,k] - V.pos[,k]) ## to check!!
+      # idx = max.col(vals) ## the max value per row
+      lls <- - Ja.val.element(a = grids, c = V_log.pos[,k] - V.pos[,k])
+      #idx = max.col(lls) ## this function is buggy???
+      idx = apply(lls, 1, which.max)
+      A[,k] = t(grids)[t(col(grids) == idx)] ## careful with masks!!!
+    }
+  }
+  return(A)
+}
+
 
 update_a <- function(a, c, gradient, hessian){
   fn_params = list(c = c, gradient = gradient, hessian = hessian)
@@ -117,6 +143,9 @@ obj.nb_means <- function(a, c, gradient = TRUE, hessian =   FALSE){
   return(out)
 }
 
+Ja.val.element <- function(a, c){
+  - ( c*a + a*log(a) - lgamma(a)  )
+}
 
 Ja.val <- function(a, c){
   - sum( c*a + a*log(a) - lgamma(a) )
