@@ -9,8 +9,9 @@ editor_options:
 
 ## experiment setup
 
-The idea is to simulate realistic data from fitted `F`, `s` on `cytokines` data. (`F` becomes $\lambda$ in the model below)
+* The idea is to simulate realistic data from fitted `F`, `s` on `cytokines` data (provided by Yusha). (`F` becomes $\lambda$ in the model below)\
 
+* I simulate data using the model below:
 \begin{align}
   & Y_{jk} \sim Po(s_k \lambda_{jk})\\
   & \lambda_{jk} = \mu_j v_{jk}\\
@@ -27,16 +28,16 @@ fit.F[fit.F < 1e-14] = 0 ## they should be 0 (only set to 1e-15 for numerical is
 
 
 take a look at the fitted `F`. 
-One question is: how siginificant the difference is, between $10^{-15}$ and $10^{-5}$ (also, is $10^{-15}$ seems to be the minimum set for smaller values )
 ```{r}
 hist(log10(fit.F),breaks = 100)
 quantile(as.vector(fit.F))
 quantile(as.vector(fit.F), probs = seq(0.99, 1, 0.001))
 ```
 
-
+## simulate data
+Look at the oracle $\Lambda$ and data $Y$:
 ```{r}
-p = 5000
+p = 1000
 k = length(s_k)
 idx = sample(x = 1:nrow(fit.F), size = p, replace = FALSE)
 Lambda = fit.F[idx,]
@@ -46,27 +47,90 @@ hist(log10(Lambda), breaks = 100)
 hist(log10(Y), breaks = 100)
 ```
 
-Fit with NB-means algorithm (with fast grid search)
+## Fit with NB-means algorithm (with fast grid search)
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
 verbose = FALSE
-maxiter = 100
+maxiter = 1000
 fit = nb_means(Y = Y, s = s_k, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
                               control = list(method = "grid"), seed = 123)
 ```
+
+```{r}
+plot(fit$progress)
+```
+
 
 ## Compared with MLE result $\lambda^{mle}_{jk} = Y_{jk}/s_k$
 ```{r}
 Lambda_mle = Y %*% diag(1/s_k)
 Lambda_eb_pm = fit$posterior$mean ## use posterior mean of the EB result
-plot(Lambda, Lambda_eb_pm, log = "xy", xlab = "lambda true", ylab = "lambda fit", col = "blue")
-points(Lambda, Lambda_mle, log = "xy", col = "red")
+plot(Lambda, Lambda_eb_pm, xlab = "lambda true", ylab = "lambda fit", col = "blue")
+points(Lambda, Lambda_mle, col = "red")
 abline(0,1,lwd=0.5,col="black")
 
 legend("bottomright", legend=c("posterior mean (EB)", "MLE"),
        col=c("blue", "red"), lty=c(1,1), cex=0.8)
 ```
+Looks like the dataset is too easy?\
 
-For practical use (like looking at driver genes, there seems to be little difference)
+Take a closer look
+```{r}
+mask <- (Lambda>0)
+plot(Lambda[mask], Lambda_eb_pm[mask], log = "xy", xlab = "lambda true", ylab = "lambda fit", col = "blue")
+points(Lambda[mask], Lambda_mle[mask], col = "red")
+abline(0,1,lwd=0.5,col="black")
+
+legend("topright", legend=c("posterior mean (EB)", "MLE", "y = x"),
+       col=c("blue", "red", "black"), lty=c(1,1,1), cex=0.8)
+```
+
+
+## look at $\mu$
+$\mu$ can be interpreted to be mean for each gene. So I compare it with the true gene mean, and gene median from (true $\Lambda$)
+```{r}
+gene_mean = apply(Lambda,1, mean)
+gene_median = apply(Lambda,1, median)
+gene_mean_fitted = fit$fitted_g$mu
+
+plot(gene_mean_fitted, gene_median, col = "red", ylab = "truth mean/median", xlab = "fitted mean")
+points(gene_mean_fitted, gene_mean, col = "blue")
+abline(0,1,lwd=0.5,col="black")
+legend("bottomright", legend=c("gene_median", "gene_mean", "y = x"),
+       col=c("red", "blue", "black"), lty=c(1,1,1), cex=0.8)
+```
+
+
+## look at $\phi_{jk}$
+Yusha provided the variability of each gene using Seurat. I look at the Phi of the most and least variable genes (its relaibilty is dubious). There seems not to be much difference. 
+```{r}
+gene_sub_names = rownames(fit.F)[idx]
+gene_ranked = readRDS("./data/genes_ranked.RDS")
+id_by_std = order(gene_ranked[gene_sub_names,"variance.standardized"], decreasing = TRUE)
+Phi_ordered = 1/fit$fitted_g$A[id_by_std,]
+
+# 
+# p1 <- hist(log10(Phi_ordered[1:20,]))                    
+# p2 <- hist(log10(Phi_ordered[980:1000,]))                     
+# plot( p1, col=rgb(0,0,1,1/4), xlim = c(-5,3), main = "hist of log(phi)")  # first histogram
+# plot( p2, col=rgb(1,0,0,1/4), xlim = c(-5,3), add=T)  # second
+hist(log10(Phi_ordered[1:20,]), xlim=c(-5,3), col="red", main = "hist of log10(phi)")
+hist(log10(Phi_ordered[980:1000,]),add=T, col=rgb(0, 1, 0, 0.5) )
+legend("topleft", legend=c("Phi for most variable genes", "Phi for least variable genes"),
+       col=c("red", rgb(0, 1, 0, 0.5)), lty=c(1,1), cex=0.8)
+```
+
+
+```{r}
+## Phi for most variable genes
+table(Phi_ordered[1:20,])
+## Phi for least variable genes
+table(Phi_ordered[980:1000,])
+```
+
+
+
+
+
 
 
 
