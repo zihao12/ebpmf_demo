@@ -34,6 +34,9 @@ take a look at the fitted `F`.
 hist(log10(fit.F),breaks = 100)
 quantile(as.vector(fit.F))
 quantile(as.vector(fit.F), probs = seq(0.99, 1, 0.001))
+
+## look at s_k
+s_k
 ```
 
 ## simulate data
