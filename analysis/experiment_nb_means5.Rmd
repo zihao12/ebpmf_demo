@@ -12,7 +12,7 @@ Investigate the model (suppress index $j$ as each row is independent)
 
 \begin{align}
 & y_k \sim Po(s_k \lambda_k)\\
-& \lambda_k = \mu Ga(1/\phi_k, 1\phi_k)
+& \lambda_k = \mu Ga(1/\phi_k, 1/\phi_k)
 \end{align}
 
 We want to focus on the case of a "sparse" sequence: most of $y$ is close to a constant, and few deviates a lot. 
@@ -34,21 +34,17 @@ verbose = FALSE
 
 ## on an ariticial sequence
 
-* I have the $\mu$ around $10$ for the majority counts. I append shorter sequence of downward/upperward deviations. 
-
-* The result is not much different from MLE (don't have much shrinkage effect)
-
-* The $\phi$ and $\mu$ makes sense. 
-
-### using descend method
-```{r message=FALSE, warning=FALSE}
+I have the $\mu$ around $20$ for the majority counts. I append shorter sequence of downward/upperward deviations. 
+```{r}
 y = c(rpois(n = 20, lambda = 2),
       rpois(n = 100, lambda = 20), 
       rpois(n = 20, lambda = 100))
+hist(y, breaks = 200)
+```
 
-## look at sequence y
-y
 
+### fit EB using descend method
+```{r message=FALSE, warning=FALSE}
 Y1 = t(matrix(replicate(2, y), ncol = 2))
 s_ = replicate(length(y), 1)
 
@@ -72,7 +68,7 @@ mu1[1]
 ```
 
 
-### using grid search
+### fit EB using grid search
 ```{r message=FALSE, warning=FALSE}
 fit1 <- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
                               control = list(method = "grid", gradient = TRUE, hessian = FALSE), seed = 1234)
@@ -92,6 +88,7 @@ mu1[1]
 
 
 ## on fitted $F$ from single-cell data
+Use the fitted $F$ provided by Yusha
 ```{r}
 load("data/cytokines_data_fit.RData")
 fit.F[fit.F < 1e-14] = 0 ## they should be 0 (only set to 1e-15 for numerical issue)
