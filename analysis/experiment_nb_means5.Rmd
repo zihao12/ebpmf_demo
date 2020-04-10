@@ -1,0 +1,150 @@
+---
+title: "experiment_nb_means5"
+author: "zihao12"
+date: "2020-04-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Investigate the model (suppress index $j$ as each row is independent)
+
+\begin{align}
+& y_k \sim Po(s_k \lambda_k)\\
+& \lambda_k = \mu Ga(1/\phi_k, 1\phi_k)
+\end{align}
+
+We want to focus on the case of a "sparse" sequence: most of $y$ is close to a constant, and few deviates a lot. 
+
+## Conclusion
+* In these very simple examples, posterior mean from EB does not differentiate from MLE much. \
+
+* We can get meaningful $\phi$ and "right" $\mu$ from EB approach, if initialized properly
+
+
+```{r}
+rm(list = ls())
+source("script/nb_means.R")
+set.seed(123)
+maxiter = 100
+verbose = FALSE 
+```
+
+
+## on an ariticial sequence
+
+* I have the $\mu$ around $10$ for the majority counts. I append shorter sequence of downward/upperward deviations. 
+
+* The result is not much different from MLE (don't have much shrinkage effect)
+
+* The $\phi$ and $\mu$ makes sense. 
+
+```{r}
+y = c(rpois(n = 20, lambda = 2),
+      rpois(n = 100, lambda = 20), 
+      rpois(n = 20, lambda = 100))
+
+## look at sequence y
+y
+
+Y1 = t(matrix(replicate(2, y), ncol = 2))
+s_ = replicate(length(y), 1)
+
+mle1 = t(t(Y1)/s_)
+
+
+fit1 <- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = "grid", gradient = TRUE, hessian = FALSE), seed = 1234)
+phi1 = 1/fit1$fitted_g$A
+mu1 = fit1$fitted_g$mu
+pm1 = fit1$posterior$mean
+
+plot(mle1[1,], col = "red", pch = 20)
+points(pm1[1,], col = "blue", pch = 18)
+abline(h = mu1[1], col = "black")
+legend("topleft", legend=c("mle", "eb post-mean", "mu"),
+       col=c("red","blue", "black"), lty=c(1,1,1), cex=0.8)
+
+plot(phi1[1,])
+mu1[1]
+```
+
+## on fitted $F$ from single-cell data
+```{r}
+load("data/cytokines_data_fit.RData")
+fit.F[fit.F < 1e-14] = 0 ## they should be 0 (only set to 1e-15 for numerical issue)
+
+n = nrow(fit.F)
+idx = 1: n
+gene_sub_names = rownames(fit.F)[idx]
+gene_ranked = readRDS("./data/genes_ranked.RDS")
+id_by_std = order(gene_ranked[gene_sub_names,"variance.standardized"], decreasing = TRUE)
+
+## look at the most variable genes (not reliable)
+fit.F[id_by_std[1:5],]
+
+## look at the least variable genes
+fit.F[id_by_std[(n-5):n],]
+
+## look at s_k
+s_k
+```
+
+
+```{r}
+s_ = s_k
+K = length(s_)
+p = 5
+Lambda1 = fit.F[id_by_std[1:p],]
+Y1 = matrix(rpois(n = p * K, lambda = Lambda1 %*% diag(s_)), ncol = K)
+
+## look at the sequence
+Y1[1,]/s_
+
+## MLE 
+mle1 = t(t(Y1)/s_)
+
+## EB fit
+fit1 <- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = "grid", gradient = TRUE, hessian = FALSE), seed = 1234)
+phi1 = 1/fit1$fitted_g$A
+mu1 = fit1$fitted_g$mu
+pm1 = fit1$posterior$mean
+
+plot(Lambda1[1,], col = "green", pch = 18)
+points(mle1[1,], col = "red")
+points(pm1[1,], col = "blue")
+abline(h = mu1[1], col = "black")
+legend("topleft", legend=c("truth","mle", "eb post-mean", "mu"),
+       col=c("green", "red","blue", "black"), lty=c(1, 1,1,1), cex=0.8)
+
+mu1[1]
+plot(phi1[1,])
+```
+* Obviously, MLE is good enough here. 
+
+* Although posterior mean looks fine, EB seems to get the wrong structure (local optimum?). Let's re-initialize it (with the "right" $\mu$)
+
+
+```{r}
+fit1 <- nb_means(Y = Y1, s = s_, mu = replicate(5, 0), A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = "grid", gradient = TRUE, hessian = FALSE), seed = 1234)
+
+phi1 = 1/fit1$fitted_g$A
+mu1 = fit1$fitted_g$mu
+pm1 = fit1$posterior$mean
+
+plot(Lambda1[1,], col = "green", pch = 18)
+points(mle1[1,], col = "red")
+points(pm1[1,], col = "blue")
+abline(h = mu1[1], col = "black")
+legend("topleft", legend=c("truth","mle", "eb post-mean", "mu"),
+       col=c("green", "red","blue", "black"), lty=c(1, 1,1,1), cex=0.8)
+
+mu1[1]
+
+plot(phi1[1,])
+```
+
+
