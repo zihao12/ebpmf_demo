@@ -503,10 +503,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea10a1cecbbd9117b638d61efadd9bd0a535631eetargetblanka10a1cea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/a10a1cecbbd9117b638d61efadd9bd0a535631ee" target="_blank">a10a1ce</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3fb81c5067e7cf99acd19677c3899123edd85ac7targetblank3fb81c5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/3fb81c5067e7cf99acd19677c3899123edd85ac7" target="_blank">3fb81c5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreea10a1cecbbd9117b638d61efadd9bd0a535631eetargetblanka10a1cea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree3fb81c5067e7cf99acd19677c3899123edd85ac7targetblank3fb81c5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -654,6 +654,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fb81c5067e7cf99acd19677c3899123edd85ac7/analysis/experiment_nb_means5.Rmd" target="_blank">3fb81c5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+<td>
+experiment_nb_means5.Rmd update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/experiment_nb_means5.html" target="_blank">3fe7b53</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/a10a1cecbbd9117b638d61efadd9bd0a535631ee/analysis/experiment_nb_means5.Rmd" target="_blank">a10a1ce</a>
 </td>
 <td>
@@ -712,7 +746,7 @@ experiment_nb_means5.Rmd
 <p>Investigate the model (suppress index <span class="math inline">\(j\)</span> as each row is independent)</p>
 <span class="math display">\[\begin{align}
 &amp; y_k \sim Po(s_k \lambda_k)\\
-&amp; \lambda_k = \mu Ga(1/\phi_k, 1\phi_k)
+&amp; \lambda_k = \mu Ga(1/\phi_k, 1/\phi_k)
 \end{align}\]</span>
 <p>We want to focus on the case of a “sparse” sequence: most of <span class="math inline">\(y\)</span> is close to a constant, and few deviates a lot.</p>
 </div>
@@ -731,44 +765,11 @@ verbose = FALSE </code></pre>
 </div>
 <div id="on-an-ariticial-sequence" class="section level2">
 <h2>on an ariticial sequence</h2>
-<ul>
-<li><p>I have the <span class="math inline">\(\mu\)</span> around <span class="math inline">\(10\)</span> for the majority counts. I append shorter sequence of downward/upperward deviations.</p></li>
-<li><p>The result is not much different from MLE (don’t have much shrinkage effect)</p></li>
-<li><p>The <span class="math inline">\(\phi\)</span> and <span class="math inline">\(\mu\)</span> makes sense.</p></li>
-</ul>
-<div id="using-descend-method" class="section level3">
-<h3>using descend method</h3>
+<p>I have the <span class="math inline">\(\mu\)</span> around <span class="math inline">\(20\)</span> for the majority counts. I append shorter sequence of downward/upperward deviations.</p>
 <pre class="r"><code>y = c(rpois(n = 20, lambda = 2),
       rpois(n = 100, lambda = 20), 
       rpois(n = 20, lambda = 100))
-
-## look at sequence y
-y</code></pre>
-<pre><code>  [1]   1   3   2   4   4   0   2   4   2   2   5   2   3   2   0   4   1   0
- [19]   1   5  25  21  21  20  17  25  23  19  16  15  18  15  17  19  14  14
- [37]  18  14  24  23  23  23  22  19  18  18  16  23  19  25  15  18  17  14
- [55]  21  19  19  26  18  26  13  15  20  21  17  29  14  21  22  20  24  29
- [73]  17  15  16  22  19  16  20  19  20  21  18  22  19  21  24  21  18  25
- [91]  24  22  21  17  25  17  26  18  15  27  20  25  17  19  16  22  18  26
-[109]  27  22  18  20  26  19  12  16  23  21  21  22 118 106  92 100  90 111
-[127] 111 116 101  96 111  85 106  99 103  89 123  76 103  89</code></pre>
-<pre class="r"><code>Y1 = t(matrix(replicate(2, y), ncol = 2))
-s_ = replicate(length(y), 1)
-
-mle1 = t(t(Y1)/s_)
-
-
-fit1 &lt;- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
-                              control = list(method = &quot;descend&quot;, gradient = TRUE, hessian = FALSE), seed = 1234)
-phi1 = 1/fit1$fitted_g$A
-mu1 = fit1$fitted_g$mu
-pm1 = fit1$posterior$mean
-
-plot(mle1[1,], col = &quot;red&quot;, pch = 20)
-points(pm1[1,], col = &quot;blue&quot;, pch = 18)
-abline(h = mu1[1], col = &quot;black&quot;)
-legend(&quot;topleft&quot;, legend=c(&quot;mle&quot;, &quot;eb post-mean&quot;, &quot;mu&quot;),
-       col=c(&quot;red&quot;,&quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
+hist(y, breaks = 200)</code></pre>
 <p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
@@ -794,6 +795,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-2-1.png" target="_blank">3fe7b53</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-2-1.png" target="_blank">f044b3c</a>
 </td>
 <td>
@@ -807,14 +819,32 @@ zihao12
 </table>
 </div>
 </div>
-<pre class="r"><code>plot(phi1[1,], log = &quot;y&quot;)</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="fit-eb-using-descend-method" class="section level3">
+<h3>fit EB using descend method</h3>
+<pre class="r"><code>Y1 = t(matrix(replicate(2, y), ncol = 2))
+s_ = replicate(length(y), 1)
+
+mle1 = t(t(Y1)/s_)
+
+
+fit1 &lt;- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = &quot;descend&quot;, gradient = TRUE, hessian = FALSE), seed = 1234)
+phi1 = 1/fit1$fitted_g$A
+mu1 = fit1$fitted_g$mu
+pm1 = fit1$posterior$mean
+
+plot(mle1[1,], col = &quot;red&quot;, pch = 20)
+points(pm1[1,], col = &quot;blue&quot;, pch = 18)
+abline(h = mu1[1], col = &quot;black&quot;)
+legend(&quot;topleft&quot;, legend=c(&quot;mle&quot;, &quot;eb post-mean&quot;, &quot;mu&quot;),
+       col=c(&quot;red&quot;,&quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
-Past versions of unnamed-chunk-2-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div id="fig-unnamed-chunk-3-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -833,7 +863,46 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-2-2.png" target="_blank">f044b3c</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-3-1.png" target="_blank">3fe7b53</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>plot(phi1[1,], log = &quot;y&quot;)</code></pre>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-2">
+Past versions of unnamed-chunk-3-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-3-2.png" target="_blank">3fe7b53</a>
 </td>
 <td>
 zihao12
@@ -849,8 +918,8 @@ zihao12
 <pre class="r"><code>mu1[1]</code></pre>
 <pre><code>[1] 20.5811</code></pre>
 </div>
-<div id="using-grid-search" class="section level3">
-<h3>using grid search</h3>
+<div id="fit-eb-using-grid-search" class="section level3">
+<h3>fit EB using grid search</h3>
 <pre class="r"><code>fit1 &lt;- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
                               control = list(method = &quot;grid&quot;, gradient = TRUE, hessian = FALSE), seed = 1234)
 phi1 = 1/fit1$fitted_g$A
@@ -862,15 +931,112 @@ points(pm1[1,], col = &quot;blue&quot;, pch = 18)
 abline(h = mu1[1], col = &quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;mle&quot;, &quot;eb post-mean&quot;, &quot;mu&quot;),
        col=c(&quot;red&quot;,&quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-4-1.png" target="_blank">3fe7b53</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-4-1.png" target="_blank">f044b3c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(phi1[1,],log = &quot;y&quot;)</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-2">
+Past versions of unnamed-chunk-4-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-4-2.png" target="_blank">3fe7b53</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-4-2.png" target="_blank">f044b3c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-10
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>mu1[1]</code></pre>
 <pre><code>[1] 20.07981</code></pre>
 </div>
 </div>
 <div id="on-fitted-f-from-single-cell-data" class="section level2">
 <h2>on fitted <span class="math inline">\(F\)</span> from single-cell data</h2>
+<p>Use the fitted <span class="math inline">\(F\)</span> provided by Yusha</p>
 <pre class="r"><code>load(&quot;data/cytokines_data_fit.RData&quot;)
 fit.F[fit.F &lt; 1e-14] = 0 ## they should be 0 (only set to 1e-15 for numerical issue)
 
@@ -938,13 +1104,13 @@ points(pm1[1,], col = &quot;blue&quot;)
 abline(h = mu1[1], col = &quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;truth&quot;,&quot;mle&quot;, &quot;eb post-mean&quot;, &quot;mu&quot;),
        col=c(&quot;green&quot;, &quot;red&quot;,&quot;blue&quot;, &quot;black&quot;), lty=c(1, 1,1,1), cex=0.8)</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div id="fig-unnamed-chunk-6-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -963,7 +1129,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-5-1.png" target="_blank">f044b3c</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-6-1.png" target="_blank">3fe7b53</a>
 </td>
 <td>
 zihao12
@@ -979,13 +1145,13 @@ zihao12
 <pre class="r"><code>mu1[1]</code></pre>
 <pre><code>[1] 0.1836448</code></pre>
 <pre class="r"><code>plot(phi1[1,])</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
-Past versions of unnamed-chunk-5-2.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div id="fig-unnamed-chunk-6-2" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1004,7 +1170,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/f044b3c0d99a8c1bcacd4e64e94ed4eff17ba309/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-5-2.png" target="_blank">f044b3c</a>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/3fe7b53fff5f54d92ff2d63f220a73784c7a3a1a/docs/figure/experiment_nb_means5.Rmd/unnamed-chunk-6-2.png" target="_blank">3fe7b53</a>
 </td>
 <td>
 zihao12
@@ -1034,11 +1200,11 @@ points(pm1[1,], col = &quot;blue&quot;)
 abline(h = mu1[1], col = &quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;truth&quot;,&quot;mle&quot;, &quot;eb post-mean&quot;, &quot;mu&quot;),
        col=c(&quot;green&quot;, &quot;red&quot;,&quot;blue&quot;, &quot;black&quot;), lty=c(1, 1,1,1), cex=0.8)</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>mu1[1]</code></pre>
 <pre><code>[1] 7.269791e-05</code></pre>
 <pre class="r"><code>plot(phi1[1,])</code></pre>
-<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_nb_means5.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
