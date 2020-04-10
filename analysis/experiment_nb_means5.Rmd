@@ -18,7 +18,7 @@ Investigate the model (suppress index $j$ as each row is independent)
 We want to focus on the case of a "sparse" sequence: most of $y$ is close to a constant, and few deviates a lot. 
 
 ## Conclusion
-* In these very simple examples, posterior mean from EB does not differentiate from MLE much. \
+* In these very simple examples, EB does not have much shrinkage effect on outlier counts \
 
 * We can get meaningful $\phi$ and "right" $\mu$ from EB approach, if initialized properly
 
@@ -40,7 +40,8 @@ verbose = FALSE
 
 * The $\phi$ and $\mu$ makes sense. 
 
-```{r}
+### using descend method
+```{r message=FALSE, warning=FALSE}
 y = c(rpois(n = 20, lambda = 2),
       rpois(n = 100, lambda = 20), 
       rpois(n = 20, lambda = 100))
@@ -55,6 +56,25 @@ mle1 = t(t(Y1)/s_)
 
 
 fit1 <- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
+                              control = list(method = "descend", gradient = TRUE, hessian = FALSE), seed = 1234)
+phi1 = 1/fit1$fitted_g$A
+mu1 = fit1$fitted_g$mu
+pm1 = fit1$posterior$mean
+
+plot(mle1[1,], col = "red", pch = 20)
+points(pm1[1,], col = "blue", pch = 18)
+abline(h = mu1[1], col = "black")
+legend("topleft", legend=c("mle", "eb post-mean", "mu"),
+       col=c("red","blue", "black"), lty=c(1,1,1), cex=0.8)
+
+plot(phi1[1,], log = "y")
+mu1[1]
+```
+
+
+### using grid search
+```{r message=FALSE, warning=FALSE}
+fit1 <- nb_means(Y = Y1, s = s_, mu = NULL, A = NULL, maxiter = maxiter, verbose = verbose,
                               control = list(method = "grid", gradient = TRUE, hessian = FALSE), seed = 1234)
 phi1 = 1/fit1$fitted_g$A
 mu1 = fit1$fitted_g$mu
@@ -66,9 +86,10 @@ abline(h = mu1[1], col = "black")
 legend("topleft", legend=c("mle", "eb post-mean", "mu"),
        col=c("red","blue", "black"), lty=c(1,1,1), cex=0.8)
 
-plot(phi1[1,])
+plot(phi1[1,],log = "y")
 mu1[1]
 ```
+
 
 ## on fitted $F$ from single-cell data
 ```{r}
