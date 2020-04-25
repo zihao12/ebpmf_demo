@@ -8,6 +8,20 @@ editor_options:
 ---
 
 ## Introduction
+* Model
+
+\begin{align}
+  & Y_{jk} \sim Pois(s_k \lambda_{jk})\\
+  & \lambda_{jk} = \mu_j v_{jk}\\
+  & v_{jk} \sim \sum_l \Pi_{lk} Ga(a_l, a_l)
+\end{align}
+
+where $Y_{jk}$, $s_k$ are known & $\{a_l\}_{l}$ are prespecified (like $10^{-10}, 10^{-9} ... 10^9, 10^{10}$). 
+
+* We call it background model because we model $\lambda_{jk} = \mu_j v_{jk}$ where $\mu_j$ is the gene-wise background. With this model, we hope to be able to identify those gene-sample pair that deviates from the background mean, and better shrink $\lambda_{jk}$. \
+
+* Also we note that it is very similar to [ebpm-gamma-mixture](https://github.com/stephenslab/ebpm/blob/master/R/ebpm_gamma_mixture.R). Before the difficulty with `ebpm-gamma-mixture` is that we can't get good grids for $\lambda_{jk}$. Here we estimate grids (through estimating $\mu_j$) and weights alternatingly. Although we have a broader defintion of "sparsity" (in terms of deviation from background) in mind here, $Ga(1/a, 1/a)$ that has large variance has most weights on 0, so it is possible we can achieve sparsity in $\lambda_{jk}$ here as well.
+
 
 ## data simulation
 ```{r}
@@ -46,12 +60,13 @@ runtime_bg_eb <- system.time(
   fit_bg_eb <- ebpm_background(Y = Y, s = s, maxiter = maxiter)
 )
 
-runtime_bg_mle <- system.time(
-  fit_bg_mle <- nb_means(Y, s, maxiter = maxiter, verbose = FALSE,
-                            control = list(method = "grid",gradient = FALSE, hessian = FALSE))
-)
 ```
 
+
+```{r}
+runtime_bg_eb
+plot(fit_bg_eb$progress, xlab = "niter", ylab = "log-likelihood", type ="l")
+```
 
 ## look at data
 ```{r}
@@ -68,33 +83,35 @@ hist(Y, breaks  = 100)
 ```{r}
 lam_mle = t(t(Y)/s)
 lam_bg_eb = fit_bg_eb$mu * fit_bg_eb$posterior$mean
-lam_bg_mle = fit_bg_mle$posterior$mean
 
-plot(Lam, lam_mle, col = "black", pch = 18)
-points(Lam, lam_bg_eb, col = "red", pch = 17)
-points(Lam, lam_bg_mle, col = "blue", pch = 16)
-
-mean((Lam - lam_bg_mle)^2)
-mean((Lam - lam_bg_eb)^2)
+plot(Lam, lam_mle, col = "black", pch = 18, xlab = "lam_true", ylab = "lam_fit")
+points(Lam, lam_bg_eb, col = "red", pch = 16)
+legend("bottomright", legend=c("lam_mle", "lam_background_eb"),
+       col=c("black", "red"), lty=c(1,1), cex=0.8)
+## compare RMSE
 mean((Lam - lam_mle)^2)
+mean((Lam - lam_bg_eb)^2)
 ```
 
-
+### look at $\mu_j$
 ```{r}
-plot(mu, fit_bg_eb$mu, col = "red", pch = 17, ylab = "mu_fitted")
-plot(mu, fit_bg_mle$mu, col = "blue", pch = 16)
+plot(mu, fit_bg_eb$mu, col = "red", pch = 16, ylab = "mu_fitted")
 ```
 
+### look at $V_{jk}$
 ```{r}
 V_bg_eb = fit_bg_eb$posterior$mean
-V_bg_mle = fit_bg_eb$posterior$mean / fit_bg_eb$mu
-plot(V, V_bg_mle, col = "blue", pch = 16)
-plot(V, V_bg_eb, col = "red", pch = 17)
+plot(V, V_bg_eb, col = "red", pch = 16)
 
 ## look at V_bg_eb more closely
 mask <- (V > 0.5)
-plot(V[mask], V_bg_eb[mask], col = "red", pch = 17)
-
+plot(V[mask], V_bg_eb[mask], col = "red", pch = 16)
 ```
 
+## look at how it is shrunk
+```{r}
+idx = 3
+Y[idx,]
+plot(Y[idx,], s * lam_bg_eb[idx, ])
+```
 
