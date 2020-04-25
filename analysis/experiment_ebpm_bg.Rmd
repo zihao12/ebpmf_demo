@@ -1,0 +1,100 @@
+---
+title: "experiment_ebpm_bg"
+author: "zihao12"
+date: "2020-04-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+## data simulation
+```{r}
+rm(list = ls())
+source("script/ebpm_background2.R")
+source("script/nb_means.R")
+set.seed(123)
+
+K = 10
+p = 999
+eps = 1e-3
+signal = 10
+s = replicate(K, 1)
+
+mu = 10 + 100*runif(p)
+Phi = runif(n = p*K) ## now Phi is just index
+mask_small = Phi < 0.8
+Phi[mask_small] = 1e-4
+id_tmp = rbinom(sum(!mask_small),1, 0.5)
+Phi[!mask_small] = id_tmp * 1e+4 + (1- id_tmp) * 1e+8
+Phi = matrix(Phi, nrow = p)
+A = 1/Phi
+
+
+## simulate data from the model
+V = matrix(rgamma(n = p*K, shape = A, rate = A), nrow = p)
+Lam = (mu %o% s) * V
+Y = matrix(rpois(n = p * K, lambda = Lam), nrow = p)
+```
+
+## fit with background model (both EB and MLE approach)
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+maxiter = 100
+
+runtime_bg_eb <- system.time(
+  fit_bg_eb <- ebpm_background(Y = Y, s = s, maxiter = maxiter)
+)
+
+runtime_bg_mle <- system.time(
+  fit_bg_mle <- nb_means(Y, s, maxiter = maxiter, verbose = FALSE,
+                            control = list(method = "grid",gradient = FALSE, hessian = FALSE))
+)
+```
+
+
+## look at data
+```{r}
+hist(mu, breaks = 100)
+
+hist(V, breaks = 100)
+
+hist(Y, breaks  = 100)
+```
+
+
+
+## compare fits
+```{r}
+lam_mle = t(t(Y)/s)
+lam_bg_eb = fit_bg_eb$mu * fit_bg_eb$posterior$mean
+lam_bg_mle = fit_bg_mle$posterior$mean
+
+plot(Lam, lam_mle, col = "black", pch = 18)
+points(Lam, lam_bg_eb, col = "red", pch = 17)
+points(Lam, lam_bg_mle, col = "blue", pch = 16)
+
+mean((Lam - lam_bg_mle)^2)
+mean((Lam - lam_bg_eb)^2)
+mean((Lam - lam_mle)^2)
+```
+
+
+```{r}
+plot(mu, fit_bg_eb$mu, col = "red", pch = 17, ylab = "mu_fitted")
+plot(mu, fit_bg_mle$mu, col = "blue", pch = 16)
+```
+
+```{r}
+V_bg_eb = fit_bg_eb$posterior$mean
+V_bg_mle = fit_bg_eb$posterior$mean / fit_bg_eb$mu
+plot(V, V_bg_mle, col = "blue", pch = 16)
+plot(V, V_bg_eb, col = "red", pch = 17)
+
+## look at V_bg_eb more closely
+mask <- (V > 0.5)
+plot(V[mask], V_bg_eb[mask], col = "red", pch = 17)
+
+```
+
+
