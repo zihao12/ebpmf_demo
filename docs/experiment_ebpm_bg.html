@@ -412,7 +412,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-04-24
+<strong>Last updated:</strong> 2020-04-25
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -509,10 +509,10 @@ unnamed-chunk-2
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree282e789855d1a1b62346755fd506d95d2cd70e77targetblank282e789a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/282e789855d1a1b62346755fd506d95d2cd70e77" target="_blank">282e789</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4b96bf8384aec6cd88c2848fe1094011e4f46d72targetblank4b96bf8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/4b96bf8384aec6cd88c2848fe1094011e4f46d72" target="_blank">4b96bf8</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree282e789855d1a1b62346755fd506d95d2cd70e77targetblank282e789a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree4b96bf8384aec6cd88c2848fe1094011e4f46d72targetblank4b96bf8a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -617,8 +617,6 @@ Unstaged changes:
     Deleted:    analysis/experiment_nb_means_cache/html/unnamed-chunk-3_ac840b1b9f49c0bc24b3f3b2ad41215e.rdb
     Deleted:    analysis/experiment_nb_means_cache/html/unnamed-chunk-3_ac840b1b9f49c0bc24b3f3b2ad41215e.rdx
     Modified:   analysis/fit_cytokines_data.Rmd
-    Modified:   script/ebpm_background2.R
-    Modified:   script/test_ebpm_bg.R
     Modified:   script/test_nb_means.R
     Modified:   script/test_nb_means2.R
 
@@ -664,6 +662,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/4b96bf8384aec6cd88c2848fe1094011e4f46d72/analysis/experiment_ebpm_bg.Rmd" target="_blank">4b96bf8</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+<td>
+update analysis of bg model
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/2994d116200b488321394f1bdc61e42739b34c0f/docs/experiment_ebpm_bg.html" target="_blank">2994d11</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/282e789855d1a1b62346755fd506d95d2cd70e77/analysis/experiment_ebpm_bg.Rmd" target="_blank">282e789</a>
 </td>
 <td>
@@ -685,6 +717,20 @@ experiment with ebpm_bg
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
+<ul>
+<li>Model</li>
+</ul>
+<span class="math display">\[\begin{align}
+  &amp; Y_{jk} \sim Pois(s_k \lambda_{jk})\\
+  &amp; \lambda_{jk} = \mu_j v_{jk}\\
+  &amp; v_{jk} \sim \sum_l \Pi_{lk} Ga(a_l, a_l)
+\end{align}\]</span>
+<p>where <span class="math inline">\(Y_{jk}\)</span>, <span class="math inline">\(s_k\)</span> are known &amp; <span class="math inline">\(\{a_l\}_{l}\)</span> are prespecified (like <span class="math inline">\(10^{-10}, 10^{-9} ... 10^9, 10^{10}\)</span>).</p>
+<ul>
+<li>We call it background model because we model <span class="math inline">\(\lambda_{jk} = \mu_j v_{jk}\)</span> where <span class="math inline">\(\mu_j\)</span> is the gene-wise background. With this model, we hope to be able to identify those gene-sample pair that deviates from the background mean, and better shrink <span class="math inline">\(\lambda_{jk}\)</span>.<br />
+</li>
+<li>Also we note that it is very similar to <a href="https://github.com/stephenslab/ebpm/blob/master/R/ebpm_gamma_mixture.R">ebpm-gamma-mixture</a>. Before the difficulty with <code>ebpm-gamma-mixture</code> is that we can’t get good grids for <span class="math inline">\(\lambda_{jk}\)</span>. Here we estimate grids (through estimating <span class="math inline">\(\mu_j\)</span>) and weights alternatingly. Although we have a broader defintion of “sparsity” (in terms of deviation from background) in mind here, <span class="math inline">\(Ga(1/a, 1/a)\)</span> that has large variance has most weights on 0, so it is possible we can achieve sparsity in <span class="math inline">\(\lambda_{jk}\)</span> here as well.</li>
+</ul>
 </div>
 <div id="data-simulation" class="section level2">
 <h2>data simulation</h2>
@@ -720,52 +766,208 @@ Y = matrix(rpois(n = p * K, lambda = Lam), nrow = p)</code></pre>
 
 runtime_bg_eb &lt;- system.time(
   fit_bg_eb &lt;- ebpm_background(Y = Y, s = s, maxiter = maxiter)
-)
-
-runtime_bg_mle &lt;- system.time(
-  fit_bg_mle &lt;- nb_means(Y, s, maxiter = maxiter, verbose = FALSE,
-                            control = list(method = &quot;grid&quot;,gradient = FALSE, hessian = FALSE))
 )</code></pre>
+<pre class="r"><code>runtime_bg_eb</code></pre>
+<pre><code>   user  system elapsed 
+ 67.108   3.992  19.628 </code></pre>
+<pre class="r"><code>plot(fit_bg_eb$progress, xlab = &quot;niter&quot;, ylab = &quot;log-likelihood&quot;, type =&quot;l&quot;)</code></pre>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2994d116200b488321394f1bdc61e42739b34c0f/docs/figure/experiment_ebpm_bg.Rmd/unnamed-chunk-3-1.png" target="_blank">2994d11</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="look-at-data" class="section level2">
 <h2>look at data</h2>
 <pre class="r"><code>hist(mu, breaks = 100)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2994d116200b488321394f1bdc61e42739b34c0f/docs/figure/experiment_ebpm_bg.Rmd/unnamed-chunk-4-1.png" target="_blank">2994d11</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(V, breaks = 100)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>hist(Y, breaks  = 100)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="compare-fits" class="section level2">
 <h2>compare fits</h2>
 <pre class="r"><code>lam_mle = t(t(Y)/s)
 lam_bg_eb = fit_bg_eb$mu * fit_bg_eb$posterior$mean
-lam_bg_mle = fit_bg_mle$posterior$mean
 
-plot(Lam, lam_mle, col = &quot;black&quot;, pch = 18)
-points(Lam, lam_bg_eb, col = &quot;red&quot;, pch = 17)
-points(Lam, lam_bg_mle, col = &quot;blue&quot;, pch = 16)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>mean((Lam - lam_bg_mle)^2)</code></pre>
-<pre><code>[1] 28.19528</code></pre>
+plot(Lam, lam_mle, col = &quot;black&quot;, pch = 18, xlab = &quot;lam_true&quot;, ylab = &quot;lam_fit&quot;)
+points(Lam, lam_bg_eb, col = &quot;red&quot;, pch = 16)
+legend(&quot;bottomright&quot;, legend=c(&quot;lam_mle&quot;, &quot;lam_background_eb&quot;),
+       col=c(&quot;black&quot;, &quot;red&quot;), lty=c(1,1), cex=0.8)</code></pre>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2994d116200b488321394f1bdc61e42739b34c0f/docs/figure/experiment_ebpm_bg.Rmd/unnamed-chunk-5-1.png" target="_blank">2994d11</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>## compare RMSE
+mean((Lam - lam_mle)^2)</code></pre>
+<pre><code>[1] 48.06954</code></pre>
 <pre class="r"><code>mean((Lam - lam_bg_eb)^2)</code></pre>
 <pre><code>[1] 6.537759</code></pre>
-<pre class="r"><code>mean((Lam - lam_mle)^2)</code></pre>
-<pre><code>[1] 48.06954</code></pre>
-<pre class="r"><code>plot(mu, fit_bg_eb$mu, col = &quot;red&quot;, pch = 17, ylab = &quot;mu_fitted&quot;)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(mu, fit_bg_mle$mu, col = &quot;blue&quot;, pch = 16)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>V_bg_eb = fit_bg_eb$posterior$mean
-V_bg_mle = fit_bg_eb$posterior$mean / fit_bg_eb$mu
-plot(V, V_bg_mle, col = &quot;blue&quot;, pch = 16)</code></pre>
+<div id="look-at-mu_j" class="section level3">
+<h3>look at <span class="math inline">\(\mu_j\)</span></h3>
+<pre class="r"><code>plot(mu, fit_bg_eb$mu, col = &quot;red&quot;, pch = 16, ylab = &quot;mu_fitted&quot;)</code></pre>
 <p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>plot(V, V_bg_eb, col = &quot;red&quot;, pch = 17)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/2994d116200b488321394f1bdc61e42739b34c0f/docs/figure/experiment_ebpm_bg.Rmd/unnamed-chunk-6-1.png" target="_blank">2994d11</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="look-at-v_jk" class="section level3">
+<h3>look at <span class="math inline">\(V_{jk}\)</span></h3>
+<pre class="r"><code>V_bg_eb = fit_bg_eb$posterior$mean
+plot(V, V_bg_eb, col = &quot;red&quot;, pch = 16)</code></pre>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## look at V_bg_eb more closely
 mask &lt;- (V &gt; 0.5)
-plot(V[mask], V_bg_eb[mask], col = &quot;red&quot;, pch = 17)</code></pre>
-<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+plot(V[mask], V_bg_eb[mask], col = &quot;red&quot;, pch = 16)</code></pre>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="look-at-how-it-is-shrunk" class="section level2">
+<h2>look at how it is shrunk</h2>
+<pre class="r"><code>idx = 3
+Y[idx,]</code></pre>
+<pre><code> [1] 59 44 54 53 49  0 51  0 53  0</code></pre>
+<pre class="r"><code>plot(Y[idx,], s * lam_bg_eb[idx, ])</code></pre>
+<p><img src="figure/experiment_ebpm_bg.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
