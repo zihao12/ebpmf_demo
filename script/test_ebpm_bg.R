@@ -6,7 +6,7 @@ source("nb_means.R")
 
 set.seed(123)
 
-K = 50
+K = 3
 p = 999
 eps = 1e-3
 signal = 10
@@ -43,8 +43,31 @@ b = a
 Pi = matrix(runif(n = K * length(a)), ncol = K)
 Pi = t(t(Pi) / colSums(Pi))
 
-fit = mle.nb_means.workhorse(Y, s, mu, A, maxiter = 100, verbose = TRUE,
-                              control = list(method = "grid",gradient = TRUE, hessian = FALSE))
-fit2 = ebpm_background_workhorse(Y = Y, s = s, a = a, b = b, mu = mu, Pi = Pi)
-plot(fit2$progress)
+
+fit = ebpm_background(Y = Y, s = s, maxiter = 100)
+plot(fit$progress)
 #points(fit1$progress, col = "red")
+
+
+plot(V, fit$posterior$mean)
+
+lam_mle = t(t(Y)/s)
+lam_pm = fit$mu * fit$posterior$mean
+plot(Theta, lam_pm, col = "red")
+points(Theta, lam_mle, col = "blue")
+
+plot(lam_pm, lam_mle)
+
+mean((lam_pm - Theta)^2)
+mean((lam_mle - Theta)^2)
+
+## find out which V gets wrong results
+V_pm = fit$posterior$mean
+idx = which(V - V_pm > 0.2, arr.ind = TRUE)
+V[idx[1], idx[2]]
+V_pm[idx[1], idx[2]]
+
+V[idx[1], idx[2]]
+V[idx[1], idx[2]]
+
+
