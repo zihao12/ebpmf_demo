@@ -24,6 +24,7 @@ where $Y_{jk}$, $s_k$ are known & $\{a_l\}_{l}$ are prespecified (like $10^{-10}
 
 
 ## data simulation
+I simulate $v_{jk} \sim Ga(1/\phi_{jk}, 1/\phi_{jk})$ (so $var(v_{jk}) = \phi_{jk}$), with 80% $\phi_{jk} = 10^{-4}$, 10% $\phi_{jk} = 10^{+4}$, 10% $\phi_{jk} = 10^{+8}$. Seems that most bigger $\phi$ yields $v = 0$. So the outlier (20%) for each $j$ are mostly 0. 
 ```{r}
 rm(list = ls())
 source("script/ebpm_background2.R")
@@ -64,12 +65,15 @@ runtime_bg_eb <- system.time(
 
 
 ```{r}
+## runtime
 runtime_bg_eb
+## algo progress
 plot(fit_bg_eb$progress, xlab = "niter", ylab = "log-likelihood", type ="l")
 ```
 
 ## look at data
 ```{r}
+par(mfrow=c(2,2))
 hist(mu, breaks = 100)
 
 hist(V, breaks = 100)
