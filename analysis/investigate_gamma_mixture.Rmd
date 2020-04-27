@@ -1,0 +1,109 @@
+---
+title: "investigate_gamma_mixture"
+author: "zihao12"
+date: "2020-04-27"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+```{r}
+set.seed(123)
+```
+
+I want to investigate the properties of this prior. 
+\begin{align}
+V \sim \sum_l \pi_l Ga(1/\phi_l, \phi_l)
+\end{align}
+Introduce variable $Z \in \{1, ..., L\}$. We have $E(V | Z = l) = 1, Var(V | Z = l) = \phi_l$ 
+\begin{align}
+& E(V | Z = l) = 1\\
+& Var(V | Z = l) = \phi_l\\
+& mode(V | Z = l) = max(0, 1 - \phi_l)
+\end{align}
+
+
+So, $E(V) = 1$, and by [law of total variance](https://en.wikipedia.org/wiki/Law_of_total_variance)
+\begin{align}
+Var(V) & = E(Var(V | Z = l)) + Var(E(V | Z = l))\\
+      & = E(\phi_Z) + Var(1)\\
+      & = \sum_l \pi_l \phi_l
+\end{align}
+For the mode of $V$, it is impossible to have a mode larger than 1, since none of the components have mode $> 1$. 
+
+
+## Look at the pdf of gamma distributions. 
+I plot the pdfs and show the mode (in red)
+$\phi = 10^d, d= -4, .., 0$ 
+```{r}
+phis = 10^seq(-4,0)
+nr = round(length(phis)/2)
+par(mfrow = c(nr, 2))
+for(phi in phis){
+  vlim = qgamma(p = c(0.002, 0.998), shape = 1/phi, rate = 1/phi)
+  v = seq(vlim[1], vlim[2], length.out = 100)
+  plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi), 
+       xlab = "v", ylab = "pdf", 
+       type = "l", main = sprintf("phi = %f", phi))
+  abline(v = 1 - phi, col = "red")
+}
+```
+
+$\phi = 0.1, ... 0.9$ 
+```{r}
+phis = seq(0.1, 0.9, by = 0.2)
+nr = round(length(phis)/2)
+par(mfrow = c(nr, 2))
+for(phi in phis){
+  vlim = qgamma(p = c(0.002, 0.998), shape = 1/phi, rate = 1/phi)
+  v = seq(vlim[1], vlim[2], length.out = 100)
+  plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi), 
+       xlab = "v", ylab = "pdf", 
+       type = "l", main = sprintf("phi = %f", phi))
+  abline(v = 1 - phi, col = "red")
+}
+```
+
+## Look at the mixture of gamma
+```{r}
+compute_pdf_gammamix <- function(x, phi_L, w){
+  pdf <- function(phi){dgamma(x = x, shape = 1/phi, rate = 1/phi)}
+  pdfs <- sapply(phi_L, pdf)
+  return(sum(w*pdfs))
+}
+
+plot_pdf_gammamix <- function(phi_L, w){
+  get_max <- function(phi){qgamma(p = c(0.98), shape = 1/phi, rate = 1/phi)}
+  get_min <- function(phi){qgamma(p = c(0.02), shape = 1/phi, rate = 1/phi)}
+  get_pdf <- function(x){compute_pdf_gammamix(x, phi_L, w)}
+  max_ = max(sapply(phi_L, get_max))
+  min_ = min(sapply(phi_L, get_min))
+  vs = seq(min_, max_, length.out = 1000)
+  plot(vs, sapply(vs, get_pdf), 
+       xlab = "v", ylab = "pdf",  
+       type = "l")
+}
+```
+
+$\phi$ is mixture of $10^{-4}, 0.7$
+```{r}
+par(mfrow = c(1, 2))
+plot_pdf_gammamix(phi_L = c(1e-4, 0.7), 
+                  w = c(0.1, 0.9))
+
+plot_pdf_gammamix(phi_L = c(1e-4, 0.7), 
+                  w = c(0.01, 0.99))
+```
+
+$\phi$ is mixture of $10^{-4}, 1$
+```{r}
+par(mfrow = c(1, 2))
+plot_pdf_gammamix(phi_L = c(1e-4, 1), 
+                  w = c(0.1, 0.9))
+
+plot_pdf_gammamix(phi_L = c(1e-4, 1), 
+                  w = c(0.01, 0.99))
+```
+
+
