@@ -90,6 +90,17 @@ legend("topright", legend=c("posterior mean (EB)", "MLE", "y = x"),
 ```
 
 
+Look at some "sparse" rows
+```{r}
+plot(Lambda[3,], col = "black")
+points(Lambda_eb_pm[3,], col = "blue")
+points(Lambda_mle[3,], col = "red")
+legend("topright", legend=c("truth","posterior mean (EB)", "MLE"),
+       col=c("black","blue", "red"), lty=c(1,1), cex=0.8)
+```
+
+
+
 ## look at $\mu$
 $\mu$ can be interpreted to be mean for each gene. So I compare it with the true gene mean, and gene median from (true $\Lambda$)
 ```{r}
@@ -102,6 +113,13 @@ points(gene_mean_fitted, gene_mean, col = "blue")
 abline(0,1,lwd=0.5,col="black")
 legend("bottomright", legend=c("gene_median", "gene_mean", "y = x"),
        col=c("red", "blue", "black"), lty=c(1,1,1), cex=0.8)
+```
+
+
+```{r}
+hist(gene_median, breaks = 100)
+hist(gene_mean, breaks = 100)
+hist(gene_mean_fitted, breaks = 100)
 ```
 
 
