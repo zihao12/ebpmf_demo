@@ -412,7 +412,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-04-08
+<strong>Last updated:</strong> 2020-04-27
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -509,10 +509,10 @@ unnamed-chunk-4
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed263b8acf4a9a781267e2d0e1cb058f492033bc8targetblankd263b8aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/d263b8acf4a9a781267e2d0e1cb058f492033bc8" target="_blank">d263b8a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree70fa078e491bb6e5d5d25cd4f386dcb279bd7179targetblank70fa078a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/70fa078e491bb6e5d5d25cd4f386dcb279bd7179" target="_blank">70fa078</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreed263b8acf4a9a781267e2d0e1cb058f492033bc8targetblankd263b8aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree70fa078e491bb6e5d5d25cd4f386dcb279bd7179targetblank70fa078a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -526,10 +526,13 @@ Ignored files:
     Ignored:    analysis/compare_GH_cache/
     Ignored:    analysis/compare_speeds_ebpmf_cache/
     Ignored:    analysis/ebpm_two_gamma_debug2_cache/
+    Ignored:    analysis/experiment_ebpm_bg2_cache/
+    Ignored:    analysis/experiment_ebpm_bg_cache/
     Ignored:    analysis/experiment_ebpm_gammamix2_cache/
     Ignored:    analysis/experiment_ebpm_gammamix3_cache/
     Ignored:    analysis/experiment_ebpm_gammamix_cache/
     Ignored:    analysis/experiment_nb_means3_cache/
+    Ignored:    analysis/fit_cytokines_data2_cache/
     Ignored:    analysis/fit_cytokines_data_cache/
     Ignored:    analysis/investigate_gamma_poisson_cache/
     Ignored:    analysis/nmf_anchor_word3_cache/
@@ -563,9 +566,12 @@ Untracked files:
     Untracked:  analysis/ebpmf_demo.Rmd
     Untracked:  analysis/ebpmf_rank1_demo2.Rmd
     Untracked:  analysis/ebpmf_two_gamma_debug.Rmd
+    Untracked:  analysis/experiment_ebpm_bg2.Rmd
     Untracked:  analysis/experiment_nb_means2_cache_0/
     Untracked:  analysis/experiment_nb_means3.Rmd
+    Untracked:  analysis/experiment_nb_means4.Rmd
     Untracked:  analysis/experiment_nb_means_old.Rmd
+    Untracked:  analysis/fit_cytokines_data2.Rmd
     Untracked:  analysis/fit_cytokines_data_old.Rmd
     Untracked:  analysis/investigate_gamma_poisson.Rmd
     Untracked:  analysis/investigate_nmf_sparse.Rmd
@@ -576,6 +582,7 @@ Untracked files:
     Untracked:  analysis/play_shrinkage_methods.Rmd
     Untracked:  analysis/plot_g.Rmd
     Untracked:  analysis/rebayes_vignette.Rmd
+    Untracked:  analysis/simulate_nb_means.Rmd
     Untracked:  analysis/softmax_experiments.ipynb
     Untracked:  analysis/test_ebpmf_two_gamma_fast.Rmd
     Untracked:  analysis/try_CVXR.Rmd
@@ -583,6 +590,7 @@ Untracked files:
     Untracked:  code/anchor-word-recovery/
     Untracked:  data/anchor_word_model1.csv
     Untracked:  data/cytokines_data_fit.RData
+    Untracked:  data/cytokines_fit_bg.Rds
     Untracked:  data/genes_ranked.RDS
     Untracked:  data/nmf_anchor_word3_A.csv
     Untracked:  data/nmf_anchor_word3_W.csv
@@ -596,6 +604,7 @@ Untracked files:
     Untracked:  data/scdata_lvg.RDS
     Untracked:  data/swimmer.mat
     Untracked:  figure/
+    Untracked:  script/ebpm_background.R
     Untracked:  script/nb_means_old.R
     Untracked:  script/nmf_sparse_ebpm_old.R
     Untracked:  script/test_nb_means_cytokines.R
@@ -605,6 +614,7 @@ Untracked files:
     Untracked:  verbose_log_1571588102.40356.txt
 
 Unstaged changes:
+    Modified:   analysis/experiment_ebpm_bg.Rmd
     Modified:   analysis/experiment_nb_means.Rmd
     Deleted:    analysis/experiment_nb_means_cache/html/__globals
     Deleted:    analysis/experiment_nb_means_cache/html/__objects
@@ -652,6 +662,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/70fa078e491bb6e5d5d25cd4f386dcb279bd7179/analysis/fit_cytokines_data.Rmd" target="_blank">70fa078</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-27
+</td>
+<td>
+add a plot
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/b27f85b2c630556a38184abf5783ef51a42582ea/docs/fit_cytokines_data.html" target="_blank">b27f85b</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1191,19 +1235,12 @@ zihao12
 </table>
 </div>
 </div>
-</div>
-<div id="look-at-mu" class="section level2">
-<h2>look at <span class="math inline">\(\mu\)</span></h2>
-<p><span class="math inline">\(\mu\)</span> can be interpreted to be mean for each gene. So I compare it with the true gene mean, and gene median from (true <span class="math inline">\(\Lambda\)</span>)</p>
-<pre class="r"><code>gene_mean = apply(Lambda,1, mean)
-gene_median = apply(Lambda,1, median)
-gene_mean_fitted = fit$fitted_g$mu
-
-plot(gene_mean_fitted, gene_median, col = &quot;red&quot;, ylab = &quot;truth mean/median&quot;, xlab = &quot;fitted mean&quot;)
-points(gene_mean_fitted, gene_mean, col = &quot;blue&quot;)
-abline(0,1,lwd=0.5,col=&quot;black&quot;)
-legend(&quot;bottomright&quot;, legend=c(&quot;gene_median&quot;, &quot;gene_mean&quot;, &quot;y = x&quot;),
-       col=c(&quot;red&quot;, &quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
+<p>Look at some “sparse” rows</p>
+<pre class="r"><code>plot(Lambda[3,], col = &quot;black&quot;)
+points(Lambda_eb_pm[3,], col = &quot;blue&quot;)
+points(Lambda_mle[3,], col = &quot;red&quot;)
+legend(&quot;topright&quot;, legend=c(&quot;truth&quot;,&quot;posterior mean (EB)&quot;, &quot;MLE&quot;),
+       col=c(&quot;black&quot;,&quot;blue&quot;, &quot;red&quot;), lty=c(1,1), cex=0.8)</code></pre>
 <p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1243,23 +1280,18 @@ zihao12
 </div>
 </div>
 </div>
-<div id="look-at-phi_jk" class="section level2">
-<h2>look at <span class="math inline">\(\phi_{jk}\)</span></h2>
-<p>Yusha provided the variability of each gene using Seurat. I look at the Phi of the most and least variable genes (its relaibilty is dubious). There seems not to be much difference.</p>
-<pre class="r"><code>gene_sub_names = rownames(fit.F)[idx]
-gene_ranked = readRDS(&quot;./data/genes_ranked.RDS&quot;)
-id_by_std = order(gene_ranked[gene_sub_names,&quot;variance.standardized&quot;], decreasing = TRUE)
-Phi_ordered = 1/fit$fitted_g$A[id_by_std,]
+<div id="look-at-mu" class="section level2">
+<h2>look at <span class="math inline">\(\mu\)</span></h2>
+<p><span class="math inline">\(\mu\)</span> can be interpreted to be mean for each gene. So I compare it with the true gene mean, and gene median from (true <span class="math inline">\(\Lambda\)</span>)</p>
+<pre class="r"><code>gene_mean = apply(Lambda,1, mean)
+gene_median = apply(Lambda,1, median)
+gene_mean_fitted = fit$fitted_g$mu
 
-# 
-# p1 &lt;- hist(log10(Phi_ordered[1:20,]))                    
-# p2 &lt;- hist(log10(Phi_ordered[980:1000,]))                     
-# plot( p1, col=rgb(0,0,1,1/4), xlim = c(-5,3), main = &quot;hist of log(phi)&quot;)  # first histogram
-# plot( p2, col=rgb(1,0,0,1/4), xlim = c(-5,3), add=T)  # second
-hist(log10(Phi_ordered[1:20,]), xlim=c(-5,3), col=&quot;red&quot;, main = &quot;hist of log10(phi)&quot;)
-hist(log10(Phi_ordered[980:1000,]),add=T, col=rgb(0, 1, 0, 0.5) )
-legend(&quot;topleft&quot;, legend=c(&quot;Phi for most variable genes&quot;, &quot;Phi for least variable genes&quot;),
-       col=c(&quot;red&quot;, rgb(0, 1, 0, 0.5)), lty=c(1,1), cex=0.8)</code></pre>
+plot(gene_mean_fitted, gene_median, col = &quot;red&quot;, ylab = &quot;truth mean/median&quot;, xlab = &quot;fitted mean&quot;)
+points(gene_mean_fitted, gene_mean, col = &quot;blue&quot;)
+abline(0,1,lwd=0.5,col=&quot;black&quot;)
+legend(&quot;bottomright&quot;, legend=c(&quot;gene_median&quot;, &quot;gene_mean&quot;, &quot;y = x&quot;),
+       col=c(&quot;red&quot;, &quot;blue&quot;, &quot;black&quot;), lty=c(1,1,1), cex=0.8)</code></pre>
 <p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
@@ -1298,6 +1330,31 @@ zihao12
 </table>
 </div>
 </div>
+<pre class="r"><code>hist(gene_median, breaks = 100)</code></pre>
+<p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(gene_mean, breaks = 100)</code></pre>
+<p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hist(gene_mean_fitted, breaks = 100)</code></pre>
+<p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="look-at-phi_jk" class="section level2">
+<h2>look at <span class="math inline">\(\phi_{jk}\)</span></h2>
+<p>Yusha provided the variability of each gene using Seurat. I look at the Phi of the most and least variable genes (its relaibilty is dubious). There seems not to be much difference.</p>
+<pre class="r"><code>gene_sub_names = rownames(fit.F)[idx]
+gene_ranked = readRDS(&quot;./data/genes_ranked.RDS&quot;)
+id_by_std = order(gene_ranked[gene_sub_names,&quot;variance.standardized&quot;], decreasing = TRUE)
+Phi_ordered = 1/fit$fitted_g$A[id_by_std,]
+
+# 
+# p1 &lt;- hist(log10(Phi_ordered[1:20,]))                    
+# p2 &lt;- hist(log10(Phi_ordered[980:1000,]))                     
+# plot( p1, col=rgb(0,0,1,1/4), xlim = c(-5,3), main = &quot;hist of log(phi)&quot;)  # first histogram
+# plot( p2, col=rgb(1,0,0,1/4), xlim = c(-5,3), add=T)  # second
+hist(log10(Phi_ordered[1:20,]), xlim=c(-5,3), col=&quot;red&quot;, main = &quot;hist of log10(phi)&quot;)
+hist(log10(Phi_ordered[980:1000,]),add=T, col=rgb(0, 1, 0, 0.5) )
+legend(&quot;topleft&quot;, legend=c(&quot;Phi for most variable genes&quot;, &quot;Phi for least variable genes&quot;),
+       col=c(&quot;red&quot;, rgb(0, 1, 0, 0.5)), lty=c(1,1), cex=0.8)</code></pre>
+<p><img src="figure/fit_cytokines_data.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## Phi for most variable genes
 table(Phi_ordered[1:20,])</code></pre>
 <pre><code>
