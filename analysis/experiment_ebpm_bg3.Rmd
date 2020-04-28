@@ -35,7 +35,7 @@ simulate_V_bg <- function(J, K, n_keyword){
   key_mask = matrix(FALSE, nrow = J, ncol = K)
   for(k in 1:K){
     idx = sample(x = 1:J, size = n_keyword, replace = FALSE)
-    V[idx, k] = exp(runif(n = n_keyword, min = 0, max = 2))
+    V[idx, k] = exp(runif(n = n_keyword, min = 0, max = 4))
     key_mask[idx, k] = TRUE
   }
   return(list(V = V, key_mask = key_mask))
