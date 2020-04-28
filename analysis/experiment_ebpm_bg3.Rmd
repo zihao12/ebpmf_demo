@@ -1,0 +1,181 @@
+---
+title: "experiment_ebpm_bg3"
+author: "zihao12"
+date: "2020-04-28"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+Our model is:
+\begin{align}
+  & Y_{jk} \sim Pois(s_k \lambda_{jk})\\
+  & \lambda_{jk} = \mu_j v_{jk}\\
+  & v_{jk} \sim \sum_l \Pi_{lk} Ga(a_l, a_l)
+\end{align}
+Note that for interpretation we use $\phi_l := 1/a_l$.
+
+In a more realistic setting, we expect to see large outliers in $v_{jK}$, which cannot be simulated from the model. \
+
+So I simulate $v_{jk}$ this way: for each topic, select some keywords. For non-keywords, set $v_{jk} = 1$ (or some random number close to 1). For key-words, generate $ln(v_{jk}) \sim U[0, 1]$. \
+
+$\mu_j$ can be generated from the empirical distribution of fitted $F$ on true single-cell dataset. And we can use `s_k` from fitted model as well.
+
+```{r}
+rm(list = ls())
+source("script/ebpm_background2.R")
+set.seed(123)
+```
+
+## function for the sampling procedure
+```{r}
+simulate_V_bg <- function(J, K, n_keyword){
+  V = matrix(exp(1e-4 * runif(n = J * K, min = -1, max = 1)), ncol = K)
+  key_mask = matrix(FALSE, nrow = J, ncol = K)
+  for(k in 1:K){
+    idx = sample(x = 1:J, size = n_keyword, replace = FALSE)
+    V[idx, k] = exp(runif(n = n_keyword, min = 0, max = 2))
+    key_mask[idx, k] = TRUE
+  }
+  return(list(V = V, key_mask = key_mask))
+}
+
+simulate_data_bg <- function(s, mu, n_keyword, seed = 123){
+  set.seed(seed)
+  K = length(s)
+  J = length(mu)
+  v_tmp = simulate_V_bg(J = J,K = K,n_keyword = n_keyword)
+  V = v_tmp$V
+  key_mask= v_tmp$key_mask
+  Lam = (mu %o% s) * V
+  Y = matrix(rpois(n = J * K, lambda = Lam), ncol = K)
+  return(list(Y = Y, V = V, key_mask = key_mask))
+}
+```
+
+
+## use $\mu, s$ from fitted model
+```{r}
+fitted = readRDS("data/cytokines_fit_bg.Rds")
+J = 1000
+
+s = fitted$s/10000 ## when s is too big, lam_mle is already good enough (why?)
+s
+
+## for mu, I don't want too many small values
+# probs = seq(0.02, 0.98, 0.02)
+# plot(probs, quantile(fitted$mu, probs = probs), ylab = "mu", main = "quantile of fitted mu")
+## I use the following number as cutoff
+cutoff = as.numeric(quantile(fitted$mu, probs = 0.54))
+cutoff
+
+## get new `mu` by sampling from the empirical distribution (after cutoff)
+mu = sample(x = fitted$mu[fitted$mu > cutoff], size = J, replace = TRUE)
+plot(density(mu, to = 3), main = "density of new mu")
+```
+
+
+## simulate data
+```{r}
+n_keyword =10
+data = simulate_data_bg(s = s, mu = mu, n_keyword = n_keyword)
+V = data$V
+key_mask = data$key_mask
+Y = data$Y
+
+## look at distribution of V
+par(mfrow = c(1,2))
+plot(density(V[key_mask]), main = "density of V (key words)")
+plot(density(V[!key_mask]), main = "density of V (not key words)")
+```
+
+
+## fit with `ebpm-background`
+* Selecting grids using `c(exp(seq(-5,2)), 0.5^seq(0,5, 1), 1.5^seq(1,7,1))` for $\phi_L$
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+maxiter = 100
+phi_L = c(exp(seq(-5,2)), 0.5^seq(0,5, 1), 1.5^seq(1,7,1))
+grids= list(al = 1/phi_L, bl = 1/phi_L)
+
+fit = ebpm_background(Y = Y, s = s, grids = grids, maxiter = maxiter)
+```
+
+
+
+```{r}
+lam_true = mu * V
+lam_mle = t(t(Y)/s)
+lam_bg = fit$mu *  fit$posterior$mean
+
+#par(mfrow = c(2, 1))
+plot(lam_true, lam_mle, pch = 20, col = "blue", 
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (all words)")
+points(lam_true, lam_bg, pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+
+plot(lam_true[key_mask], lam_mle[key_mask], pch = 20, col = "blue", 
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (key words)")
+points(lam_true[key_mask], lam_bg[key_mask], pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+
+plot(lam_true[!key_mask], lam_mle[!key_mask], pch = 20, col = "blue", 
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (non key words)")
+points(lam_true[!key_mask], lam_bg[!key_mask], pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+```
+It seems that: \
+
+* The background model shrinks most non-keywords well\
+
+* But it fails to get the keywords right\
+
+Let's look at $V$:
+```{r}
+V_bg = fit$posterior$mean
+plot(V, V_bg)
+
+plot(V[key_mask], V_bg[key_mask], main = "key words")
+plot(V[!key_mask], V_bg[!key_mask], main = "non keywords")
+```
+
+##  check other parts of the algorithm
+look at $\mu$
+```{r}
+plot(mu, fit$mu)
+
+```
+
+```{r}
+plot(fit$progress)
+```
+
+## why it can't shrink key-words right?
+
+Look at $\pi_{lk}$
+```{r}
+K = length(s)
+par(mfrow = c(round(K/4),4))
+for(k in 1:K){
+  plot(fit$Pi[,k], ylab = "weight", xlab = "1:L", main = sprintf("k = %d", k))
+}
+
+phi_L[1]
+```
+So only one component is used for most topics, which makes sense, since most $v_{jk}$ are close to 1, so we only need small $\phi$. So the prior is like
+```{r}
+phi = phi_L[1]
+v = seq(0,5, 0.01)
+plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi), type = "l", ylab = "prob", xlab = "v", main = "p0(v)")
+```
+No wonder large $v$ will be dragged closer to 1. 
+
