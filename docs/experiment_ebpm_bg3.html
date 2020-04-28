@@ -509,10 +509,10 @@ unnamed-chunk-5
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb26661c27108b6f8c56eda05e1d67fa439ee1924targetblankb26661ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/b26661c27108b6f8c56eda05e1d67fa439ee1924" target="_blank">b26661c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree035865c77160d2d346289c532c37abb94cd1cf5ctargetblank035865ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/035865c77160d2d346289c532c37abb94cd1cf5c" target="_blank">035865c</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeb26661c27108b6f8c56eda05e1d67fa439ee1924targetblankb26661ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree035865c77160d2d346289c532c37abb94cd1cf5ctargetblank035865ca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -668,6 +668,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/035865c77160d2d346289c532c37abb94cd1cf5c/analysis/experiment_ebpm_bg3.Rmd" target="_blank">035865c</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+<td>
+keyword enrichment
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/ee439aacb37fb76432060827968bf93a76d4344a/docs/experiment_ebpm_bg3.html" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/b26661c27108b6f8c56eda05e1d67fa439ee1924/analysis/experiment_ebpm_bg3.Rmd" target="_blank">b26661c</a>
 </td>
 <td>
@@ -710,7 +744,7 @@ set.seed(123)</code></pre>
   key_mask = matrix(FALSE, nrow = J, ncol = K)
   for(k in 1:K){
     idx = sample(x = 1:J, size = n_keyword, replace = FALSE)
-    V[idx, k] = exp(runif(n = n_keyword, min = 0, max = 2))
+    V[idx, k] = exp(runif(n = n_keyword, min = 0, max = 4))
     key_mask[idx, k] = TRUE
   }
   return(list(V = V, key_mask = key_mask))
@@ -750,6 +784,43 @@ cutoff</code></pre>
 mu = sample(x = fitted$mu[fitted$mu &gt; cutoff], size = J, replace = TRUE)
 plot(density(mu, to = 3), main = &quot;density of new mu&quot;)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-3-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="simulate-data" class="section level2">
 <h2>simulate data</h2>
@@ -764,6 +835,43 @@ par(mfrow = c(1,2))
 plot(density(V[key_mask]), main = &quot;density of V (key words)&quot;)
 plot(density(V[!key_mask]), main = &quot;density of V (not key words)&quot;)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-4-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fit-with-ebpm-background" class="section level2">
 <h2>fit with <code>ebpm-background</code></h2>
@@ -788,6 +896,43 @@ abline(0,1,lwd=3,col=&quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;lam_mle&quot;, &quot;lam_bg&quot;),
        col=c(&quot;blue&quot;, &quot;red&quot;), lty=1:1, cex=0.6)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(lam_true[key_mask], lam_mle[key_mask], pch = 20, col = &quot;blue&quot;, 
      xlab = &quot;true lam&quot;, ylab = &quot;fitted lam&quot;,
      main = &quot;lam true vs lam fit (key words)&quot;)
@@ -796,6 +941,43 @@ abline(0,1,lwd=3,col=&quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;lam_mle&quot;, &quot;lam_bg&quot;),
        col=c(&quot;blue&quot;, &quot;red&quot;), lty=1:1, cex=0.6)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-2">
+Past versions of unnamed-chunk-6-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-2.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(lam_true[!key_mask], lam_mle[!key_mask], pch = 20, col = &quot;blue&quot;, 
      xlab = &quot;true lam&quot;, ylab = &quot;fitted lam&quot;,
      main = &quot;lam true vs lam fit (non key words)&quot;)
@@ -803,25 +985,248 @@ points(lam_true[!key_mask], lam_bg[!key_mask], pch = 21, col = &quot;red&quot;)
 abline(0,1,lwd=3,col=&quot;black&quot;)
 legend(&quot;topleft&quot;, legend=c(&quot;lam_mle&quot;, &quot;lam_bg&quot;),
        col=c(&quot;blue&quot;, &quot;red&quot;), lty=1:1, cex=0.6)</code></pre>
-<p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /> It seems that:<br />
+<p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-3">
+Past versions of unnamed-chunk-6-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-6-3.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>It seems that:<br />
 * The background model shrinks most non-keywords well<br />
 * But it fails to get the keywords right<br />
 Let’s look at <span class="math inline">\(V\)</span>:</p>
 <pre class="r"><code>V_bg = fit$posterior$mean
 plot(V, V_bg)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(V[key_mask], V_bg[key_mask], main = &quot;key words&quot;)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-2.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(V[!key_mask], V_bg[!key_mask], main = &quot;non keywords&quot;)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-7-3.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="check-other-parts-of-the-algorithm" class="section level2">
 <h2>check other parts of the algorithm</h2>
 <p>look at <span class="math inline">\(\mu\)</span></p>
 <pre class="r"><code>plot(mu, fit$mu)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-8-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>plot(fit$progress)</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-9-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="why-it-cant-shrink-key-words-right" class="section level2">
 <h2>why it can’t shrink key-words right?</h2>
@@ -832,13 +1237,88 @@ for(k in 1:K){
   plot(fit$Pi[,k], ylab = &quot;weight&quot;, xlab = &quot;1:L&quot;, main = sprintf(&quot;k = %d&quot;, k))
 }</code></pre>
 <p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-10-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>phi_L[1]</code></pre>
 <pre><code>[1] 0.006737947</code></pre>
 <p>So only one component is used for most topics, which makes sense, since most <span class="math inline">\(v_{jk}\)</span> are close to 1, so we only need small <span class="math inline">\(\phi\)</span>. So the prior is like</p>
 <pre class="r"><code>phi = phi_L[1]
 v = seq(0,5, 0.01)
 plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi), type = &quot;l&quot;, ylab = &quot;prob&quot;, xlab = &quot;v&quot;, main = &quot;p0(v)&quot;)</code></pre>
-<p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /> No wonder large <span class="math inline">\(v\)</span> will be dragged closer to 1.</p>
+<p><img src="figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/ee439aacb37fb76432060827968bf93a76d4344a/docs/figure/experiment_ebpm_bg3.Rmd/unnamed-chunk-11-1.png" target="_blank">ee439aa</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>No wonder large <span class="math inline">\(v\)</span> will be dragged closer to 1.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
