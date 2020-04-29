@@ -1,0 +1,218 @@
+---
+title: "experiment_ebpm_bg4"
+author: "zihao12"
+date: "2020-04-29"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I use the choice from Yusha Liu for simulating $\mu_j$ and $s_k$. They are very important in determining the hardness of the problem. \
+
+Our model is:
+\begin{align}
+  & Y_{jk} \sim Pois(s_k \lambda_{jk})\\
+  & \lambda_{jk} = \mu_j v_{jk}\\
+  & v_{jk} \sim \sum_l \Pi_{lk} Ga(a_l, a_l)
+\end{align}
+Note that for interpretation we use $\phi_l := 1/a_l$.
+
+In a more realistic setting, we expect to see only large outliers in $v_{jK}$, which cannot be simulated from the model. \
+
+So I simulate $v_{jk}$ this way: for each topic, select some keywords. For non-keywords, set $v_{jk} = 1$ (or some random number close to 1). For key-words, generate $ln(v_{jk}) \sim U[1, 4]$. \
+
+I use $\mu_j \sim U[0.25, 5]$, and $s$ is in the range from $0.5$ to $3$.
+
+## some results 
+* In general, background model can shrink non keywords and leave keywords\
+
+* In cases where $Y_{jK}$ has some very large and rare outliers, the estimation of $\mu_j$ can be bad, as well as $V_{jK}$ for those outliers. In fact, using median of $Y_{jK}/s_{K}$ can be better in those cases (TODO: initialize $\mu_j$ using median, or simply fix them)\
+
+* In previous experiments, we find the size of $s_k$ affects the difficulty of the Poisson Means problem a lot... so need more thought here. 
+
+```{r}
+rm(list = ls())
+source("script/ebpm_background2.R")
+set.seed(123)
+```
+
+# define functions needed for the sampling procedure
+```{r}
+simulate_V_bg <- function(J, K, n_keyword){
+  V = matrix(exp(1e-4 * runif(n = J * K, min = -1, max = 1)), ncol = K)
+  key_mask = matrix(FALSE, nrow = J, ncol = K)
+  for(k in 1:K){
+    idx = sample(x = 1:J, size = n_keyword, replace = FALSE)
+    V[idx, k] = exp(runif(n = n_keyword, min = 1, max = 4))
+    key_mask[idx, k] = TRUE
+  }
+  return(list(V = V, key_mask = key_mask))
+}
+
+simulate_data_bg <- function(s, mu, n_keyword, seed = 123){
+  set.seed(seed)
+  K = length(s)
+  J = length(mu)
+  v_tmp = simulate_V_bg(J = J,K = K,n_keyword = n_keyword)
+  V = v_tmp$V
+  key_mask= v_tmp$key_mask
+  Lam = (mu %o% s) * V
+  Y = matrix(rpois(n = J * K, lambda = Lam), ncol = K)
+  return(list(Y = Y, V = V, key_mask = key_mask))
+}
+```
+
+## simulate data
+```{r}
+# specify the background vector mu by removing the effectively zero ones
+data <- readRDS("data/cytokines_data_bg_model.rds")
+s.k <- data$s.k
+s.sim <- s.k/1e4
+J <- 2000
+
+set.seed(123)
+mu.sim <- runif(J, min=0.25, max=25)
+
+# simulate data
+n_keyword =10
+data = simulate_data_bg(s = s.sim, mu = mu.sim, n_keyword = n_keyword)
+V = data$V
+key_mask = data$key_mask
+Y = data$Y
+
+```
+
+## fit the background model
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+maxiter = 200
+a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
+grids= list(al = a_L, bl = a_L)
+
+runtime_bg_eb <- system.time(
+  fit_bg_eb <- ebpm_background(Y = Y, s = s.sim, grids = grids, maxiter = maxiter)
+)
+
+runtime_bg_eb
+plot(fit_bg_eb$progress)
+```
+
+## look at $\mu_j$
+```{r}
+mu_bg = fit_bg_eb$mu
+mu_median = apply(t(t(Y)/s.sim), 1, median)
+plot(mu.sim,mu_bg , col = "red", pch = 21,
+     xlab = "true mu", ylab = "fitted mu")
+points(mu.sim, mu_median, col =  "blue", pch = 20)
+abline(0,1,lwd=2,col="black")
+legend("topleft", legend=c("mu_median", "mu_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+```
+
+```{r}
+mean((mu.sim - mu_bg)^2)
+mean((mu.sim - mu_median)^2)
+```
+* In the background model, the poorly fitted few $\mu$ made the most contributions. like the one that fits $25$ with 100, contributes around $5$ to the MSE... (of course we can improve the fit by better initialization and more iterations, but as a subproblem we can't run too long)
+
+* It seems that directly using the median of $y_{jK}/s_K$ is already already a good estimate if we have only very few outliers in each $v_{jK}$. Then we can just fix $\mu_j$ this way and onnly need to run 1 iteration. Then the computaion time is the same as in `ebpm_gamma_mixture`. 
+
+
+
+## look at $\Pi_{kl}$
+```{r fig.width=14, fig.height=14}
+# look at pi_{kl} for each k
+K = length(s.sim)
+par(mfrow = c(4,4))
+for(k in 1:K){
+  plot(1:length(a_L), fit_bg_eb$Pi[,k], 
+       type="p", xlab = "phi_l: 1:L", ylab = "pi_kl", main = paste0("topic k=", k))
+}
+```
+
+Take a closer look at those proportions
+```{r}
+grid_id = 6
+k = 4
+fit_bg_eb$Pi[6,k]
+a_L[grid_id]
+
+phi = 1/a_L[grid_id]
+v = seq(0,10, 0.01)
+par(mfrow=c(1,2))
+plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi), type = "l", ylab = "prob", xlab = "v", main = sprintf("p(v | phi = %f)", phi))
+plot(v, dgamma(x = v, shape = 1/phi, rate = 1/phi, log = TRUE), type = "l", ylab = "log-prob", xlab = "v", main = sprintf("p(v | phi = %f)", phi))
+```
+
+## look at $V_{jk}$
+```{r fig.width=14, fig.height=14}
+V_bg = fit_bg_eb$posterior$mean
+par(mfrow = c(2,2))
+plot(V, V_bg, main = "V vs V_bg", pch = 20)
+plot(V[key_mask], V_bg[key_mask], main = "V vs V_bg (key words)", pch = 20)
+plot(V[!key_mask], V_bg[!key_mask], main = "V vs V_bg (non key words)", pch = 20)
+```
+
+There are few points (in key-words) that fit very poorly. See why
+```{r fig.width=10, fig.height=5}
+bad_mask <- (mu_bg > 2*mu.sim)
+bad_j = which(bad_mask == TRUE)
+bad_j
+par(mfrow = c(1,2))
+plot(V[bad_j[1],],V_bg[bad_j[1],])
+plot(V[bad_j[2],],V_bg[bad_j[2],])
+
+## go on to look at one of them
+round(Y[bad_j[1],]/s.sim)
+mu_bg[bad_j[1]]
+mu_median[bad_j[1]]
+
+## go on to look at "normal" one
+round(Y[62,]/s.sim)
+mu_bg[62]
+mu_median[62]
+```
+* See the bad fits (in key words) are due to poor fit of $\mu$
+
+* The bad fit of $\mu_j$ happen when the outlier is too huge. Seem that since huge outliers are too rare, $\Pi_{kl}$ does not take them into account, and use larger $\mu_j$ to explain it. 
+```{r}
+(1/a_L)[fit_bg_eb$Pi[,15] > 0]
+```
+
+
+## look at $\lambda_{jk}$
+```{r fig.width=14, fig.height=14}
+# lambda vs estimated lambda for all
+lam_true = mu.sim * V
+lam_mle = t(t(Y)/s.sim)
+lam_bg = fit_bg_eb$mu * fit_bg_eb$posterior$mean
+
+par(mfrow=c(2,2))
+
+plot(lam_true, lam_mle, pch = 20, col = "blue",
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (all words)")
+points(lam_true, lam_bg, pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+
+
+plot(lam_true[key_mask], lam_mle[key_mask], pch = 20, col = "blue",
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (key words)")
+points(lam_true[key_mask], lam_bg[key_mask], pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+
+
+plot(lam_true[!key_mask], lam_mle[!key_mask], pch = 20, col = "blue",
+     xlab = "true lam", ylab = "fitted lam",
+     main = "lam true vs lam fit (non key words)")
+points(lam_true[!key_mask], lam_bg[!key_mask], pch = 21, col = "red")
+abline(0,1,lwd=3,col="black")
+legend("topleft", legend=c("lam_mle", "lam_bg"),
+       col=c("blue", "red"), lty=1:1, cex=0.6)
+```
+
