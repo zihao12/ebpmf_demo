@@ -48,8 +48,32 @@ n = nrow(Y)
 p = ncol(Y)
 K = ncol(L)
 
-
+## scale l,f into multinomial model
+lf = poisson2multinom(F = F, L = L)
 ```
+
+## look at the meaning of each topic 
+let's look at the weight distribution in each topic (multinomial model). It seems that the top $0.002$ words take up most weight.
+```{r fig.width=14, fig.height=14}
+par(mfrow = c(5,4))
+for(k in 1:K){
+  probs = seq(0, 1, 0.002)
+  #top_words = order(lf$F[,1], decreasing = TRUE)[1:13]
+  plot(probs, quantile(lf$F[,k], probs = probs))
+}
+```
+
+Below I show the top $0.002$ words in each topic (per column)
+```{r}
+n_word = round(0.002 * p)
+topic_df <- matrix(,nrow = n_word, ncol = K)
+for(k in 1:K){
+  topic_df[,k] = dict[order(lf$F[,k], decreasing = TRUE)[1:n_word]]
+}
+colnames(topic_df) <- 1:K
+topic_df
+```
+
 
 
 ## Let's look at the structure of $f_{jk}$.
@@ -93,7 +117,6 @@ for(j in idx){
 
 ## most important words in a topic
 ```{r fig.width=14, fig.height=14}
-lf = poisson2multinom(F = F, L = L)
 par(mfrow = c(5,4))
 for(k in 1:K){
   j = which.max(lf$F[,k])
