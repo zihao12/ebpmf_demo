@@ -1,0 +1,88 @@
+---
+title: "experiment_ebpm_bg_kos"
+author: "zihao12"
+date: "2020-04-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to try `ebpm-background` model on the fitted model on kos data: https://zihao12.github.io/ebpmf_demo/applications_kos.html
+
+```{r}
+rm(list = ls())
+library(Matrix)
+source("code/misc.R")
+source("script/ebpm_background3.R")
+set.seed(123)
+
+data_dir = "~/Desktop/data/text"
+data_name = "docword.kos.mtx"
+model_name = "docword.kos_nnmf_K20_maxiter1000.Rds"
+dict_name = "vocab.kos.txt"
+
+X = readMM(file= sprintf("%s/%s", data_dir, data_name))
+X = as.matrix(X)
+dict = read.csv(sprintf("%s/%s", data_dir, dict_name), header = FALSE)
+dict = as.vector(dict[,1])
+model = readRDS(sprintf("%s/%s", data_dir, model_name))
+L = model$W
+F = t(model$H)
+
+
+## scale F
+s_k = colSums(L)
+n = nrow(X)
+p = ncol(X)
+K = ncol(L)
+```
+
+I construct a poisson means sub-problem this way
+\begin{align}
+& Y_{jk} = \sum_i Z_{ijk}\\
+& Z_{ijk} = X_{ij} \zeta_{ijk}\\
+& \zeta_{ijk} = \frac{l_{ik} f_{jk}}{\sum_k l_{ik} f_{jk}}\\
+\end{align}
+
+```{r}
+# get_Z <- function(X,L, F ,K){
+#   n = nrow(X)
+#   p = ncol(X)
+#   ## zeta = array(dim = c(n, p, K))
+#   Z_sum = array(dim = c(p, K))
+#   denom = L %*% t(F)
+#   for(k in 1:K){
+#     print(k)
+#     #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/denom))
+#     tmp = L[,k] %o% F[,k]
+#     tmp = tmp / denom
+#     Z_sum[,k] = colSums(X * tmp)
+#   }
+#   Z_sum[is.nan(Z_sum)] = 0
+#   return(Z_sum)
+# }
+# 
+# Y = get_Z(X = X, L = L, F = F, K = K)
+# saveRDS(Y, "data/kos.z.Rds")
+Y = readRDS("data/kos.z.Rds")
+hist(log10(Y + 1), breaks = 100)
+```
+
+
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+maxiter = 20
+a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
+grids= list(al = a_L, bl = a_L)
+
+Lam = t(t(F) * s_k)
+runtime <- system.time(
+  fit <- ebpm_background(Y = Y, s = replicate(K, 1),
+                grids = grids, maxiter = maxiter)
+)
+```
+
+```{r}
+plot(fit$progress)
+```
+
