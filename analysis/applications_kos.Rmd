@@ -1,0 +1,105 @@
+---
+title: "applications_kos"
+author: "zihao12"
+date: "2020-04-29"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+* I applied Poisson Matrix Factorization to analyze a corpus of Daily Kos Blog dataset.\
+
+* The data is downloaded from [Bag of Words](https://archive.ics.uci.edu/ml/datasets/Bag+of+Words). I run `NNLM::nnmf` for $1000$ iterations with $20$ topics, using `scd` algorithm.\
+
+* I mainly look at $f_{jK}$ of the fitted model. \
+
+* Note that, I use $s_k f_{jk}$ in place of $f_{jk}$ for fear that some small non-zero numbers will be read as 0. 
+```{r}
+rm(list = ls())
+library(Matrix)
+source("code/misc.R")
+set.seed(123)
+
+data_dir = "~/Desktop/data/text"
+data_name = "docword.kos.mtx"
+model_name = "docword.kos_nnmf_K20_maxiter1000.Rds"
+dict_name = "vocab.kos.txt"
+
+Y = readMM(file= sprintf("%s/%s", data_dir, data_name))
+Y = as.matrix(Y)
+dict = read.csv(sprintf("%s/%s", data_dir, dict_name), header = FALSE)
+dict = as.vector(dict[,1])
+model = readRDS(sprintf("%s/%s", data_dir, model_name))
+L = model$W
+F = t(model$H)
+
+## scale F
+s_k = colSums(L)
+F = t(t(F) * s_k)
+
+dim(Y)
+dim(L)
+dim(F)
+
+
+
+n = nrow(Y)
+p = ncol(Y)
+K = ncol(L)
+
+
+```
+
+
+## Let's look at the structure of $f_{jk}$.
+
+### most frequent words
+Note that the most frequent words (like "a", "the")seem to have been eliminated ...
+```{r fig.width=14, fig.height=14}
+freq_order = order(colSums(Y)) ## increasing order
+
+#idx = sample(x = 1:p, size = 9, replace = FALSE)
+idx = freq_order[(p-15):p]
+par(mfrow = c(4,4))
+for(j in idx){
+  plot(F[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for word `%s`", dict[j]))
+}
+
+```
+
+### rarest words
+Also note that words that occurred less than ten times are also eliminated
+```{r fig.width=14, fig.height=14}
+idx = freq_order[1:16]
+par(mfrow = c(4,4))
+for(j in idx){
+  plot(F[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for word `%s`", dict[j]))
+}
+```
+
+### other words
+get some words that are neither most often nor rare 
+```{r fig.width=14, fig.height=14}
+idx = sample(x = 1:p, size = 16, replace = FALSE) ## hope it won't coincide with previous choices
+par(mfrow = c(4,4))
+for(j in idx){
+  plot(F[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for word `%s`", dict[j]))
+}
+```
+
+## most important words in a topic
+```{r fig.width=14, fig.height=14}
+lf = poisson2multinom(F = F, L = L)
+par(mfrow = c(5,4))
+for(k in 1:K){
+  j = which.max(lf$F[,k])
+  plot(F[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for `%s` in topic %d", dict[j], k))
+}
+```
+
+
