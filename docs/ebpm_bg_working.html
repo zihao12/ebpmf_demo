@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="zihao12" />
+
+<meta name="date" content="2020-05-01" />
+
+<title>ebpm_bg_working</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ebpmf_demo</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zihao12/ebpmf_demo">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ebpm_bg_working</h1>
+<h4 class="author">zihao12</h4>
+<h4 class="date">2020-05-01</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-05-01
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.5.0). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree09342bb565ec9c0d32595cf63135abc836a1fe95targetblank09342bba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/09342bb565ec9c0d32595cf63135abc836a1fe95" target="_blank">09342bb</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree09342bb565ec9c0d32595cf63135abc836a1fe95targetblank09342bba" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .RData
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/anchor_word_model_swimmer_cache/
+    Ignored:    analysis/compare_GH_cache/
+    Ignored:    analysis/compare_speeds_ebpmf_cache/
+    Ignored:    analysis/ebpm_two_gamma_debug2_cache/
+    Ignored:    analysis/experiment_ebpm_bg2_cache/
+    Ignored:    analysis/experiment_ebpm_bg3_cache/
+    Ignored:    analysis/experiment_ebpm_bg4_cache/
+    Ignored:    analysis/experiment_ebpm_bg5_cache/
+    Ignored:    analysis/experiment_ebpm_bg_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix2_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix3_cache/
+    Ignored:    analysis/experiment_ebpm_gammamix_cache/
+    Ignored:    analysis/experiment_nb_means3_cache/
+    Ignored:    analysis/fit_cytokines_data2_cache/
+    Ignored:    analysis/fit_cytokines_data_cache/
+    Ignored:    analysis/investigate_gamma_poisson_cache/
+    Ignored:    analysis/nmf_anchor_word3_cache/
+    Ignored:    analysis/nmf_anchor_word4_cache/
+    Ignored:    analysis/nmf_sparse10_cache/
+    Ignored:    analysis/nmf_sparse11_cache/
+    Ignored:    analysis/nmf_sparse8_cache/
+    Ignored:    analysis/nmf_sparse9_cache/
+    Ignored:    analysis/test_ebpmf_two_gamma_fast_cache/
+
+Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  Untitled.Rmd
+    Untracked:  Untitled.html
+    Untracked:  analysis/.ipynb_checkpoints/
+    Untracked:  analysis/Experiment_ebpmf_simple.Rmd
+    Untracked:  analysis/analysis_ebpm_bg_kos3.Rmd
+    Untracked:  analysis/anchor_word_model1.Rmd
+    Untracked:  analysis/anchor_word_model2.Rmd
+    Untracked:  analysis/anchor_word_model3.Rmd
+    Untracked:  analysis/compare_speeds_ebpmf.Rmd
+    Untracked:  analysis/debug_ebpmf_two_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_beta_gamma.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma2.Rmd
+    Untracked:  analysis/demo_ebpmf_two_gamma_cache_old/
+    Untracked:  analysis/draft.Rmd
+    Untracked:  analysis/ebpm_gamma_mixture_experiment.Rmd
+    Untracked:  analysis/ebpm_gh_gamma.Rmd
+    Untracked:  analysis/ebpm_two_gamma_test.R
+    Untracked:  analysis/ebpm_two_gamma_test.Rmd
+    Untracked:  analysis/ebpmf.Rmd
+    Untracked:  analysis/ebpmf_demo.Rmd
+    Untracked:  analysis/ebpmf_rank1_demo2.Rmd
+    Untracked:  analysis/ebpmf_two_gamma_debug.Rmd
+    Untracked:  analysis/experiment_ebpm_bg2.Rmd
+    Untracked:  analysis/experiment_ebpm_bg5_cache_old/
+    Untracked:  analysis/experiment_nb_means2_cache_0/
+    Untracked:  analysis/experiment_nb_means3.Rmd
+    Untracked:  analysis/experiment_nb_means4.Rmd
+    Untracked:  analysis/experiment_nb_means_old.Rmd
+    Untracked:  analysis/fit_cytokines_data2.Rmd
+    Untracked:  analysis/fit_cytokines_data_old.Rmd
+    Untracked:  analysis/investigate_ebpm_s.Rmd
+    Untracked:  analysis/investigate_gamma_poisson.Rmd
+    Untracked:  analysis/investigate_nmf_sparse.Rmd
+    Untracked:  analysis/nmf_anchor_word4.Rmd
+    Untracked:  analysis/nmf_sparse11.Rmd
+    Untracked:  analysis/nmf_symm.Rmd
+    Untracked:  analysis/play_prior.Rmd
+    Untracked:  analysis/play_shrinkage_methods.Rmd
+    Untracked:  analysis/plot_g.Rmd
+    Untracked:  analysis/rebayes_vignette.Rmd
+    Untracked:  analysis/simulate_nb_means.Rmd
+    Untracked:  analysis/softmax_experiments.ipynb
+    Untracked:  analysis/test_ebpmf_two_gamma_fast.Rmd
+    Untracked:  analysis/try_CVXR.Rmd
+    Untracked:  cache/
+    Untracked:  code/anchor-word-recovery/
+    Untracked:  data/anchor_word_model1.csv
+    Untracked:  data/cytokines_data_bg_model.rds
+    Untracked:  data/cytokines_data_fit.RData
+    Untracked:  data/cytokines_fit_bg2.Rds
+    Untracked:  data/experiment_ebpm_bg_kos2_data.Rds
+    Untracked:  data/experiment_ebpm_bg_kos3_data.Rds
+    Untracked:  data/experiment_ebpm_bg_kos_data.Rds
+    Untracked:  data/genes_ranked.RDS
+    Untracked:  data/nmf_anchor_word3_A.csv
+    Untracked:  data/nmf_anchor_word3_W.csv
+    Untracked:  data/nmf_anchor_word3_X.csv
+    Untracked:  data/nmf_anchor_word4_A.csv
+    Untracked:  data/nmf_anchor_word4_W.csv
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mle.Rds
+    Untracked:  data/nmf_sparse8_fit_ebpmf_gm_mlem.Rds
+    Untracked:  data/nmf_sparse_ebpm_tg_slow.Rds
+    Untracked:  data/scdata_hvg.RDS
+    Untracked:  data/scdata_lvg.RDS
+    Untracked:  data/swimmer.mat
+    Untracked:  figure/
+    Untracked:  script/ebpm_background.R
+    Untracked:  script/nb_means_old.R
+    Untracked:  script/nmf_sparse_ebpm_old.R
+    Untracked:  script/sim_bg_model.R
+    Untracked:  script/test_nb_means_cytokines.R
+    Untracked:  verbose_log_1571583163.21966.txt
+    Untracked:  verbose_log_1571583324.71036.txt
+    Untracked:  verbose_log_1571583741.94199.txt
+    Untracked:  verbose_log_1571588102.40356.txt
+
+Unstaged changes:
+    Modified:   analysis/experiment_ebpm_bg.Rmd
+    Modified:   analysis/experiment_ebpm_bg5.Rmd
+    Modified:   analysis/experiment_ebpm_bg_kos.Rmd
+    Modified:   analysis/experiment_nb_means.Rmd
+    Deleted:    analysis/experiment_nb_means_cache/html/__globals
+    Deleted:    analysis/experiment_nb_means_cache/html/__objects
+    Deleted:    analysis/experiment_nb_means_cache/html/__packages
+    Deleted:    analysis/experiment_nb_means_cache/html/unnamed-chunk-3_ac840b1b9f49c0bc24b3f3b2ad41215e.RData
+    Deleted:    analysis/experiment_nb_means_cache/html/unnamed-chunk-3_ac840b1b9f49c0bc24b3f3b2ad41215e.rdb
+    Deleted:    analysis/experiment_nb_means_cache/html/unnamed-chunk-3_ac840b1b9f49c0bc24b3f3b2ad41215e.rdx
+    Modified:   data/kos.z.Rds
+    Modified:   script/test_nb_means.R
+    Modified:   script/test_nb_means2.R
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the R Markdown and HTML files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view them.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/09342bb565ec9c0d32595cf63135abc836a1fe95/analysis/ebpm_bg_working.Rmd" target="_blank">09342bb</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+add working progress
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="interpretations-of-topic-modeling" class="section level2">
+<h2>Interpretations of topic-modeling</h2>
+<div id="first-in-multinomial-model" class="section level3">
+<h3>First, in Multinomial model:</h3>
+<span class="math display">\[\begin{align}
+&amp; X _{ij} \sim Multinom(L_i, \zeta_{ij})\\
+&amp; \zeta_{ij} = \sum_k L_{ik} F_{jk}\\
+&amp; \sum_k L_{ik} = \sum_j F_{jk} = 1\\
+&amp; L_{ik}, F_{jk} \geq 0
+\end{align}\]</span>
+<p>We can think of:</p>
+<ul>
+<li>each word <span class="math inline">\(j\)</span> in a <span class="math inline">\(K\)</span>-simplex (a <span class="math inline">\(K\)</span>-dimensional word embedding);<br />
+</li>
+<li>each document <span class="math inline">\(i\)</span> represened by a unit vector (under L1 norm) in the <span class="math inline">\(K\)</span>-simplex;<br />
+</li>
+<li><span class="math inline">\(\zeta_{ij}\)</span> is the projection of the embedding of word <span class="math inline">\(j\)</span> to the vector for document <span class="math inline">\(i\)</span><br />
+</li>
+</ul>
+<p>So we are learning the word embedding for each word, and the “direction” for each document at the same time.</p>
+</div>
+<div id="second-in-poisson-model" class="section level3">
+<h3>Second, in Poisson model</h3>
+<span class="math display">\[\begin{align}
+&amp; X _{ij} \sim Po(\lambda_{ij})\\
+&amp; \lambda_{ij} = \sum_k L_{ik} F_{jk}\\
+&amp; L_{ik}, F_{jk} \geq 0
+\end{align}\]</span>
+<p>Interpretation is similar, just changing the simplex to orthant.</p>
+<ul>
+<li>each word <span class="math inline">\(j\)</span> in a <span class="math inline">\(K\)</span>-orthant. (a <span class="math inline">\(K\)</span>-dimensional word embedding);<br />
+</li>
+<li>each document <span class="math inline">\(i\)</span> represened by a vector (under L1 norm containing more than just direction information) in the <span class="math inline">\(K\)</span>-orthant;<br />
+</li>
+<li><span class="math inline">\(\lambda_{ij}\)</span> is the dot product of the embedding of word <span class="math inline">\(j\)</span> with the vector for document <span class="math inline">\(i\)</span><br />
+</li>
+</ul>
+</div>
+<div id="some-first-thoughts-on-scaling" class="section level3">
+<h3>some first thoughts on scaling</h3>
+<p>Scaling of <span class="math inline">\(F\)</span> for interpretation: it seems we want each coordinate of the orthant to be standardized: for example, make distribution of <span class="math inline">\(f_{Jk}\)</span> to have mode at 0 and similar variance? this corresponds another background model, with <span class="math inline">\(\mu_k\)</span>.<br />
+Scaling of <span class="math inline">\(L\)</span>: seems that, for each document <span class="math inline">\(i\)</span>, vector <span class="math inline">\(l_{iK}\)</span> should have <span class="math inline">\(L_1\)</span> norm corresponding to doc-length.</p>
+</div>
+<div id="background-model" class="section level3">
+<h3>“background” model</h3>
+It might easier to think about the “additive” model:
+<span class="math display">\[\begin{align}
+&amp; F_{jk} = \mu_j + \tau_{jk}\\
+&amp; \lambda_{ij} - \mu_j (\sum_k L_{ik}) = \sum_k L_{ik} \tau_{jk}\\
+\end{align}\]</span>
+Our current model is multiplicative
+<span class="math display">\[\begin{align}
+&amp; F_{jk} = \mu_j v_{jk}\\
+&amp; \lambda_{ij}/\mu_j =  \sum_{k} L_{ik} V_{jk}
+\end{align}\]</span>
+<p>So for each word <span class="math inline">\(j\)</span>, I want to learn better (sparse) word embedding by separating out the “background”. Or, in analogy to deep learning, the “background” is like the correction for the output layer.</p>
+</div>
+</div>
+<div id="background-model-on-simulation-data" class="section level2">
+<h2>background model on simulation data</h2>
+<p><a href="https://zihao12.github.io/ebpmf_demo/experiment_ebpm_bg5.html" class="uri">https://zihao12.github.io/ebpmf_demo/experiment_ebpm_bg5.html</a></p>
+<p>We focus on the subproblem of estimating the word-embedding, given the document vector <span class="math inline">\(L_{iK}\)</span>. We sucessfully recovered the true embedding <span class="math inline">\(V_{jK}\)</span> and background frequency <span class="math inline">\(\mu_j\)</span>. Some observations:</p>
+<ul>
+<li>the size of <span class="math inline">\(s_k := \sum_{i} L_{ik}\)</span> affects the difficulty of the recovery of <span class="math inline">\(F_{jk}\)</span>. For MLE estimation, <span class="math inline">\(E[(F^{mle}_{jk} - F_{jk})^2] = F_{jk}/s_k\)</span>. So when <span class="math inline">\(s_k &gt;&gt; F_{jk}\)</span>, the MLE is good enough, and has little room to improve.<br />
+</li>
+<li>Initialization of <span class="math inline">\(\mu\)</span> is very important for convergence speed. Using median seems good (replace 0s with small numbers).<br />
+</li>
+<li>True background <span class="math inline">\(\mu_j\)</span> is also important. When it is too small, it’s hard to estimate <span class="math inline">\(V_{jk}\)</span>.</li>
+</ul>
+</div>
+<div id="topic-modeling-on-kos-dataset" class="section level2">
+<h2>topic modeling on <code>kos</code> dataset</h2>
+<p><a href="https://zihao12.github.io/ebpmf_demo/applications_kos.html" class="uri">https://zihao12.github.io/ebpmf_demo/applications_kos.html</a></p>
+<ul>
+<li>Data is 98% 0<br />
+</li>
+<li>Most of the computed backgrounds are 0 (probably because they remove words like “a”, “the”).<br />
+</li>
+<li>I think it might be better to make the background some small non-zero value. It seems too confident to say a document can’t have membership on a topic if we observe a word that hardly appears on a topic. Think about a new document of that very topic happens to mention that word.</li>
+</ul>
+</div>
+<div id="background-model-applied-to-the-fitted-topic-model" class="section level2">
+<h2>background model applied to the fitted topic-model</h2>
+<p>In the sub-problem, <span class="math inline">\(\mu_j\)</span> are mostly ($ &gt; 75%$) 0 (computed by median). My implementation of <code>background model</code> is not able to deal with <span class="math inline">\(\mu_j\)</span> yet, so they are fitted with some small non-zero number. The results is very close to MLE.</p>
+<p>My first fit: <a href="https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos.html" class="uri">https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos.html</a> I used <code>L, F</code> from PMF directly. It’s very close to MLE. I thought the reason was because of the very small <span class="math inline">\(\lambda_{jk}/s_k\)</span>.<br />
+Then I scale <span class="math inline">\(F\)</span> with <span class="math inline">\(f_{jk} s_k\)</span> just to make the <span class="math inline">\(\lambda_{jk}/s_k\)</span> large. However, the experiment <a href="https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos2.html" class="uri">https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos2.html</a> shows that EB result is still very close to MLE. I think it is because of the smnall background noise.<br />
+But another perspective is that the differences may be very small in one iteration, but can accumulate after many iterations.</p>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
