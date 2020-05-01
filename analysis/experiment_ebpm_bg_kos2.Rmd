@@ -1,0 +1,99 @@
+---
+title: "experiment_ebpm_bg_kos"
+author: "zihao12"
+date: "2020-04-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to try `ebpm-background` model on the fitted model on kos data: https://zihao12.github.io/ebpmf_demo/applications_kos.html
+
+```{r}
+rm(list = ls())
+library(Matrix)
+source("code/misc.R")
+source("script/ebpm_background3.R")
+set.seed(123)
+
+data_dir = "~/Desktop/data/text"
+data_name = "docword.kos.mtx"
+model_name = "docword.kos_nnmf_K20_maxiter1000.Rds"
+dict_name = "vocab.kos.txt"
+
+X = readMM(file= sprintf("%s/%s", data_dir, data_name))
+X = as.matrix(X)
+dict = read.csv(sprintf("%s/%s", data_dir, dict_name), header = FALSE)
+dict = as.vector(dict[,1])
+model = readRDS(sprintf("%s/%s", data_dir, model_name))
+L = model$W
+F = t(model$H)
+
+s_k = colSums(L)
+n = nrow(X)
+p = ncol(X)
+K = ncol(L)
+
+## scale (L, F)
+L = L %*% diag(1/s_k)
+F = F %*% diag(s_k)
+```
+
+I construct a poisson means sub-problem this way
+\begin{align}
+& Y_{jk} = \sum_i Z_{ijk}\\
+& Z_{ijk} = X_{ij} \zeta_{ijk}\\
+& \zeta_{ijk} = \frac{l_{ik} f_{jk}}{\sum_k l_{ik} f_{jk}}\\
+\end{align}
+
+
+Then fit `ebpm_background` model on $Y_{jk}$
+```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
+## get Y
+get_Y <- function(X,L, F ,K){
+  n = nrow(X)
+  p = ncol(X)
+  ## zeta = array(dim = c(n, p, K))
+  Z_sum = array(, dim = c(p, K))
+  Lam = L %*% t(F)
+  for(k in 1:K){
+    #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/Lam))
+    tmp = X * (L[,k] %o% F[,k])
+    mask <- (tmp != 0)
+    tmp[mask] = tmp[mask]/Lam[mask]
+    Z_sum[,k] = colSums(tmp)
+  }
+  return(Z_sum)
+}
+
+Y = get_Y(X = X, L = L, F = F, K = K)
+
+## fit model
+maxiter = 10
+a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
+grids= list(al = a_L, bl = a_L)
+
+Lam = t(t(F) * s_k)
+runtime <- system.time(
+  fit <- ebpm_background(Y = Y, s = s_k,
+                grids = grids, maxiter = maxiter)
+)
+```
+
+Y has too many rows that are completely 0, which our algo haven't dealt with specifically!!!
+```{r}
+Y_rs = rowSums(Y)
+sum(Y_rs==0)/p
+runtime
+plot(fit$progress)
+```
+
+```{r}
+Lam = fit$mu * fit$posterior$mean
+plot(F, Lam)
+```
+
+```{r}
+saveRDS(list(Y = Y, fit = fit, runtime = runtime), "analysis/experiment_ebpm_bg_kos_data.Rds")
+```
