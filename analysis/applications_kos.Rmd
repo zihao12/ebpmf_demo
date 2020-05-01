@@ -14,11 +14,12 @@ editor_options:
 
 * I mainly look at $f_{jK}$ of the fitted model. \
 
-* Note that, I use $s_k f_{jk}$ in place of $f_{jk}$ for fear that some small non-zero numbers will be read as 0. 
+* Note that, I use $L \frac{f_{jk}}{\sum_{j} f_{jk}}$ in place of $f_{jk}$ for better intrepretation. $L$ is the average document length. 
 ```{r}
 rm(list = ls())
 library(Matrix)
 source("code/misc.R")
+library(pheatmap)
 set.seed(123)
 
 data_dir = "~/Desktop/data/text"
@@ -33,16 +34,10 @@ dict = as.vector(dict[,1])
 model = readRDS(sprintf("%s/%s", data_dir, model_name))
 L = model$W
 F = t(model$H)
-
-## scale F
 s_k = colSums(L)
-F = t(t(F) * s_k)
 
-dim(Y)
 dim(L)
 dim(F)
-
-
 
 n = nrow(Y)
 p = ncol(Y)
@@ -51,6 +46,16 @@ K = ncol(L)
 ## scale l,f into multinomial model
 lf = poisson2multinom(F = F, L = L)
 ```
+
+### scale `F`
+```{r}
+doc_length_med = median(rowSums(Y))
+doc_length_med
+F = t(t(F)/colSums(F))
+F = doc_length_med * F
+```
+
+
 
 ## look at the meaning of each topic 
 let's look at the weight distribution in each topic (multinomial model). It seems that the top $0.002$ words take up most weight.
@@ -125,4 +130,16 @@ for(k in 1:K){
 }
 ```
 
-
+look at top words using `pheatmap`
+```{r fig.width=14, fig.height=14}
+#par(mfrow = c(5,4))
+n_top_word = round(0.002 * p)
+for(k in 1:K){
+  print(sprintf("topic %d", k))
+  word_idx = order(lf$F[,k], decreasing = TRUE)[1:n_top_word]
+  F_sub = F[word_idx, ]
+  rownames(F_sub) = dict[word_idx]
+  colnames(F_sub) = paste("Topic", 1:K, sep = "")
+  pheatmap(F_sub)
+}
+```
