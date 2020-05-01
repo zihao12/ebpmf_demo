@@ -394,7 +394,7 @@ div.section {
 
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
-<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
 </button>
 </p>
 <div id="workflowr-report" class="collapse">
@@ -403,7 +403,7 @@ div.section {
 <a data-toggle="tab" href="#summary">Summary</a>
 </li>
 <li>
-<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -415,7 +415,7 @@ div.section {
 <strong>Last updated:</strong> 2020-05-01
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ebpmf_demo/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -479,12 +479,18 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
 </p>
 </div>
-<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div id="strongCachestrongdetected" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+The following chunks had caches available:
+<ul>
+<li>
+unnamed-chunk-2
+</li>
+</ul>
+<p>To ensure reproducibility of the results, delete the cache directory <code>experiment_ebpm_bg_kos2_cache</code> and re-run the analysis. To have workflowr automatically delete the cache directory prior to building the file, set <code>delete_cache = TRUE</code> when running <code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
 </div>
 </div>
 </div>
@@ -503,10 +509,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee58a300d090d7cfbc8f973da2997bfb86db66d1atargetblanke58a300a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e58a300d090d7cfbc8f973da2997bfb86db66d1a" target="_blank">e58a300</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefe55e428250cda573589f43ebf935261faf864b6targetblankfe55e42a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/fe55e428250cda573589f43ebf935261faf864b6" target="_blank">fe55e42</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee58a300d090d7cfbc8f973da2997bfb86db66d1atargetblanke58a300a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefe55e428250cda573589f43ebf935261faf864b6targetblankfe55e42a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -521,6 +527,7 @@ Untracked files:
     Untracked:  analysis/current_progress_ebpmf_comparison_cache/
     Untracked:  analysis/demo_sparse_ebpmf_two_gamma_cache/
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
+    Untracked:  analysis/experiment_ebpm_bg_kos2_cache/
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.RData
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.rdb
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.rdx
@@ -596,6 +603,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/fe55e428250cda573589f43ebf935261faf864b6/analysis/experiment_ebpm_bg_kos2.Rmd" target="_blank">fe55e42</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+kos exper 2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/1334ce502ea4ad371e8c70e4f30d22a066e7f8d9/docs/experiment_ebpm_bg_kos2.html" target="_blank">1334ce5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -753,6 +794,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1334ce502ea4ad371e8c70e4f30d22a066e7f8d9/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-3-1.png" target="_blank">1334ce5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/51b0d1d16793240f2d05aea6795b81e1f592895f/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-3-1.png" target="_blank">51b0d1d</a>
 </td>
 <td>
@@ -793,6 +845,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/1334ce502ea4ad371e8c70e4f30d22a066e7f8d9/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-4-1.png" target="_blank">1334ce5</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/51b0d1d16793240f2d05aea6795b81e1f592895f/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-4-1.png" target="_blank">51b0d1d</a>
 </td>
 <td>
@@ -806,7 +869,7 @@ zihao12
 </table>
 </div>
 </div>
-<pre class="r"><code>saveRDS(list(Y = Y, fit = fit, runtime = runtime), &quot;analysis/experiment_ebpm_bg_kos_data.Rds&quot;)</code></pre>
+<pre class="r"><code>saveRDS(list(Y = Y, fit = fit, runtime = runtime), &quot;analysis/experiment_ebpm_bg_kos2_data.Rds&quot;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -845,11 +908,11 @@ loaded via a namespace (and not attached):
 [13] xfun_0.12           irlba_2.3.3         git2r_0.26.1       
 [16] gtools_3.8.1        htmltools_0.4.0     yaml_2.2.1         
 [19] digest_0.6.23       rprojroot_1.3-2     numDeriv_2016.8-1.1
-[22] mixsqp_0.3-17       later_1.0.0         codetools_0.2-16   
-[25] promises_1.1.0      fs_1.3.1            glue_1.3.1         
-[28] evaluate_0.14       rmarkdown_2.1       stringi_1.4.5      
-[31] compiler_3.6.3      backports_1.1.5     gsl_2.1-6          
-[34] RcppZiggurat_0.1.5  httpuv_1.5.2       </code></pre>
+[22] mixsqp_0.3-17       later_1.0.0         promises_1.1.0     
+[25] fs_1.3.1            glue_1.3.1          evaluate_0.14      
+[28] rmarkdown_2.1       stringi_1.4.5       compiler_3.6.3     
+[31] backports_1.1.5     gsl_2.1-6           RcppZiggurat_0.1.5 
+[34] httpuv_1.5.2       </code></pre>
 </div>
 </div>
 
