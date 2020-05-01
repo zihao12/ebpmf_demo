@@ -503,10 +503,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeeb9da1bf3b76b85eb9c5f3b295fefc359be4a8a5targetblankeb9da1ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/eb9da1bf3b76b85eb9c5f3b295fefc359be4a8a5" target="_blank">eb9da1b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee58a300d090d7cfbc8f973da2997bfb86db66d1atargetblanke58a300a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e58a300d090d7cfbc8f973da2997bfb86db66d1a" target="_blank">e58a300</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreeeb9da1bf3b76b85eb9c5f3b295fefc359be4a8a5targetblankeb9da1ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee58a300d090d7cfbc8f973da2997bfb86db66d1atargetblanke58a300a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -601,6 +601,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e58a300d090d7cfbc8f973da2997bfb86db66d1a/analysis/experiment_ebpm_bg_kos2.Rmd" target="_blank">e58a300</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+kos exper 2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/51b0d1d16793240f2d05aea6795b81e1f592895f/docs/experiment_ebpm_bg_kos2.html" target="_blank">51b0d1d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/eb9da1bf3b76b85eb9c5f3b295fefc359be4a8a5/analysis/experiment_ebpm_bg_kos2.Rmd" target="_blank">eb9da1b</a>
 </td>
 <td>
@@ -677,7 +711,7 @@ get_Y &lt;- function(X,L, F ,K){
 Y = get_Y(X = X, L = L, F = F, K = K)
 
 ## fit model
-maxiter = 10
+maxiter = 100
 a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
 grids= list(al = a_L, bl = a_L)
 
@@ -692,12 +726,86 @@ sum(Y_rs==0)/p</code></pre>
 <pre><code>[1] 0</code></pre>
 <pre class="r"><code>runtime</code></pre>
 <pre><code>   user  system elapsed 
- 43.586   0.192  31.708 </code></pre>
+398.534   0.549 306.826 </code></pre>
 <pre class="r"><code>plot(fit$progress)</code></pre>
 <p><img src="figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51b0d1d16793240f2d05aea6795b81e1f592895f/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-3-1.png" target="_blank">51b0d1d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>Lam = fit$mu * fit$posterior$mean
 plot(F, Lam)</code></pre>
 <p><img src="figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/51b0d1d16793240f2d05aea6795b81e1f592895f/docs/figure/experiment_ebpm_bg_kos2.Rmd/unnamed-chunk-4-1.png" target="_blank">51b0d1d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>saveRDS(list(Y = Y, fit = fit, runtime = runtime), &quot;analysis/experiment_ebpm_bg_kos_data.Rds&quot;)</code></pre>
 <br>
 <p>
