@@ -509,10 +509,10 @@ unnamed-chunk-3
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreedf9d426db1ca6f6e6383d9f5c840befe9b7e4a0btargetblankdf9d426a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/df9d426db1ca6f6e6383d9f5c840befe9b7e4a0b" target="_blank">df9d426</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee8ee9c396e8f74f8637d3d9d763db4bf398725f8targetblanke8ee9c3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/e8ee9c396e8f74f8637d3d9d763db4bf398725f8" target="_blank">e8ee9c3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreedf9d426db1ca6f6e6383d9f5c840befe9b7e4a0btargetblankdf9d426a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreee8ee9c396e8f74f8637d3d9d763db4bf398725f8targetblanke8ee9c3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -527,7 +527,6 @@ Untracked files:
     Untracked:  analysis/current_progress_ebpmf_comparison_cache/
     Untracked:  analysis/demo_sparse_ebpmf_two_gamma_cache/
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
-    Untracked:  analysis/experiment_ebpm_bg_kos_cache/
     Untracked:  analysis/experiment_ebpm_gammamix3_cache/
     Untracked:  analysis/experiment_nb_means_cache_0/
     Untracked:  analysis/fast_mle_nb.Rmd
@@ -598,6 +597,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/e8ee9c396e8f74f8637d3d9d763db4bf398725f8/analysis/experiment_ebpm_bg_kos.Rmd" target="_blank">e8ee9c3</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-30
+</td>
+<td>
+run kos ebpm bg
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/81a23451501f7956c0c83e833fcc05c0e9816320/analysis/experiment_ebpm_bg_kos.Rmd" target="_blank">81a2345</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-30
+</td>
+<td>
+update kos ebpm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/44067ea346a53e318200abea41f094b60492c59b/docs/experiment_ebpm_bg_kos.html" target="_blank">44067ea</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -707,66 +757,28 @@ I construct a poisson means sub-problem this way
 &amp; Z_{ijk} = X_{ij} \zeta_{ijk}\\
 &amp; \zeta_{ijk} = \frac{l_{ik} f_{jk}}{\sum_k l_{ik} f_{jk}}\\
 \end{align}\]</span>
-<pre class="r"><code># get_Z &lt;- function(X,L, F ,K){
-#   n = nrow(X)
-#   p = ncol(X)
-#   ## zeta = array(dim = c(n, p, K))
-#   Z_sum = array(dim = c(p, K))
-#   denom = L %*% t(F)
-#   for(k in 1:K){
-#     print(k)
-#     #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/denom))
-#     tmp = L[,k] %o% F[,k]
-#     tmp = tmp / denom
-#     Z_sum[,k] = colSums(X * tmp)
-#   }
-#   Z_sum[is.nan(Z_sum)] = 0
-#   return(Z_sum)
-# }
-# 
-# Y = get_Z(X = X, L = L, F = F, K = K)
-# saveRDS(Y, &quot;data/kos.z.Rds&quot;)
-Y = readRDS(&quot;data/kos.z.Rds&quot;)
-hist(log10(Y + 1), breaks = 100)</code></pre>
-<p><img src="figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/zihao12/ebpmf_demo/blob/8b7b17bae238f8a1755f6ad958d6a4bb1541e33c/docs/figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-2-1.png" target="_blank">8b7b17b</a>
-</td>
-<td>
-zihao12
-</td>
-<td>
-2020-04-30
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>maxiter = 100
+<p>Then fit <code>ebpm_background</code> model on <span class="math inline">\(Y_{jk}\)</span></p>
+<pre class="r"><code>## get Y
+get_Y &lt;- function(X,L, F ,K){
+  n = nrow(X)
+  p = ncol(X)
+  ## zeta = array(dim = c(n, p, K))
+  Z_sum = array(, dim = c(p, K))
+  Lam = L %*% t(F)
+  for(k in 1:K){
+    #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/Lam))
+    tmp = X * (L[,k] %o% F[,k])
+    mask &lt;- (tmp != 0)
+    tmp[mask] = tmp[mask]/Lam[mask]
+    Z_sum[,k] = colSums(tmp)
+  }
+  return(Z_sum)
+}
+
+Y = get_Y(X = X, L = L, F = F, K = K)
+
+## fit model
+maxiter = 100
 a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
 grids= list(al = a_L, bl = a_L)
 
@@ -775,7 +787,17 @@ runtime &lt;- system.time(
   fit &lt;- ebpm_background(Y = Y, s = replicate(K, 1),
                 grids = grids, maxiter = maxiter)
 )</code></pre>
+<p>Y has too many rows that are completely 0, which our algo haven’t dealt with specifically!!!</p>
+<pre class="r"><code>Y_rs = rowSums(Y)
+sum(Y_rs==0)/p</code></pre>
+<pre><code>[1] 0</code></pre>
+<pre class="r"><code>runtime</code></pre>
+<pre><code>   user  system elapsed 
+401.549   0.420 307.810 </code></pre>
 <pre class="r"><code>plot(fit$progress)</code></pre>
+<p><img src="figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Lam = fit$mu * fit$posterior$mean
+plot(F, Lam)</code></pre>
 <p><img src="figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
@@ -799,6 +821,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/44067ea346a53e318200abea41f094b60492c59b/docs/figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-4-1.png" target="_blank">44067ea</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-04-30
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/zihao12/ebpmf_demo/blob/8b7b17bae238f8a1755f6ad958d6a4bb1541e33c/docs/figure/experiment_ebpm_bg_kos.Rmd/unnamed-chunk-4-1.png" target="_blank">8b7b17b</a>
