@@ -74,7 +74,7 @@ grids= list(al = a_L, bl = a_L)
 
 Lam = t(t(F) * s_k)
 runtime <- system.time(
-  fit <- ebpm_background(Y = Y, s = replicate(K, 1),
+  fit <- ebpm_background(Y = Y, s = s_k,
                 grids = grids, maxiter = maxiter)
 )
 ```
@@ -92,3 +92,6 @@ Lam = fit$mu * fit$posterior$mean
 plot(F, Lam)
 ```
 
+```{r}
+saveRDS(list(Y = Y, fit = fit, runtime = runtime), "analysis/experiment_ebpm_bg_kos_data.Rds")
+```
