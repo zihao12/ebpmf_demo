@@ -38,6 +38,7 @@ K = ncol(L)
 ## scale (L, F)
 L = L %*% diag(1/s_k)
 F = F %*% diag(s_k)
+s_k = replicate(K, 1)
 ```
 
 I construct a poisson means sub-problem this way
