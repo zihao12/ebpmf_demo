@@ -509,10 +509,10 @@ unnamed-chunk-2
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefe55e428250cda573589f43ebf935261faf864b6targetblankfe55e42a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/fe55e428250cda573589f43ebf935261faf864b6" target="_blank">fe55e42</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7c3bf2e6de70e213982d8b54e3e6a1a2938cf0bftargetblank7c3bf2ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zihao12/ebpmf_demo/tree/7c3bf2e6de70e213982d8b54e3e6a1a2938cf0bf" target="_blank">7c3bf2e</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotreefe55e428250cda573589f43ebf935261faf864b6targetblankfe55e42a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzihao12ebpmfdemotree7c3bf2e6de70e213982d8b54e3e6a1a2938cf0bftargetblank7c3bf2ea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -528,6 +528,7 @@ Untracked files:
     Untracked:  analysis/demo_sparse_ebpmf_two_gamma_cache/
     Untracked:  analysis/ebpm_two_gamma_speed.Rmd
     Untracked:  analysis/experiment_ebpm_bg_kos2_cache/
+    Untracked:  analysis/experiment_ebpm_bg_kos2_data.Rds
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.RData
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.rdb
     Untracked:  analysis/experiment_ebpm_bg_kos_cache/html/unnamed-chunk-2_ad01f68e475296daaa97301667a7fd5d.rdx
@@ -603,6 +604,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zihao12/ebpmf_demo/blob/7c3bf2e6de70e213982d8b54e3e6a1a2938cf0bf/analysis/experiment_ebpm_bg_kos2.Rmd" target="_blank">7c3bf2e</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+kos exper 2
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zihao12/ebpmf_demo/e0d340d0d9feeab7580b90afd9ae8926fff32f81/docs/experiment_ebpm_bg_kos2.html" target="_blank">e0d340d</a>
+</td>
+<td>
+zihao12
+</td>
+<td>
+2020-05-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -724,7 +759,8 @@ K = ncol(L)
 
 ## scale (L, F)
 L = L %*% diag(1/s_k)
-F = F %*% diag(s_k)</code></pre>
+F = F %*% diag(s_k)
+s_k = replicate(K, 1)</code></pre>
 I construct a poisson means sub-problem this way
 <span class="math display">\[\begin{align}
 &amp; Y_{jk} = \sum_i Z_{ijk}\\
