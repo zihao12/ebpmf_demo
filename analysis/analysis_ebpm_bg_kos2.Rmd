@@ -1,0 +1,97 @@
+---
+title: "experiment_ebpm_bg_kos"
+author: "zihao12"
+date: "2020-04-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+I want to try `ebpm-background` model on the fitted model on kos data: https://zihao12.github.io/ebpmf_demo/applications_kos.html
+
+```{r}
+rm(list = ls())
+library(pheatmap)
+source("code/misc.R")
+set.seed(123)
+
+data_dir = "~/Desktop/data/text"
+dict_name = "vocab.kos.txt"
+fitted_file = "data/experiment_ebpm_bg_kos2_data.Rds"
+
+dict = read.csv(sprintf("%s/%s", data_dir, dict_name), header = FALSE)
+dict = as.vector(dict[,1])
+```
+
+I construct a poisson means sub-problem this way
+\begin{align}
+& Y_{jk} = \sum_i Z_{ijk}\\
+& Z_{ijk} = X_{ij} \zeta_{ijk}\\
+& \zeta_{ijk} = \frac{l_{ik} f_{jk}}{\sum_k l_{ik} f_{jk}}\\
+\end{align}
+
+
+Then fit `ebpm_background` model on $Y_{jk}$
+```{r}
+fitted = readRDS(fitted_file)
+Y = fitted$Y
+model = fitted$fit
+plot(model$progress)
+K = ncol(Y)
+p = nrow(Y)
+s_k = colSums(fitted$L)
+
+s_k
+
+V_bg = model$posterior$mean
+mu_bg = model$mu
+Lam_bg = mu_bg * V_bg
+
+Lam_mle = t(t(Y)/s_k)
+mu_median = apply(Lam_mle, 1, median)
+```
+
+
+## $\mu_j$
+* even the largest background frequency is too small (should we do scaling?)\
+
+* majority background frequencies should probably just be 0...
+```{r}
+hist(mu_median, breaks = 100, xlim = c(0,100))
+## what percentage of words have background (use median of Lam_mle) 0
+sum(mu_median == 0)/nrow(Y)
+## max background
+max(mu_median)
+
+plot(mu_median, mu_bg, pch = 20)
+abline(0,1,lwd=3, col = "green")
+```
+
+## $\lambda_{jk}$
+* Not too much different from MLE result. \
+
+```{r }
+plot(Lam_mle, Lam_bg)
+## look at those with bigger background freq
+mask <- (mu_median > 20)
+plot(Lam_mle[mask,], Lam_bg[mask,])
+```
+
+## look at some $\lambda_{jK}$
+```{r fig.width=14, fig.height=14}
+
+lf = poisson2multinom(F = fitted$F, L = fitted$L)
+
+par(mfrow = c(5,4))
+for(k in 1:K){
+  j = which.max(lf$F[,k])
+  plot(Lam_mle[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for `%s` in topic %d", dict[j], k))
+  points(Lam_bg[j,], col = "blue")
+}
+
+```
+
+
+
