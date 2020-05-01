@@ -95,5 +95,5 @@ plot(F, Lam)
 ```
 
 ```{r}
-saveRDS(list(Y = Y, fit = fit, runtime = runtime), "analysis/experiment_ebpm_bg_kos_data.Rds")
+saveRDS(list(Y = Y, fit = fit, runtime = runtime), "analysis/experiment_ebpm_bg_kos2_data.Rds")
 ```
