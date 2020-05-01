@@ -8,10 +8,11 @@ editor_options:
 ---
 
 ## Interpretations of topic-modeling
+Our data is $X_{ij}$, count of word $j$ in document $i$
 
 ### First, in Multinomial model:
 \begin{align}
-& X _{ij} \sim Multinom(L_i, \zeta_{ij})\\
+& X _{iJ} \sim Multinom(L_i, \zeta_{iJ})\\
 & \zeta_{ij} = \sum_k L_{ik} F_{jk}\\
 & \sum_k L_{ik} = \sum_j F_{jk} = 1\\
 & L_{ik}, F_{jk} \geq 0
