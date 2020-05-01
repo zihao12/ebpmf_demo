@@ -1,0 +1,101 @@
+---
+title: "ebpm_bg_working"
+author: "zihao12"
+date: "2020-05-01"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Interpretations of topic-modeling
+
+### First, in Multinomial model:
+\begin{align}
+& X _{ij} \sim Multinom(L_i, \zeta_{ij})\\
+& \zeta_{ij} = \sum_k L_{ik} F_{jk}\\
+& \sum_k L_{ik} = \sum_j F_{jk} = 1\\
+& L_{ik}, F_{jk} \geq 0
+\end{align}
+
+We can think of:
+
+* each word $j$ in a $K$-simplex (a $K$-dimensional word embedding);\
+
+* each document $i$ represened by a unit vector (under L1 norm) in the $K$-simplex;\
+
+* $\zeta_{ij}$ is the projection of the embedding of word $j$ to the vector for document $i$\
+
+So we are learning the word embedding for each word, and the "direction" for each document at the same time. 
+
+### Second, in Poisson model
+\begin{align}
+& X _{ij} \sim Po(\lambda_{ij})\\
+& \lambda_{ij} = \sum_k L_{ik} F_{jk}\\
+& L_{ik}, F_{jk} \geq 0
+\end{align}
+
+Interpretation is similar, just changing the simplex to orthant.
+
+* each word $j$ in a $K$-orthant. (a $K$-dimensional word embedding);\
+
+* each document $i$ represened by a vector (under L1 norm containing more than just direction information) in the $K$-orthant;\
+
+* $\lambda_{ij}$ is the dot product of the embedding of word $j$ with the vector for document $i$\
+
+### some first thoughts on scaling
+
+Scaling of $F$ for interpretation: it seems we want each coordinate of the orthant to be standardized: for example, make distribution of $f_{Jk}$ to have mode at 0 and similar variance? this corresponds another background model, with $\mu_k$.\
+
+Scaling of $L$: seems that, for each document $i$, vector $l_{iK}$ should have $L_1$ norm corresponding to doc-length. 
+
+### "background" model
+It might easier to think about the "additive" model:
+\begin{align}
+& F_{jk} = \mu_j + \tau_{jk}\\
+& \lambda_{ij} - \mu_j (\sum_k L_{ik}) = \sum_k L_{ik} \tau_{jk}\\
+\end{align}
+
+Our current model is multiplicative
+\begin{align}
+& F_{jk} = \mu_j v_{jk}\\
+& \lambda_{ij}/\mu_j =  \sum_{k} L_{ik} V_{jk}
+\end{align}
+
+So for each word $j$, I want to learn better (sparse) word embedding by separating out the "background". Or, in analogy to deep learning, the "background" is like the correction for the output layer. 
+
+## background model on simulation data
+https://zihao12.github.io/ebpmf_demo/experiment_ebpm_bg5.html
+
+We focus on the subproblem of estimating the word-embedding, given the document vector $L_{iK}$. We sucessfully recovered the true embedding $V_{jK}$ and background frequency $\mu_j$. Some observations:
+
+* the size of $s_k := \sum_{i} L_{ik}$ affects the difficulty of the recovery of $F_{jk}$. For MLE estimation, $E[(F^{mle}_{jk} - F_{jk})^2] = F_{jk}/s_k$. So when $s_k >> F_{jk}$,  the MLE is good enough, and has little room to improve.\
+
+* Initialization of $\mu$ is very important for convergence speed. Using median seems good (replace 0s with small numbers).\
+
+* True background $\mu_j$ is also important. When it is too small, it's hard to estimate $V_{jk}$. 
+
+## topic modeling on `kos` dataset
+https://zihao12.github.io/ebpmf_demo/applications_kos.html
+
+
+* Data is 98% 0\
+
+* Most of the computed backgrounds are 0 (probably because they remove words like "a", "the"). \
+
+* I think it might be better to make the background some small non-zero value. It seems too confident to say a document can't have membership on a topic if we observe a word that hardly appears on a topic. Think about a new document of that very topic happens to mention that word. 
+
+
+
+
+## background model applied to the fitted topic-model
+In the sub-problem, $\mu_j$ are mostly ($ > 75%$) 0 (computed by median). My implementation of `background model` is not able to deal with $\mu_j$ yet, so they are fitted with some small non-zero number. The results is very close to MLE. 
+
+My first fit: https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos.html
+I used `L, F` from PMF directly. It's very close to MLE. I thought the reason was because of the very small $\lambda_{jk}/s_k$. \
+
+Then I scale $F$ with $f_{jk} s_k$ just to make the $\lambda_{jk}/s_k$ large. However, the experiment https://zihao12.github.io/ebpmf_demo/analysis_ebpm_bg_kos2.html shows that EB result is still very close to MLE. I think it is because of the smnall background noise. \
+
+But another perspective is that the differences may be very small in one iteration, but can accumulate after many iterations.  
+
+
+
