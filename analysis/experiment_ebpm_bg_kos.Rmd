@@ -45,33 +45,30 @@ I construct a poisson means sub-problem this way
 & \zeta_{ijk} = \frac{l_{ik} f_{jk}}{\sum_k l_{ik} f_{jk}}\\
 \end{align}
 
-```{r}
-# get_Z <- function(X,L, F ,K){
-#   n = nrow(X)
-#   p = ncol(X)
-#   ## zeta = array(dim = c(n, p, K))
-#   Z_sum = array(dim = c(p, K))
-#   denom = L %*% t(F)
-#   for(k in 1:K){
-#     print(k)
-#     #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/denom))
-#     tmp = L[,k] %o% F[,k]
-#     tmp = tmp / denom
-#     Z_sum[,k] = colSums(X * tmp)
-#   }
-#   Z_sum[is.nan(Z_sum)] = 0
-#   return(Z_sum)
-# }
-# 
-# Y = get_Z(X = X, L = L, F = F, K = K)
-# saveRDS(Y, "data/kos.z.Rds")
-Y = readRDS("data/kos.z.Rds")
-hist(log10(Y + 1), breaks = 100)
-```
 
-
+Then fit `ebpm_background` model on $Y_{jk}$
 ```{r cache=TRUE, autodep=TRUE, message=FALSE, warning=FALSE}
-maxiter = 100
+## get Y
+get_Y <- function(X,L, F ,K){
+  n = nrow(X)
+  p = ncol(X)
+  ## zeta = array(dim = c(n, p, K))
+  Z_sum = array(, dim = c(p, K))
+  Lam = L %*% t(F)
+  for(k in 1:K){
+    #Z_sum[,k] = colSums(X * ((L[,k] %o% F[,k])/Lam))
+    tmp = X * (L[,k] %o% F[,k])
+    mask <- (tmp != 0)
+    tmp[mask] = tmp[mask]/Lam[mask]
+    Z_sum[,k] = colSums(tmp)
+  }
+  return(Z_sum)
+}
+
+Y = get_Y(X = X, L = L, F = F, K = K)
+
+## fit model
+maxiter = 20
 a_L = c(seq(0.01, 0.10, 0.01), seq(0.2, 0.9, 0.1), seq(1,15,2), 20, 50, 75, 100, 200, 1e3)
 grids= list(al = a_L, bl = a_L)
 
@@ -82,7 +79,16 @@ runtime <- system.time(
 )
 ```
 
+Y has too many rows that are completely 0, which our algo haven't dealt with specifically!!!
 ```{r}
+Y_rs = rowSums(Y)
+sum(Y_rs==0)/p
+runtime
 plot(fit$progress)
+```
+
+```{r}
+Lam = fit$mu * fit$posterior$mean
+plot(F, Lam)
 ```
 
