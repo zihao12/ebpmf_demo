@@ -1,0 +1,111 @@
+---
+title: "applications_kos"
+author: "zihao12"
+date: "2020-04-29"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+* I applied `EBPMF-BG` (background model) to analyze a corpus of Daily Kos Blog dataset.\
+
+* The data is downloaded from [Bag of Words](https://archive.ics.uci.edu/ml/datasets/Bag+of+Words). The count matrix $X_{IJ}$ has $I = 3430$ documents, $J = 6906$ words, and $467714$ nonzero entries (around 2 percent). 
+
+* Models are described in [Yusha's writeup](https://www.overleaf.com/project/5eae3f1020590200014f1257)
+
+* Implementation details are in [ebpmf_bg](https://github.com/stephenslab/ebpmf.alpha/blob/master/derivations/ebpmf_bg.pdf). Note that I use the option `pm_func = list(f = ebpm::ebpm_gamma_mixture, l = ebpm::ebpm_point_gamma)`, and $l_{i0}$ are fixed to be 1. (using MLE for $l_{ik}$ has some numerical issues now...) 
+
+```{r message = FALSE, warning=FALSE}
+rm(list = ls())
+library(Matrix)
+source("code/misc.R")
+library(pheatmap)
+set.seed(123)
+
+data_dir = "~/Desktop/data/text"
+model_name = "docword.kos_ebpmf_bg_K20_maxiter500.Rds"
+dict_name = "vocab.kos.txt"
+
+## load model and dictionary
+dict = read.csv(sprintf("%s/%s", data_dir, dict_name), header = FALSE)
+dict = as.vector(dict[,1])
+model = readRDS(sprintf("%s/%s", data_dir, model_name))
+```
+
+## algorithm performance
+```{r}
+plot(model$ELBO)
+runtime_average = model$runtime/length(model$ELBO)
+runtime_average
+```
+As a comparison, the runtime is around $4.5$ seconds per iteration for `NNLM::nnmf` with `scd`, and $6.8$ per iteration for `fastTopics`. (More systematic comparisons are needed ...)
+
+
+### scale $l_{i0}$ and $f_{j0}$
+I require that $\sum_j f_{j0} = 1$. Then $s_k := \sum_k l_{i0} \bar{l}_{ik}$ is interpretable as the number of words to estimate topic $k$. 
+```{r}
+d = sum(model$f0)
+model$f0 <- model$f0 / d
+model$l0 <- model$l0 * d
+
+L = model$l0 * model$qg$qls_mean
+F = model$f0 * model$qg$qfs_mean
+s_k = colSums(L)
+s_k
+
+## scale l,f into multinomial model
+lf = poisson2multinom(F = F, L = L)
+```
+
+## look at the meaning of each topic 
+let's look at the weight distribution in each topic (multinomial model). It seems that the top $0.002$ words take up most weight.
+```{r fig.width=14, fig.height=14}
+n = nrow(L)
+p = nrow(F)
+K = ncol(L)
+
+par(mfrow = c(5,4))
+for(k in 1:K){
+  probs = seq(0, 1, 0.002)
+  plot(probs, quantile(lf$F[,k], probs = probs))
+}
+```
+
+Below I show the top $0.002$ words in each topic (per column)
+```{r}
+n_word = round(0.002 * p)
+topic_df <- matrix(,nrow = n_word, ncol = K)
+for(k in 1:K){
+  topic_df[,k] = dict[order(lf$F[,k], decreasing = TRUE)[1:n_word]]
+}
+colnames(topic_df) <- 1:K
+topic_df
+```
+
+
+
+Let's look at the structure of $f_{jk}$.
+## most important words in a topic
+```{r fig.width=14, fig.height=14}
+par(mfrow = c(5,4))
+for(k in 1:K){
+  j = which.max(lf$F[,k])
+  plot(F[j,], xlab = "topic index", ylab = "f_jk",
+       main = sprintf("f_jK for `%s` in topic %d", dict[j], k))
+}
+```
+
+look at top words using `pheatmap`
+```{r fig.width=14, fig.height=14}
+#par(mfrow = c(5,4))
+n_top_word = round(0.002 * p)
+for(k in 1:K){
+  print(sprintf("topic %d", k))
+  word_idx = order(lf$F[,k], decreasing = TRUE)[1:n_top_word]
+  F_sub = F[word_idx, ]
+  rownames(F_sub) = dict[word_idx]
+  colnames(F_sub) = paste("Topic", 1:K, sep = "")
+  pheatmap(F_sub)
+}
+```
